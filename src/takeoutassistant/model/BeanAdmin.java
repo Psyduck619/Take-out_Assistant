@@ -1,6 +1,7 @@
 package takeoutassistant.model;
 
 public class BeanAdmin {
+    public static BeanAdmin currentLoginAdmin = null;
     private String admin_id;
     private String admin_name;
     private String admin_pwd;

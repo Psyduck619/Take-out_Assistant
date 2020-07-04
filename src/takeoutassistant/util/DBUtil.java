@@ -3,7 +3,7 @@ package takeoutassistant.util;
 import java.sql.Connection;
 
 public class DBUtil {
-    private static final String jdbcUrl="jdbc:mysql://localhost:3306/takeoutassistant?useSSL=false";
+    private static final String jdbcUrl="jdbc:mysql://localhost:3306/db2020?useSSL=false";
     private static final String dbUser="root";
     private static final String dbPwd="102736";
     static{

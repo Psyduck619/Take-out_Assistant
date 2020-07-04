@@ -3,16 +3,25 @@ package takeoutassistant.model;
 import java.util.Date;
 
 public class BeanUser {
+    public static BeanUser currentLoginUser = null;
     private String user_id;
     private String user_name;
-    private boolean user_gender;
+    private String user_gender;
     private String user_pwd;
-    private int user_phone;
+    private String user_phone;
     private String user_email;
     private String user_city;
     private Date user_reg_time;
-    private boolean isVIP;
+    private boolean VIP;
     private Date VIP_end_time;
+
+    public boolean isVIP() {
+        return VIP;
+    }
+
+    public void setVIP(boolean VIP) {
+        this.VIP = VIP;
+    }
 
     public String getUser_id() {
         return user_id;
@@ -30,11 +39,11 @@ public class BeanUser {
         this.user_name = user_name;
     }
 
-    public boolean isUser_gender() {
+    public String isUser_gender() {
         return user_gender;
     }
 
-    public void setUser_gender(boolean user_gender) {
+    public void setUser_gender(String user_gender) {
         this.user_gender = user_gender;
     }
 
@@ -46,11 +55,11 @@ public class BeanUser {
         this.user_pwd = user_pwd;
     }
 
-    public int getUser_phone() {
+    public String getUser_phone() {
         return user_phone;
     }
 
-    public void setUser_phone(int user_phone) {
+    public void setUser_phone(String user_phone) {
         this.user_phone = user_phone;
     }
 
@@ -76,14 +85,6 @@ public class BeanUser {
 
     public void setUser_reg_time(Date user_reg_time) {
         this.user_reg_time = user_reg_time;
-    }
-
-    public boolean isVIP() {
-        return isVIP;
-    }
-
-    public void setVIP(boolean VIP) {
-        isVIP = VIP;
     }
 
     public Date getVIP_end_time() {

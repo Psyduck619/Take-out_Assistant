@@ -28,7 +28,7 @@ public class AdminManager implements IAdminManager {
         try{
             conn = DBUtil.getConnection();
             //≈–∂œ’À∫≈ «∑Ò¥Ê‘⁄
-            String sql = "select * from tbl_user where admin_name=?";
+            String sql = "select * from tbl_admin where admin_name=?";
             pst = conn.prepareStatement(sql);
             pst.setString(1, name);
             rs = pst.executeQuery();
@@ -44,7 +44,7 @@ public class AdminManager implements IAdminManager {
             pst = conn.prepareStatement(sql);
             pst.setString(1, name);
             rs = pst.executeQuery();
-            if(!rs.next()){
+            if(rs.next()){
                 if(!pwd.equals(rs.getString(1))){
                     rs.close();
                     pst.close();
