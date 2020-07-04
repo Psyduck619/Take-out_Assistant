@@ -1,6 +1,6 @@
 package takeoutassistant.util;
 
-public class BusinessException extends Exception {
+public class BusinessException extends BaseException {
     public BusinessException(String msg){
         super(msg);
     }

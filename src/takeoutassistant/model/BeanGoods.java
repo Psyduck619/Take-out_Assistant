@@ -2,7 +2,7 @@ package takeoutassistant.model;
 
 public class BeanGoods {
     private String goods_id;
-    private String admin_id;
+    private String type_id;
     private String goods_type;
     private String goods_name;
 
@@ -14,12 +14,12 @@ public class BeanGoods {
         this.goods_id = goods_id;
     }
 
-    public String getAdmin_id() {
-        return admin_id;
+    public String getType_id() {
+        return type_id;
     }
 
-    public void setAdmin_id(String admin_id) {
-        this.admin_id = admin_id;
+    public void setType_id(String type_id) {
+        this.type_id = type_id;
     }
 
     public String getGoods_type() {
