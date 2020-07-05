@@ -2,24 +2,24 @@ package takeoutassistant.model;
 
 public class BeanGoodsType {
     public static final String[] tblGTypeTitle={"ÐòºÅ","Ãû³Æ","ÊýÁ¿"};
-    private String type_id;
-    private String seller_id;
+    private int type_id;
+    private int seller_id;
     private String type_name;
     private int quantity;
 
-    public String getType_id() {
+    public int getType_id() {
         return type_id;
     }
 
-    public void setType_id(String type_id) {
+    public void setType_id(int type_id) {
         this.type_id = type_id;
     }
 
-    public String getSeller_id() {
+    public int getSeller_id() {
         return seller_id;
     }
 
-    public void setSeller_id(String seller_id) {
+    public void setSeller_id(int seller_id) {
         this.seller_id = seller_id;
     }
 
