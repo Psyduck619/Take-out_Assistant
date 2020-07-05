@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 
 
 public class FrmLogin extends JDialog implements ActionListener {
+	static String loginType = null;
 	private JPanel toolBar = new JPanel();
 	private JPanel workPane = new JPanel();
 	private JPanel imagePane = new JPanel();
@@ -23,10 +24,14 @@ public class FrmLogin extends JDialog implements ActionListener {
 	private JButton btnCancel = new JButton("退出");
 	private JButton btnRegister = new JButton("注册");
 	private JLabel lIcon = new JLabel();
-	private JLabel labelUser = new JLabel("用户：");
+	private JLabel labelUser = new JLabel("账号：");
 	private JLabel labelPwd = new JLabel("密码：");
 	private JTextField edtUserId = new JTextField(20);
 	private JPasswordField edtPwd = new JPasswordField(20);
+
+	private JRadioButton rbtUser1 = new JRadioButton("用户");
+	private JRadioButton rbtUser2 = new JRadioButton("管理员");
+	private ButtonGroup gUser = new ButtonGroup();
 
 	public FrmLogin(Frame f, String s, boolean b) {
 		super(f, s, b);
@@ -39,13 +44,20 @@ public class FrmLogin extends JDialog implements ActionListener {
 		workPane.add(edtUserId);
 		workPane.add(labelPwd);
 		workPane.add(edtPwd);
+
+		gUser.add(rbtUser1);
+		gUser.add(rbtUser2);
+		rbtUser1.setSelected(true);
+		workPane.add(rbtUser1);
+		workPane.add(rbtUser2);
+
 		this.getContentPane().add(workPane, BorderLayout.CENTER);
 		Icon icon = new ImageIcon("src/PIKA.jpg");
 		lIcon.setIcon(icon);
 		imagePane.add(lIcon);
 		imagePane.setBackground(Color.DARK_GRAY);
 		this.getContentPane().add(imagePane,BorderLayout.NORTH);
-		this.setSize(320, 500);
+		this.setSize(320, 520);
 		// 屏幕居中显示
 		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -67,10 +79,19 @@ public class FrmLogin extends JDialog implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == this.btnLogin) {
-			String userid=this.edtUserId.getText();
-			String pwd=new String(this.edtPwd.getPassword());
+			String userid = this.edtUserId.getText();
+			String pwd = new String(this.edtPwd.getPassword());
+			if(rbtUser1.isSelected()){
+				loginType = rbtUser1.getText();
+			} else {
+				loginType = rbtUser2.getText();
+			}
 			try {
-				BeanUser.currentLoginUser= TakeoutAssistantUtil.userManager.login(userid, pwd);
+				if(loginType.equals("用户")){
+					BeanUser.currentLoginUser= TakeoutAssistantUtil.userManager.login(userid, pwd);
+				} else {
+					BeanAdmin.currentLoginAdmin = TakeoutAssistantUtil.adminManager.login(userid, pwd);
+				}
 			} catch (BaseException e1) {
 				JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
 				return;

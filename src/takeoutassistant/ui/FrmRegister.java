@@ -16,14 +16,14 @@ public class FrmRegister extends JDialog implements ActionListener {
 	private Button btnOk = new Button("注册");
 	private Button btnCancel = new Button("取消");
 
-	private JLabel labelUser = new JLabel("用户名：");
-	private JLabel labelName = new JLabel("   姓名：");
-	private JLabel labelPwd = new JLabel("   密码：");
-	private JLabel labelGender = new JLabel("性别：");
-	private JLabel labelPhone = new JLabel("   电话：");
-	private JLabel labelEmail = new JLabel("  *邮箱：");
-	private JLabel labelCity = new JLabel("城市：");
-	private JLabel labelPwd2 = new JLabel("确认密码：");
+	private JLabel labelUser = new JLabel("*用户名：");
+	private JLabel labelName = new JLabel("  *姓名：");
+	private JLabel labelPwd = new JLabel("  *密码：");
+	private JLabel labelGender = new JLabel("*性别：");
+	private JLabel labelPhone = new JLabel("  *手机：");
+	private JLabel labelEmail = new JLabel("   邮箱：");
+	private JLabel labelCity = new JLabel("*城市：");
+	private JLabel labelPwd2 = new JLabel("*确认密码：");
 	private JTextField edtUserId = new JTextField(18);
 	private JTextField edtName = new JTextField(18);
 	private JTextField edtPhone = new JTextField(18);
@@ -108,12 +108,36 @@ public class FrmRegister extends JDialog implements ActionListener {
 				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-
-
 		}
-
-
 	}
 
+//	public void actionPerformed(ActionEvent e) {
+//		if(e.getSource()==this.btnCancel)
+//			this.setVisible(false);
+//		else if(e.getSource()==this.btnOk){
+//			String userid=this.edtUserId.getText();
+//			String name=this.edtName.getText();
+//			String gender=null;
+//			if(edtGender.isSelected()){
+//				gender = edtGender.getText();
+//			}else if(edtGender2.isSelected()){
+//				gender = edtGender2.getText();
+//			}else{
+//				gender = edtGender3.getText();
+//			}
+//			String phone=this.edtPhone.getText();
+//			String email=this.edtEmail.getText();
+//			String city= (String) this.edtCity.getSelectedItem();
+//			String pwd1=new String(this.edtPwd.getPassword());
+//			String pwd2=new String(this.edtPwd2.getPassword());
+//			try {
+//				BeanUser user=TakeoutAssistantUtil.userManager.reg(userid,name,gender,phone,email,city,pwd1,pwd2);
+//				this.setVisible(false);
+//			} catch (BaseException e1) {
+//				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
+//				return;
+//			}
+//		}
+//	}
 
 }

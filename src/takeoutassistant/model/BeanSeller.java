@@ -1,17 +1,17 @@
 package takeoutassistant.model;
 
 public class BeanSeller {
-    private String seller_id;
+    private int seller_id;
     private String seller_name;
     private int seller_level;
     private double per_cost;
     private int total_sales;
 
-    public String getSeller_id() {
+    public int getSeller_id() {
         return seller_id;
     }
 
-    public void setSeller_id(String seller_id) {
+    public void setSeller_id(int seller_id) {
         this.seller_id = seller_id;
     }
 

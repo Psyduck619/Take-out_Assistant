@@ -9,21 +9,46 @@ import takeoutassistant.util.DbException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.regex.Pattern;
 
 public class UserManager implements IUserManager {
 
     //用户注册
     public BeanUser reg(String userid, String name, String gender, String phone, String email, String city, String pwd, String pwd2) throws BaseException {
+        Pattern p = null;
         //判断账号是否合法
         if(userid == null || "".equals(userid)){
-            throw new BusinessException("ID can't be null!");
+            throw new BusinessException("账号不能为空!");
         }
         if(userid.length() > 20){
             throw new BusinessException("登录账号不能超过20字!");
         }
+        //判断名字是否合法
+        if(name == null || "".equals(name)){
+            throw new BusinessException("名字不能为空!");
+        }
+        if(name.length() > 20){
+            throw new BusinessException("名字不能超过20字!");
+        }
         //判断电话号是否合法
+        p = Pattern.compile("[0-9]*");
+        if(!p.matcher(phone).matches()){
+            throw new BusinessException("手机号只能为数字!");
+        }
+//        for(int i = 0 ; i < phone.length() ; i++){
+//            if(!Character.isDigit(phone.charAt(i))){
+//                throw new BusinessException("手机号只能为数字!");
+//            }
+//        }
         if(phone.length() != 11){
             throw new BusinessException("手机号必须为11位!");
+        }
+        //判断邮箱是否合法
+        if(email != null || !"".equals(email)){
+            p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,3}");
+            if(!p.matcher(email).matches()){
+                throw new BusinessException("邮箱格式错误!");
+            }
         }
         //判断密码是否合法
         if(pwd == null || "".equals(pwd)){
@@ -119,7 +144,7 @@ public class UserManager implements IUserManager {
             pst.setString(1,userid);
             rs = pst.executeQuery();
             if(!rs.next()){
-                user.setUser_id(rs.getString(1));
+                user.setUser_name(rs.getString(1));
                 user.setUser_gender(rs.getString(2));
                 user.setUser_phone(rs.getString(3));
                 user.setUser_email(rs.getString(4));
@@ -145,7 +170,53 @@ public class UserManager implements IUserManager {
 
     //用户修改密码
     public void changePwd(BeanUser user, String oldPwd, String newPwd, String newPwd2) throws BaseException {
-
+        //判断密码是否合法
+        if(oldPwd == null || "".equals(oldPwd) || newPwd == null || "".equals(newPwd) || newPwd2 == null || "".equals(newPwd2)){
+            throw new BusinessException("密码不能为空!");
+        }
+        if(oldPwd.length() > 16 || newPwd.length() > 16 || newPwd2.length() > 16){
+            throw new BusinessException("密码不能超过16字!");
+        }
+        if(!newPwd.equals(newPwd2)){
+            throw new BusinessException("两次密码不相同!");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try{
+            conn = DBUtil.getConnection();
+            //判断密码是否正确
+            sql = "select user_pwd from tbl_user where user_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,user.getUser_id());
+            rs = pst.executeQuery();
+            if(!rs.next()){
+                rs.close();
+                pst.close();
+                throw new BusinessException("密码错误!");
+            }
+            rs.close();
+            pst.close();
+            //实现密码修改
+            sql = "update tbl_user set user_pwd=? where user_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,newPwd);
+            pst.setString(2,user.getUser_id());
+            pst.execute();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if(conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 
     //用户点单

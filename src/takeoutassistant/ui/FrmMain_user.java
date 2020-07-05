@@ -11,12 +11,12 @@ import java.awt.event.*;
 
 import static takeoutassistant.ui.FrmLogin.loginType;
 
-public class FrmMain extends JFrame implements ActionListener {
+public class FrmMain_user extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private JMenuBar menubar=new JMenuBar();
-    private JMenu menu_plan=new JMenu("管理员计划管理");
-    private JMenu menu_step=new JMenu("步骤管理");
-    private JMenu menu_static=new JMenu("查询统计");
+    private JMenu menu_plan=new JMenu("用户计划管理");
+    private JMenu menu_step=new JMenu("用户步骤管理");
+    private JMenu menu_static=new JMenu("用户查询统计");
     private JMenu menu_more=new JMenu("更多");
 
     private JMenuItem  menuItem_AddPlan=new JMenuItem("新建计划");
@@ -36,7 +36,7 @@ public class FrmMain extends JFrame implements ActionListener {
     private FrmLogin dlgLogin=null;
     private JPanel statusBar = new JPanel();
 
-//    private Object tblPlanTitle[]=BeanPlan.tableTitles;
+    //    private Object tblPlanTitle[]=BeanPlan.tableTitles;
 //    private Object tblPlanData[][];
 //    DefaultTableModel tabPlanModel=new DefaultTableModel();
 //    private JTable dataTablePlan=new JTable(tabPlanModel);
@@ -66,12 +66,12 @@ public class FrmMain extends JFrame implements ActionListener {
 //        this.dataTablePlan.validate();
 //        this.dataTablePlan.repaint();
 //    }
-    public FrmMain(){
+    public FrmMain_user(){
 
         this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setTitle("大开大合");
-        dlgLogin=new FrmLogin(this,"登录",true);
-        dlgLogin.setVisible(true);
+        //dlgLogin=new FrmLogin(this,"登录",true);
+        //dlgLogin.setVisible(true);
         //菜单
         this.menu_plan.add(this.menuItem_AddPlan); this.menuItem_AddPlan.addActionListener(this);
         this.menu_plan.add(this.menuItem_DeletePlan); this.menuItem_DeletePlan.addActionListener(this);
@@ -108,7 +108,7 @@ public class FrmMain extends JFrame implements ActionListener {
 //        this.reloadPlanTable();
         //状态栏
         statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JLabel label=new JLabel("您好!管理员!");
+        JLabel label=new JLabel("您好!用户!");
         statusBar.add(label);
         this.getContentPane().add(statusBar,BorderLayout.SOUTH);
         this.addWindowListener(new WindowAdapter(){
@@ -116,7 +116,7 @@ public class FrmMain extends JFrame implements ActionListener {
                 System.exit(0);
             }
         });
-        if(loginType == "管理员"){
+        if(loginType == "用户"){
             this.setVisible(true);
         }
     }
