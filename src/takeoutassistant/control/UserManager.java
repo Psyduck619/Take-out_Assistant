@@ -31,20 +31,18 @@ public class UserManager implements IUserManager {
             throw new BusinessException("名字不能超过20字!");
         }
         //判断电话号是否合法
+        if(phone == null || "".equals(phone)){
+            throw new BusinessException("名字不能为空!");
+        }
         p = Pattern.compile("[0-9]*");
         if(!p.matcher(phone).matches()){
             throw new BusinessException("手机号只能为数字!");
         }
-//        for(int i = 0 ; i < phone.length() ; i++){
-//            if(!Character.isDigit(phone.charAt(i))){
-//                throw new BusinessException("手机号只能为数字!");
-//            }
-//        }
         if(phone.length() != 11){
             throw new BusinessException("手机号必须为11位!");
         }
         //判断邮箱是否合法
-        if(email != null || !"".equals(email)){
+        if(email != null && !"".equals(email)){
             p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,3}");
             if(!p.matcher(email).matches()){
                 throw new BusinessException("邮箱格式错误!");

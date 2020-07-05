@@ -1,6 +1,7 @@
 package takeoutassistant.model;
 
 public class BeanGoodsType {
+    public static final String[] tblGTypeTitle={"ÐòºÅ","Ãû³Æ","ÊýÁ¿"};
     private String type_id;
     private String seller_id;
     private String type_name;
@@ -36,5 +37,12 @@ public class BeanGoodsType {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getCell(int col){
+        if(col==0) return ""+this.type_id;
+        else if(col==1) return this.type_name;
+        else if(col==2) return ""+this.quantity;
+        else return "";
     }
 }

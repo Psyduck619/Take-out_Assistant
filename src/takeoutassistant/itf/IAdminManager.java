@@ -5,7 +5,7 @@ import takeoutassistant.util.BaseException;
 
 public interface IAdminManager {
     //管理员注册
-    //public BeanAdmin reg(String name, String pwd, String pwd2) throws BaseException;
+    public BeanAdmin addAdmin(String name, String pwd, String pwd2) throws BaseException;
     //管理员登录
     public BeanAdmin login(String name, String pwd) throws BaseException;
     //管理员修改密码

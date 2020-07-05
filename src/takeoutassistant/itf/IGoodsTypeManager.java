@@ -10,7 +10,7 @@ public interface IGoodsTypeManager {
     //增加商品类别
     public BeanGoodsType addGoodsType(BeanSeller seller, String name, int quantity) throws BaseException;
     //显示所有商品类别
-    public List<BeanGoodsType> loadAll() throws BaseException;
+    public List<BeanGoodsType> loadTypes(BeanSeller seller) throws BaseException;
     //删除商品类别
     public void deleteGoodsType(BeanGoodsType goodstype) throws BaseException;
     //修改商品类别名字

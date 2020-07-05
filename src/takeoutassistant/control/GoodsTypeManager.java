@@ -16,7 +16,7 @@ public class GoodsTypeManager implements IGoodsTypeManager {
     }
 
     //显示所有商品类别
-    public List<BeanGoodsType> loadAll() throws BaseException {
+    public List<BeanGoodsType> loadTypes(BeanSeller seller) throws BaseException {
 
         return null;
     }

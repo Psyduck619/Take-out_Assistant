@@ -110,34 +110,4 @@ public class FrmRegister extends JDialog implements ActionListener {
 			}
 		}
 	}
-
-//	public void actionPerformed(ActionEvent e) {
-//		if(e.getSource()==this.btnCancel)
-//			this.setVisible(false);
-//		else if(e.getSource()==this.btnOk){
-//			String userid=this.edtUserId.getText();
-//			String name=this.edtName.getText();
-//			String gender=null;
-//			if(edtGender.isSelected()){
-//				gender = edtGender.getText();
-//			}else if(edtGender2.isSelected()){
-//				gender = edtGender2.getText();
-//			}else{
-//				gender = edtGender3.getText();
-//			}
-//			String phone=this.edtPhone.getText();
-//			String email=this.edtEmail.getText();
-//			String city= (String) this.edtCity.getSelectedItem();
-//			String pwd1=new String(this.edtPwd.getPassword());
-//			String pwd2=new String(this.edtPwd2.getPassword());
-//			try {
-//				BeanUser user=TakeoutAssistantUtil.userManager.reg(userid,name,gender,phone,email,city,pwd1,pwd2);
-//				this.setVisible(false);
-//			} catch (BaseException e1) {
-//				JOptionPane.showMessageDialog(null, e1.getMessage(),"´íÎó",JOptionPane.ERROR_MESSAGE);
-//				return;
-//			}
-//		}
-//	}
-
 }

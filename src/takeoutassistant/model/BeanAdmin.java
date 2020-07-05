@@ -2,15 +2,15 @@ package takeoutassistant.model;
 
 public class BeanAdmin {
     public static BeanAdmin currentLoginAdmin = null;
-    private String admin_id;
+    private int admin_id;
     private String admin_name;
     private String admin_pwd;
 
-    public String getAdmin_id() {
+    public int getAdmin_id() {
         return admin_id;
     }
 
-    public void setAdmin_id(String admin_id) {
+    public void setAdmin_id(int admin_id) {
         this.admin_id = admin_id;
     }
 

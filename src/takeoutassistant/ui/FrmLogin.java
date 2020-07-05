@@ -16,13 +16,13 @@ import java.awt.event.WindowEvent;
 
 
 public class FrmLogin extends JDialog implements ActionListener {
-	static String loginType = null;
+	public static String loginType = null;
 	private JPanel toolBar = new JPanel();
 	private JPanel workPane = new JPanel();
 	private JPanel imagePane = new JPanel();
 	private JButton btnLogin = new JButton("µÇÂ½");
 	private JButton btnCancel = new JButton("ÍË³ö");
-	private JButton btnRegister = new JButton("×¢²á");
+	private JButton btnRegister = new JButton("ÓÃ»§×¢²á");
 	private JLabel lIcon = new JLabel();
 	private JLabel labelUser = new JLabel("ÕËºÅ£º");
 	private JLabel labelPwd = new JLabel("ÃÜÂë£º");

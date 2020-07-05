@@ -1,6 +1,7 @@
 package takeoutassistant.model;
 
 public class BeanSeller {
+    public static final String[] tableTitles={"商家序号","商家名称","星级","平均消费","总销量"};
     private int seller_id;
     private String seller_name;
     private int seller_level;
@@ -45,5 +46,14 @@ public class BeanSeller {
 
     public void setTotal_sales(int total_sales) {
         this.total_sales = total_sales;
+    }
+
+    public String getCell(int col){
+        if(col==0) return ""+this.seller_id;
+        else if(col==1) return ""+this.seller_name;
+        else if(col==2) return ""+this.seller_level;
+        else if(col==3) return ""+this.per_cost;
+        else if(col==4) return ""+this.total_sales;
+        else return "";
     }
 }

@@ -30,7 +30,7 @@ public class SellerManager implements ISellerManager {
         try {
             conn = DBUtil.getConnection();
             //实现商家添加到数据库
-            sql = "insert into tbl_seller(seller_name,seller_level,seller_sales) values(?,?,?)";
+            sql = "insert into tbl_seller(seller_name,seller_level,total_sales) values(?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setString(1,name);
             pst.setInt(2,1);
@@ -63,7 +63,7 @@ public class SellerManager implements ISellerManager {
         try {
             conn = DBUtil.getConnection();
             //实现从数据库查找所有商家信息
-            sql = "select seller_id,seller_name,seller_level,seller_cost,seller_sales from tbl_seller";
+            sql = "select seller_id,seller_name,seller_level,per_cost,total_sales from tbl_seller";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             while(rs.next()){
@@ -104,7 +104,7 @@ public class SellerManager implements ISellerManager {
             //判断是否选中某商家
             sql = "select * from tbl_seller where seller_id=?";
             pst = conn.prepareStatement(sql);
-            pst.setInt(1,seller.getSeller_id());
+            pst.setInt(1, seller.getSeller_id());
             rs = pst.executeQuery();
             if(!rs.next()){
                 rs.close();
@@ -114,17 +114,10 @@ public class SellerManager implements ISellerManager {
             rs.close();
             pst.close();
             //实现从数据库删除
-            sql = "delete * from tbl_seller where seller_id=?";
+            sql = "delete from tbl_seller where seller_id=?";
             pst = conn.prepareStatement(sql);
-            pst.setInt(1,seller.getSeller_id());
-            rs = pst.executeQuery();
-            //判断商家是否已被异常删除
-            if(!rs.next()){
-                rs.close();
-                pst.close();
-                throw new BusinessException("商家已被删除~");
-            }
-            rs.close();
+            pst.setInt(1, seller.getSeller_id());
+            pst.execute();
             pst.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -173,14 +166,7 @@ public class SellerManager implements ISellerManager {
             pst = conn.prepareStatement(sql);
             pst.setString(1,name);
             pst.setInt(2,seller.getSeller_id());
-            rs = pst.executeQuery();
-            //判断商家是否被异常删除
-            if(!rs.next()){
-                rs.close();
-                pst.close();
-                throw new BusinessException("商家不存在~");
-            }
-            rs.close();;
+            pst.execute();
             pst.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -198,7 +184,7 @@ public class SellerManager implements ISellerManager {
     //显示某星级商家
     @Override
     public List<BeanSeller> loadLevel(int level) throws BaseException {
-        if(level < 1 || level > 5){
+        if(level < 0 || level > 5){
             throw new BusinessException("请选择正确的星级~");
         }
         //初始化
@@ -210,21 +196,39 @@ public class SellerManager implements ISellerManager {
         try {
             conn = DBUtil.getConnection();
             //实现从数据库查找所需商家信息
-            sql = "select seller_id,seller_name,seller_level,seller_cost,seller_sales from tbl_seller where seller_level=?";
-            pst = conn.prepareStatement(sql);
-            pst.setInt(1,level);
-            rs = pst.executeQuery();
-            while(rs.next()){
-                BeanSeller bs = new BeanSeller();
-                bs.setSeller_id(rs.getInt(1));
-                bs.setSeller_name(rs.getString(2));
-                bs.setSeller_level(rs.getInt(3));
-                bs.setPer_cost(rs.getDouble(4));
-                bs.setTotal_sales(rs.getInt(5));
-                result.add(bs);
+            if(level == 0){//显示所有信息
+                sql = "select seller_id,seller_name,seller_level,per_cost,total_sales from tbl_seller";
+                pst = conn.prepareStatement(sql);
+                rs = pst.executeQuery();
+                while(rs.next()){
+                    BeanSeller bs = new BeanSeller();
+                    bs.setSeller_id(rs.getInt(1));
+                    bs.setSeller_name(rs.getString(2));
+                    bs.setSeller_level(rs.getInt(3));
+                    bs.setPer_cost(rs.getDouble(4));
+                    bs.setTotal_sales(rs.getInt(5));
+                    result.add(bs);
+                }
+                rs.close();
+                pst.close();
             }
-            rs.close();
-            pst.close();
+            else{//显示指定星级商家
+                sql = "select seller_id,seller_name,seller_level,per_cost,total_sales from tbl_seller where seller_level=?";
+                pst = conn.prepareStatement(sql);
+                pst.setInt(1,level);
+                rs = pst.executeQuery();
+                while(rs.next()){
+                    BeanSeller bs = new BeanSeller();
+                    bs.setSeller_id(rs.getInt(1));
+                    bs.setSeller_name(rs.getString(2));
+                    bs.setSeller_level(rs.getInt(3));
+                    bs.setPer_cost(rs.getDouble(4));
+                    bs.setTotal_sales(rs.getInt(5));
+                    result.add(bs);
+                }
+                rs.close();
+                pst.close();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }finally {
