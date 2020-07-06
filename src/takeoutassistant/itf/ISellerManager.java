@@ -1,6 +1,5 @@
 package takeoutassistant.itf;
 
-import jdk.internal.dynalink.beans.BeansLinker;
 import takeoutassistant.model.BeanSeller;
 import takeoutassistant.util.BaseException;
 

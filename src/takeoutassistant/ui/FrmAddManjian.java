@@ -9,37 +9,43 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static takeoutassistant.control.AdminManager.isDouble;
-import static takeoutassistant.ui.FrmMain.curType;
-
-public class FrmAddGoods extends JDialog implements ActionListener {
-    BeanGoodsType type = new BeanGoodsType();
+public class FrmAddManjian extends JDialog implements ActionListener {
+    BeanSeller seller = new BeanSeller();
     private JPanel toolBar = new JPanel();
     private JPanel workPane = new JPanel();
     private Button btnOk = new Button("确定");
     private Button btnCancel = new Button("取消");
-    private JLabel labelName = new JLabel("商品名称：");
-    private JLabel labelPrice = new JLabel("单价：");
-    private JLabel labelPeice2 = new JLabel("会员价：");
-    private JTextField edtName = new JTextField(20);
-    private JTextField edtPrice = new JTextField(20);
-    private JTextField edtPrice2 = new JTextField(20);
+    private JLabel labelFull = new JLabel("满足金额：");
+    private JLabel labelDiscount = new JLabel("优惠金额：");
+    private JLabel labelTogether = new JLabel("优惠券是否可同享：");
+    private JTextField edtFull = new JTextField(20);
+    private JTextField edtDiscount = new JTextField(20);
+    private JRadioButton edtYes = new JRadioButton("是");
+    private JRadioButton edtNo = new JRadioButton("否");
+    private ButtonGroup group = new ButtonGroup();
 
-    public FrmAddGoods(Frame f, String s, boolean b) {
+    public FrmAddManjian(Frame f, String s, boolean b) {
         super(f, s, b);
         toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
         toolBar.add(this.btnOk);
         toolBar.add(btnCancel);
         this.getContentPane().add(toolBar, BorderLayout.SOUTH);
-        workPane.add(labelName);
-        workPane.add(edtName);
-        workPane.add(labelPrice);
-        workPane.add(edtPrice);
-        workPane.add(labelPeice2);
-        workPane.add(edtPrice2);
+        workPane.add(labelFull);
+        workPane.add(edtFull);
+        workPane.add(labelDiscount);
+        workPane.add(edtDiscount);
+        //单选按钮设置
+        group.add(edtYes);
+        group.add(edtNo);
+        edtYes.setSelected(true);
+        workPane.add(labelTogether);
+        workPane.add(edtYes);
+        workPane.add(edtNo);
         this.getContentPane().add(workPane, BorderLayout.CENTER);
-        this.setSize(280, 300);
+        this.setSize(280, 220);
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -57,15 +63,19 @@ public class FrmAddGoods extends JDialog implements ActionListener {
             this.setVisible(false);
         }
         else if(e.getSource() == this.btnOk){
-            String name = this.edtName.getText();
-            String price = this.edtPrice.getText();
-            String price2 = this.edtPrice2.getText();
-            if(!isDouble(price) || !isDouble(price2)){
-                JOptionPane.showMessageDialog(null, "金额格式错误", "错误",JOptionPane.ERROR_MESSAGE);
+            String full = edtFull.getText();
+            String discount = edtDiscount.getText();
+            Pattern pattern = Pattern.compile("[0-9]*");
+            if(!pattern.matcher(full).matches() || !pattern.matcher(discount).matches()){
+                JOptionPane.showMessageDialog(null, "金额必须为整数", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            boolean flag = true;
+            if(edtNo.isSelected()){
+                flag = false;
+            }
             try {
-                TakeoutAssistantUtil.goodsManager.addGoods(type, name, Double.parseDouble(price), Double.parseDouble(price2));
+                TakeoutAssistantUtil.manjianManager.addManjian(seller, Integer.parseInt(full), Integer.parseInt(discount), flag);
                 this.setVisible(false);
             } catch (BaseException e1) {
                 JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);

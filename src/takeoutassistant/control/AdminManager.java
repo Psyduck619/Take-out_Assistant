@@ -184,4 +184,13 @@ public class AdminManager implements IAdminManager {
         }
     }
 
+    //ÅĞ¶ÏÊÇ·ñÎªdouble
+    public static boolean isDouble(String str){
+        try{
+            Double.parseDouble(str);
+            return true;
+        } catch (NumberFormatException ex){
+            return false;
+        }
+    }
 }

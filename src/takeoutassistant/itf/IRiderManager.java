@@ -3,11 +3,12 @@ package takeoutassistant.itf;
 import takeoutassistant.model.BeanRider;
 import takeoutassistant.util.BaseException;
 
+import java.util.Date;
 import java.util.List;
 
 public interface IRiderManager {
     //增加骑手
-    public BeanRider addRider(String name) throws BaseException;
+    public BeanRider addRider(String name, Date entryDate, String status) throws BaseException;
     //显示所有骑手
     public List<BeanRider> loadAll() throws BaseException;
     //删除骑手

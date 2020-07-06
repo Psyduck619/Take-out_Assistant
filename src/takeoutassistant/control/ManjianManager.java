@@ -1,7 +1,7 @@
 package takeoutassistant.control;
 
-import takeoutassistant.itf.IGoodsTypeManager;
-import takeoutassistant.model.BeanGoodsType;
+import takeoutassistant.itf.IManjianManager;
+import takeoutassistant.model.BeanManjian;
 import takeoutassistant.model.BeanSeller;
 import takeoutassistant.util.BaseException;
 import takeoutassistant.util.BusinessException;
@@ -13,16 +13,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GoodsTypeManager implements IGoodsTypeManager {
+public class ManjianManager implements IManjianManager {
 
-    //增加商品类别
-    public void addGoodsType(BeanSeller seller, String name) throws BaseException {
-        //判断类别名字是否合理
-        if(name == null || "".equals(name)){
-            throw new BusinessException("类别名称不能为空");
-        }
-        if(name.length() > 20){
-            throw new BusinessException("类别名称不能超过20字");
+    //增加满减种类
+    public void addManjian(BeanSeller seller, int full, int discount, boolean together) throws BaseException{
+        //满减是否合法
+        if(full < discount){
+            throw new BusinessException("满足金额不能小于优惠金额");
         }
         //初始化
         Connection conn = null;
@@ -31,11 +28,12 @@ public class GoodsTypeManager implements IGoodsTypeManager {
         try {
             conn = DBUtil.getConnection();
             //实现类别添加到数据库
-            sql = "insert into tbl_goodstype(seller_id,type_name,quantity) values(?,?,?)";
+            sql = "insert into tbl_manjian(seller_id,manjian_amount,discount_amount,ifTogether) values(?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1,seller.getSeller_id());
-            pst.setString(2,name);
-            pst.setInt(3,0);
+            pst.setInt(2,full);
+            pst.setInt(3,discount);
+            pst.setBoolean(4,together);
             pst.execute();
             pst.close();
         } catch (SQLException e) {
@@ -50,28 +48,28 @@ public class GoodsTypeManager implements IGoodsTypeManager {
             }
         }
     }
-
-    //显示所有商品类别
-    public List<BeanGoodsType> loadTypes(BeanSeller seller) throws BaseException {
+    //显示所有满减种类
+    public List<BeanManjian> loadManjian(BeanSeller seller) throws BaseException{
         //初始化
-        List<BeanGoodsType> result = new ArrayList<BeanGoodsType>();
+        List<BeanManjian> result = new ArrayList<BeanManjian>();
         Connection conn = null;
         String sql = null;
         java.sql.PreparedStatement pst = null;
         try {
             conn = DBUtil.getConnection();
-            //实现显示全部类别功能
-            sql = "select type_id,seller_id,type_name,quantity from tbl_goodstype where seller_id=? order by type_id";
+            //实现显示全部满减功能
+            sql = "select manjian_id, manjian_amount, discount_amount, ifTogether from tbl_manjian where seller_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, seller.getSeller_id());
             java.sql.ResultSet rs = pst.executeQuery();
             while(rs.next()){
-                BeanGoodsType gt = new BeanGoodsType();
-                gt.setType_id(rs.getInt(1));
-                gt.setSeller_id(rs.getInt(2));
-                gt.setType_name(rs.getString(3));
-                gt.setQuantity(rs.getInt(4));
-                result.add(gt);
+                BeanManjian bm = new BeanManjian();
+                bm.setManjian_id(rs.getInt(1));
+                bm.setSeller_id(seller.getSeller_id());
+                bm.setManjian_amount(rs.getInt(2));
+                bm.setDiscount_amount(rs.getInt(3));
+                bm.setIfTogether(rs.getBoolean(4));
+                result.add(bm);
             }
             rs.close();
             pst.close();
@@ -89,9 +87,8 @@ public class GoodsTypeManager implements IGoodsTypeManager {
                 }
         }
     }
-
-    //删除商品类别
-    public void deleteGoodsType(BeanGoodsType goodstype) throws BaseException {
+    //删除满减种类
+    public void deleteManjian(BeanManjian manjian) throws BaseException{
         //初始化
         Connection conn = null;
         String sql = null;
@@ -99,22 +96,10 @@ public class GoodsTypeManager implements IGoodsTypeManager {
         java.sql.ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
-            //判断是否有商品存在,若有,则无法删除
-            sql = "select quantity from tbl_goodstype where type_id=?";
-            pst = conn.prepareStatement(sql);
-            pst.setInt(1,goodstype.getType_id());
-            rs = pst.executeQuery();
-            if(rs.next()){
-                if(rs.getInt(1) != 0){
-                    rs.close();
-                    pst.close();
-                    throw new BusinessException("该类别存在商品,无法删除");
-                }
-            }
             //实现删除
-            sql = "delete from tbl_goodstype where type_id=?";
+            sql = "delete from tbl_manjian where manjian_id=?";
             pst = conn.prepareStatement(sql);
-            pst.setInt(1, goodstype.getType_id());
+            pst.setInt(1, manjian.getManjian_id());
             pst.execute();
             pst.close();
         } catch (SQLException e){
@@ -130,15 +115,11 @@ public class GoodsTypeManager implements IGoodsTypeManager {
             }
         }
     }
-
-    //修改商品类别名字
-    public void modifyGoodsType(BeanGoodsType goodstype, String name) throws BaseException {
-        //判断类别名字是否合理
-        if(name == null || "".equals(name)){
-            throw new BusinessException("类别名称不能为空");
-        }
-        if(name.length() > 20){
-            throw new BusinessException("类别名称不能超过20字");
+    //修改满减
+    public void modifyManjian(BeanManjian manjian, int full, int discount, boolean together) throws BaseException{
+        //判断满减是否合理
+        if(full < discount) {
+            throw new BusinessException("满足金额不能小于优惠金额");
         }
         //初始化
         Connection conn = null;
@@ -146,11 +127,16 @@ public class GoodsTypeManager implements IGoodsTypeManager {
         java.sql.PreparedStatement pst = null;
         try {
             conn = DBUtil.getConnection();
-            //实现商品类别修改
-            sql = "update tbl_goodstype set type_name=? where type_id=?";
+            //实现满减修改
+            sql = "update tbl_manjian set manjian_amount=? where manjian_id=?";
             pst = conn.prepareStatement(sql);
-            pst.setString(1, name);
-            pst.setInt(2, goodstype.getType_id());
+            pst.setInt(1, full);
+            sql = "update tbl_manjian set discount_amount=? where manjian_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, discount);
+            sql = "update tbl_manjian set ifTogether=? where manjian_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setBoolean(1, together);
             pst.execute();
             pst.close();
         }catch (SQLException e) {

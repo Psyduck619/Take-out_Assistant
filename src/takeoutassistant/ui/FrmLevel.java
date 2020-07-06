@@ -39,6 +39,7 @@ public class FrmLevel extends JDialog implements ActionListener {
         group.add(edtLevel4);
         group.add(edtLevel5);
         group.add(edtLevel);
+        edtLevel1.setSelected(true);
         workPane.add(edtLevel1);
         workPane.add(edtLevel2);
         workPane.add(edtLevel3);

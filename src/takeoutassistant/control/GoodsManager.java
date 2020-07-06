@@ -168,12 +168,21 @@ public class GoodsManager {
         java.sql.PreparedStatement pst = null;
         try {
             conn = DBUtil.getConnection();
-            //实现商品添加到数据库
-            sql = "update into tbl_goods(goods_name,price,discount_price) values(?,?,?)";
+            //实现商品信息到数据库
+            sql = "update tbl_goods set goods_name=? where goods_id=?";
             pst = conn.prepareStatement(sql);
             pst.setString(1, name);
-            pst.setDouble(2, price1);
-            pst.setDouble(3, price2);
+            pst.setInt(2,goods.getGoods_id());
+            pst.execute();
+            sql = "update tbl_goods set price=? where goods_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setDouble(1, price1);
+            pst.setInt(2,goods.getGoods_id());
+            pst.execute();
+            sql = "update tbl_goods set discount_price=? where goods_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setDouble(1, price2);
+            pst.setInt(2,goods.getGoods_id());
             pst.execute();
             pst.close();
         } catch (SQLException e) {

@@ -1,8 +1,6 @@
 package takeoutassistant.ui;
 
 import takeoutassistant.TakeoutAssistantUtil;
-import takeoutassistant.model.BeanGoodsType;
-import takeoutassistant.model.BeanSeller;
 import takeoutassistant.util.BaseException;
 
 import javax.swing.*;
@@ -10,11 +8,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static takeoutassistant.control.AdminManager.isDouble;
-import static takeoutassistant.ui.FrmMain.curType;
+import static takeoutassistant.ui.FrmMain.curGoods;
 
-public class FrmAddGoods extends JDialog implements ActionListener {
-    BeanGoodsType type = new BeanGoodsType();
+public class FrmModifyGoods extends JDialog implements ActionListener {
     private JPanel toolBar = new JPanel();
     private JPanel workPane = new JPanel();
     private Button btnOk = new Button("确定");
@@ -26,7 +22,8 @@ public class FrmAddGoods extends JDialog implements ActionListener {
     private JTextField edtPrice = new JTextField(20);
     private JTextField edtPrice2 = new JTextField(20);
 
-    public FrmAddGoods(Frame f, String s, boolean b) {
+    public FrmModifyGoods(Frame f, String s, boolean b) {
+
         super(f, s, b);
         toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
         toolBar.add(this.btnOk);
@@ -57,15 +54,11 @@ public class FrmAddGoods extends JDialog implements ActionListener {
             this.setVisible(false);
         }
         else if(e.getSource() == this.btnOk){
-            String name = this.edtName.getText();
-            String price = this.edtPrice.getText();
-            String price2 = this.edtPrice2.getText();
-            if(!isDouble(price) || !isDouble(price2)){
-                JOptionPane.showMessageDialog(null, "金额格式错误", "错误",JOptionPane.ERROR_MESSAGE);
-                return;
-            }
             try {
-                TakeoutAssistantUtil.goodsManager.addGoods(type, name, Double.parseDouble(price), Double.parseDouble(price2));
+                String name = this.edtName.getText();
+                String price = this.edtPrice.getText();
+                String price2 = this.edtPrice2.getText();
+                TakeoutAssistantUtil.goodsManager.modifyGoods(curGoods, name, Double.parseDouble(price),Double.parseDouble(price2));
                 this.setVisible(false);
             } catch (BaseException e1) {
                 JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
@@ -73,4 +66,5 @@ public class FrmAddGoods extends JDialog implements ActionListener {
             }
         }
     }
+
 }

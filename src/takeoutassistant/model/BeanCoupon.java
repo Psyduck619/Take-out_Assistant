@@ -3,26 +3,27 @@ package takeoutassistant.model;
 import java.util.Date;
 
 public class BeanCoupon {
-    private String coupon_id;
-    private String seller_id;
+    public static final String[] tblCouponTitle={"优惠券序号","优惠金额","集单数","开始时间","结束时间"};
+    private int coupon_id;
+    private int seller_id;
     private int coupon_amount;
     private int coupon_request;
     private Date begin_date;
     private Date end_date;
 
-    public String getCoupon_id() {
+    public int getCoupon_id() {
         return coupon_id;
     }
 
-    public void setCoupon_id(String coupon_id) {
+    public void setCoupon_id(int coupon_id) {
         this.coupon_id = coupon_id;
     }
 
-    public String getSeller_id() {
+    public int getSeller_id() {
         return seller_id;
     }
 
-    public void setSeller_id(String seller_id) {
+    public void setSeller_id(int seller_id) {
         this.seller_id = seller_id;
     }
 
@@ -56,5 +57,14 @@ public class BeanCoupon {
 
     public void setEnd_date(Date end_date) {
         this.end_date = end_date;
+    }
+
+    public String getCell(int col){
+        if(col==0) return  ""+this.coupon_id;
+        else if(col==1) return ""+this.coupon_amount;
+        else if(col==2) return ""+this.coupon_request;
+        else if(col==3) return  ""+this.begin_date;
+        else if(col==4) return  ""+this.end_date;
+        else return "";
     }
 }
