@@ -1,7 +1,7 @@
 package takeoutassistant.model;
 
 public class BeanGoodsType {
-    public static final String[] tblGTypeTitle={"序号","名称","数量"};
+    public static final String[] tblGTypeTitle={"类别序号","类别名称","数量"};
     private int type_id;
     private int seller_id;
     private String type_name;

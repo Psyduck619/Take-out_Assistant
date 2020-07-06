@@ -3,6 +3,7 @@ package takeoutassistant.ui;
 import takeoutassistant.TakeoutAssistantUtil;
 import takeoutassistant.model.*;
 import takeoutassistant.util.BaseException;
+import takeoutassistant.util.BusinessException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -15,17 +16,28 @@ import static takeoutassistant.ui.FrmLogin.loginType;
 public class FrmMain extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private JMenuBar menubar=new JMenuBar();
+    //总菜单选项
     private JMenu menu_seller=new JMenu("商家管理");
+    private JMenu menu_type=new JMenu("商品类别管理");
+    private JMenu menu_goods=new JMenu("商品管理");
     private JMenu menu_rider=new JMenu("骑手管理");
     private JMenu menu_user=new JMenu("用户管理");
     private JMenu menu_admin=new JMenu("管理员设置");
-
+    //商家菜单选项
     private JMenuItem  menuItem_AddSeller=new JMenuItem("添加商家");
     private JMenuItem  menuItem_DeleteSeller=new JMenuItem("删除商家");
     private JMenuItem  menuItem_ModifyName=new JMenuItem("修改名称");
     private JMenuItem  menuItem_ShowLevel=new JMenuItem("商家星级筛选");
+    //商品类别菜单选项
+    private JMenuItem  menuItem_AddType=new JMenuItem("添加类别");
+    private JMenuItem  menuItem_DeleteType=new JMenuItem("删除类别");
+    private JMenuItem  menuItem_ModifyType=new JMenuItem("修改类别名称");
+    //商品菜单选项
+    private JMenuItem  menuItem_AddGoods=new JMenuItem("添加商品");
+    private JMenuItem  menuItem_DeleteGoods=new JMenuItem("删除商品");
+    private JMenuItem  menuItem_ModifyGoods=new JMenuItem("更新商品信息");
 
-    private JMenuItem  menuItem_AddStep=new JMenuItem("添加步骤");
+    private JMenuItem  menuItem_AddStep=new JMenuItem("添加");
     private JMenuItem  menuItem_DeleteStep=new JMenuItem("删除步骤");
     private JMenuItem  menuItem_startStep=new JMenuItem("开始步骤");
     private JMenuItem  menuItem_finishStep=new JMenuItem("结束步骤");
@@ -46,16 +58,24 @@ public class FrmMain extends JFrame implements ActionListener {
     private static Object tblSellerData[][];
     private static DefaultTableModel tabSellerModel = new DefaultTableModel();
     private static JTable dataTableSeller = new JTable(tabSellerModel);
-
+    //商品类别表构造
     private Object tblGTypeTitle[] = BeanGoodsType.tblGTypeTitle;
     private Object tblGTypeData[][];
     DefaultTableModel tabGTypeModel = new DefaultTableModel();
     private JTable dataTableGType = new JTable(tabGTypeModel);
+    //商品表构造
+    private Object tblGoodsTitle[] = BeanGoods.tblGoodsTitle;
+    private Object tblGoodsData[][];
+    DefaultTableModel tabGoodsModel = new DefaultTableModel();
+    private JTable dataTableGoods = new JTable(tabGoodsModel);
 
     //初始化商家信息
     public static BeanSeller curSeller = null;
+    public static BeanGoodsType curType = null;
+    public static BeanGoods curGoods = null;
     public static List<BeanSeller> allSeller = null;
-    List<BeanGoodsType> goodsTypes = null;
+    List<BeanGoodsType> allType = null;
+    List<BeanGoods> allGoods = null;
     //实现显示所有商家
     private void reloadSellerTable(){
         try {
@@ -96,83 +116,136 @@ public class FrmMain extends JFrame implements ActionListener {
         if(sellerIdx < 0) return;
         curSeller = allSeller.get(sellerIdx);
         try {
-            goodsTypes = TakeoutAssistantUtil.goodsTypeManager.loadTypes(curSeller);
+            allType = TakeoutAssistantUtil.goodsTypeManager.loadTypes(curSeller);
         } catch (BaseException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
             return;
         }
-//        tblGTypeData = new Object[goodsTypes.size()][BeanGoodsType.tblGTypeTitle.length];
-//        for(int i = 0 ; i < goodsTypes.size() ; i++){
-//            for(int j = 0 ; j < BeanGoodsType.tblGTypeTitle.length ; j++)
-//                tblGTypeData[i][j] = goodsTypes.get(i).getCell(j);
-//        }
-//
-//        tabGTypeModel.setDataVector(tblGTypeData,tblGTypeTitle);
-//        this.dataTableGType.validate();
-//        this.dataTableGType.repaint();
+        tblGTypeData = new Object[allType.size()][BeanGoodsType.tblGTypeTitle.length];
+        for(int i = 0 ; i < allType.size() ; i++){
+            for(int j = 0 ; j < BeanGoodsType.tblGTypeTitle.length ; j++)
+                tblGTypeData[i][j] = allType.get(i).getCell(j);
+        }
+
+        tabGTypeModel.setDataVector(tblGTypeData,tblGTypeTitle);
+        this.dataTableGType.validate();
+        this.dataTableGType.repaint();
+    }
+    //显示所有商品
+    private void reloadGoodsTabel(int typeIdx){
+        if(typeIdx < 0) return;
+        curType = allType.get(typeIdx);
+        try {
+            allGoods = TakeoutAssistantUtil.goodsManager.loadGoods(curType);
+        } catch (BaseException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        tblGoodsData = new Object[allGoods.size()][BeanGoods.tblGoodsTitle.length];
+        for(int i = 0 ; i < allGoods.size() ; i++){
+            for(int j = 0 ; j < BeanGoods.tblGoodsTitle.length ; j++)
+                tblGoodsData[i][j] = allGoods.get(i).getCell(j);
+        }
+
+        tabGoodsModel.setDataVector(tblGoodsData,tblGoodsTitle);
+        this.dataTableGoods.validate();
+        this.dataTableGoods.repaint();
     }
     //主界面
     public FrmMain(){
-            this.setExtendedState(Frame.MAXIMIZED_BOTH);
-            this.setTitle("大开大合");
-            dlgLogin=new FrmLogin(this,"登录",true);
-            dlgLogin.setVisible(true);
-            //商家菜单
-            this.menu_seller.add(this.menuItem_AddSeller); this.menuItem_AddSeller.addActionListener(this);
-            this.menu_seller.add(this.menuItem_DeleteSeller); this.menuItem_DeleteSeller.addActionListener(this);
-            this.menu_seller.add(this.menuItem_ModifyName); this.menuItem_ModifyName.addActionListener(this);
-            this.menu_seller.add(this.menuItem_ShowLevel); this.menuItem_ShowLevel.addActionListener(this);
-            //
-            this.menu_rider.add(this.menuItem_AddStep); this.menuItem_AddStep.addActionListener(this);
-            this.menu_rider.add(this.menuItem_DeleteStep); this.menuItem_DeleteStep.addActionListener(this);
-            this.menu_rider.add(this.menuItem_startStep); this.menuItem_startStep.addActionListener(this);
-            this.menu_rider.add(this.menuItem_finishStep); this.menuItem_finishStep.addActionListener(this);
-            this.menu_rider.add(this.menuItem_moveUpStep); this.menuItem_moveUpStep.addActionListener(this);
-            this.menu_rider.add(this.menuItem_moveDownStep); this.menuItem_moveDownStep.addActionListener(this);
-            this.menu_user.add(this.menuItem_static1); this.menuItem_static1.addActionListener(this);
-            this.menu_admin.add(this.menuItem_AddAdmin); this.menuItem_AddAdmin.addActionListener(this);
-            this.menu_admin.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
+        this.setExtendedState(Frame.MAXIMIZED_BOTH);
+        this.setTitle("大开大合");
+        dlgLogin=new FrmLogin(this,"登录",true);
+        dlgLogin.setVisible(true);
+        //商家菜单
+        this.menu_seller.add(this.menuItem_AddSeller); this.menuItem_AddSeller.addActionListener(this);
+        this.menu_seller.add(this.menuItem_DeleteSeller); this.menuItem_DeleteSeller.addActionListener(this);
+        this.menu_seller.add(this.menuItem_ModifyName); this.menuItem_ModifyName.addActionListener(this);
+        this.menu_seller.add(this.menuItem_ShowLevel); this.menuItem_ShowLevel.addActionListener(this);
+        //商品类别菜单
+        this.menu_type.add(this.menuItem_AddType); this.menuItem_AddType.addActionListener(this);
+        this.menu_type.add(this.menuItem_DeleteType); this.menuItem_DeleteType.addActionListener(this);
+        this.menu_type.add(this.menuItem_ModifyType); this.menuItem_ModifyType.addActionListener(this);
+        //商品菜单
+        this.menu_goods.add(this.menuItem_AddGoods); this.menuItem_AddGoods.addActionListener(this);
+        this.menu_goods.add(this.menuItem_DeleteGoods); this.menuItem_DeleteGoods.addActionListener(this);
+        this.menu_goods.add(this.menuItem_ModifyGoods); this.menuItem_ModifyGoods.addActionListener(this);
+        //
+        this.menu_rider.add(this.menuItem_AddStep); this.menuItem_AddStep.addActionListener(this);
+        this.menu_rider.add(this.menuItem_DeleteStep); this.menuItem_DeleteStep.addActionListener(this);
+        this.menu_rider.add(this.menuItem_startStep); this.menuItem_startStep.addActionListener(this);
+        this.menu_rider.add(this.menuItem_finishStep); this.menuItem_finishStep.addActionListener(this);
+        this.menu_rider.add(this.menuItem_moveUpStep); this.menuItem_moveUpStep.addActionListener(this);
+        this.menu_rider.add(this.menuItem_moveDownStep); this.menuItem_moveDownStep.addActionListener(this);
+        this.menu_user.add(this.menuItem_static1); this.menuItem_static1.addActionListener(this);
+        this.menu_admin.add(this.menuItem_AddAdmin); this.menuItem_AddAdmin.addActionListener(this);
+        this.menu_admin.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
 
-            menubar.add(menu_seller);
-            menubar.add(menu_rider);
-            menubar.add(menu_user);
-            menubar.add(menu_admin);
-            this.setJMenuBar(menubar);
+        menubar.add(menu_seller);
+        menubar.add(menu_type);
+        menubar.add(menu_goods);
+        menubar.add(menu_rider);
+        menubar.add(menu_user);
+        menubar.add(menu_admin);
+        this.setJMenuBar(menubar);
 
-            //主界面布局
-            //商家信息在左
-            this.getContentPane().add(new JScrollPane(this.dataTableSeller), BorderLayout.WEST);
-            //点击显示选择信息
-            this.dataTableSeller.addMouseListener(new MouseAdapter (){
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    int i = FrmMain.this.dataTableSeller.getSelectedRow();
-                    if(i < 0) {
-                        return;
-                    }
-                    FrmMain.this.reloadGTypeTabel(i);
+        //主界面布局
+        //商家信息在左
+        this.getContentPane().add(new JScrollPane(this.dataTableSeller), BorderLayout.WEST);
+        this.dataTableSeller.addMouseListener(new MouseAdapter (){
+            @Override
+            public void mouseClicked(MouseEvent e) {  //点击显示选择信息
+                int i = FrmMain.this.dataTableSeller.getSelectedRow();
+                if(i < 0) {
+                    return;
                 }
-            });
-            this.getContentPane().add(new JScrollPane(this.dataTableGType), BorderLayout.CENTER);
-
-            this.reloadSellerTable();
-            //状态栏
-            statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-            JLabel label=new JLabel("您好!管理员!");
-            statusBar.add(label);
-            this.getContentPane().add(statusBar,BorderLayout.SOUTH);
-            this.addWindowListener(new WindowAdapter(){
-                public void windowClosing(WindowEvent e){
-                    System.exit(0);
-                }
-            });
-            if(loginType == "管理员"){
-                this.setVisible(true);
+                FrmMain.this.reloadGTypeTabel(i);
             }
+        });
+        //商品类别在中
+        this.getContentPane().add(new JScrollPane(this.dataTableGType), BorderLayout.CENTER);
+        this.dataTableGType.addMouseListener(new MouseAdapter (){
+            @Override
+            public void mouseClicked(MouseEvent e) {  //点击显示选择信息
+                int i = FrmMain.this.dataTableGType.getSelectedRow();
+                if(i < 0) {
+                    return;
+                }
+                FrmMain.this.reloadGoodsTabel(i);
+            }
+        });
+        //商品在右
+        this.getContentPane().add(new JScrollPane(this.dataTableGoods), BorderLayout.EAST);
+        this.dataTableGoods.addMouseListener(new MouseAdapter (){
+            @Override
+            public void mouseClicked(MouseEvent e) {  //点击显示选择信息
+                int i = FrmMain.this.dataTableGoods.getSelectedRow();
+                if(i < 0) {
+                    return;
+                }
+                curGoods = allGoods.get(i);
+            }
+        });
+
+        this.reloadSellerTable();  //加载卖家信息
+        //状态栏
+        statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JLabel label=new JLabel("您好!管理员!");
+        statusBar.add(label);
+        this.getContentPane().add(statusBar,BorderLayout.SOUTH);
+        this.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+                System.exit(0);
+            }
+        });
+        if(loginType == "管理员"){
+            this.setVisible(true);
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         //添加商家
         if(e.getSource() == this.menuItem_AddSeller){
             FrmAddSeller dlg = new FrmAddSeller(this,"添加商家",true);
@@ -208,6 +281,75 @@ public class FrmMain extends JFrame implements ActionListener {
             FrmLevel dlg = new FrmLevel(this,"选择星级商家",true);
             dlg.setVisible(true);
         }
+
+        //添加类别
+        if(e.getSource() == this.menuItem_AddType){
+            FrmAddType dlg = new FrmAddType(this,"添加类别",true);
+            dlg.seller = curSeller;
+            dlg.setVisible(true);
+            FrmMain.this.reloadGTypeTabel(FrmMain.this.dataTableSeller.getSelectedRow());
+        }
+        //删除类别
+        else if(e.getSource() == this.menuItem_DeleteType){
+            int i = FrmMain.this.dataTableGType.getSelectedRow();
+            if(i < 0) {
+                JOptionPane.showMessageDialog(null, "请选择类别", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            try {
+                TakeoutAssistantUtil.goodsTypeManager.deleteGoodsType(this.allType.get(i));
+                FrmMain.this.reloadGTypeTabel(FrmMain.this.dataTableSeller.getSelectedRow());
+            } catch (BaseException e1) {
+                JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        //修改类别名称
+        else if(e.getSource() == this.menuItem_ModifyType){
+            if(this.curType == null) {
+                JOptionPane.showMessageDialog(null, "请选择类别", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            FrmModifyType dlg = new FrmModifyType(this,"修改类别名称",true);
+            dlg.setVisible(true);
+            FrmMain.this.reloadGTypeTabel(FrmMain.this.dataTableSeller.getSelectedRow());
+        }
+
+        //添加商品
+        if(e.getSource() == this.menuItem_AddGoods){
+            FrmAddGoods dlg = new FrmAddGoods(this,"添加商品",true);
+            dlg.type = curType;
+            dlg.setVisible(true);
+            FrmMain.this.reloadGoodsTabel(FrmMain.this.dataTableGType.getSelectedRow());
+            FrmMain.this.reloadGTypeTabel(FrmMain.this.dataTableSeller.getSelectedRow());
+        }
+        //删除商品
+        else if(e.getSource() == this.menuItem_DeleteGoods){
+            int i = FrmMain.this.dataTableGoods.getSelectedRow();
+            if(i < 0) {
+                JOptionPane.showMessageDialog(null, "请选择商品", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            try {
+                TakeoutAssistantUtil.goodsManager.deleteGoods(this.allGoods.get(i));
+                FrmMain.this.reloadGoodsTabel(FrmMain.this.dataTableGoods.getSelectedRow());
+                FrmMain.this.reloadGTypeTabel(FrmMain.this.dataTableSeller.getSelectedRow());
+            } catch (BaseException e1) {
+                JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        //修改商品信息
+        else if(e.getSource() == this.menuItem_ModifyType){
+            if(this.curType == null) {
+                JOptionPane.showMessageDialog(null, "请选择类别", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            FrmModifyType dlg = new FrmModifyType(this,"修改类别名称",true);
+            dlg.setVisible(true);
+            FrmMain.this.reloadGoodsTabel(FrmMain.this.dataTableGoods.getSelectedRow());
+        }
+
         //添加管理员
         else if(e.getSource() == this.menuItem_AddAdmin) {
             FrmAddAdmin dlg = new FrmAddAdmin(this, "添加管理员", true);
@@ -218,5 +360,6 @@ public class FrmMain extends JFrame implements ActionListener {
             FrmModifyPwd dlg = new FrmModifyPwd(this,"密码修改",true);
             dlg.setVisible(true);
         }
+
     }
 }

@@ -16,7 +16,7 @@ import java.util.List;
 public class GoodsTypeManager implements IGoodsTypeManager {
 
     //增加商品类别
-    public void addGoodsType(BeanSeller seller, String name, int quantity) throws BaseException {
+    public void addGoodsType(BeanSeller seller, String name) throws BaseException {
         //判断是否选择商家
         if(seller == null){
             throw new BusinessException("请选择一个商家");
@@ -27,10 +27,6 @@ public class GoodsTypeManager implements IGoodsTypeManager {
         }
         if(name.length() > 20){
             throw new BusinessException("类别名称不能超过20字");
-        }
-        //判断数量是否合理
-        if(quantity < 0){
-            throw new BusinessException("商品数量不能小于0");
         }
         //初始化
         Connection conn = null;
@@ -43,7 +39,7 @@ public class GoodsTypeManager implements IGoodsTypeManager {
             pst = conn.prepareStatement(sql);
             pst.setInt(1,seller.getSeller_id());
             pst.setString(2,name);
-            pst.setInt(3,quantity);
+            pst.setInt(3,0);
             pst.execute();
             pst.close();
         } catch (SQLException e) {
@@ -108,12 +104,25 @@ public class GoodsTypeManager implements IGoodsTypeManager {
         Connection conn = null;
         String sql = null;
         java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
+            //判断是否有商品存在,若有,则无法删除
+            sql = "select quantity from tbl_goodstype where type_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,goodstype.getType_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                if(rs.getInt(1) != 0){
+                    rs.close();
+                    pst.close();
+                    throw new BusinessException("该类别存在商品,无法删除");
+                }
+            }
             //实现删除
             sql = "delete from tbl_goodstype where type_id=?";
             pst = conn.prepareStatement(sql);
-            pst.setInt(1, goodstype.getSeller_id());
+            pst.setInt(1, goodstype.getType_id());
             pst.execute();
             pst.close();
         } catch (SQLException e){
@@ -132,10 +141,6 @@ public class GoodsTypeManager implements IGoodsTypeManager {
 
     //修改商品类别名字
     public void modifyGoodsType(BeanGoodsType goodstype, String name) throws BaseException {
-        //判断是否选择某类别
-        if(goodstype == null){
-            throw new BusinessException("请选择一个类别");
-        }
         //判断类别名字是否合理
         if(name == null || "".equals(name)){
             throw new BusinessException("类别名称不能为空");

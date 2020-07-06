@@ -83,12 +83,12 @@ public class FrmRegister extends JDialog implements ActionListener {
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource()==this.btnCancel)
+		if(e.getSource() == this.btnCancel)
 			this.setVisible(false);
-		else if(e.getSource()==this.btnOk){
-			String userid=this.edtUserId.getText();
-			String name=this.edtName.getText();
-			String gender=null;
+		else if(e.getSource() == this.btnOk){
+			String userid = this.edtUserId.getText();
+			String name = this.edtName.getText();
+			String gender = null;
 			if(edtGender.isSelected()){
 				gender = edtGender.getText();
 			}else if(edtGender2.isSelected()){
@@ -96,13 +96,14 @@ public class FrmRegister extends JDialog implements ActionListener {
 			}else{
 				gender = edtGender3.getText();
 			}
-			String phone=this.edtPhone.getText();
-			String email=this.edtEmail.getText();
-			String city= (String) this.edtCity.getSelectedItem();
-			String pwd1=new String(this.edtPwd.getPassword());
-			String pwd2=new String(this.edtPwd2.getPassword());
+			String phone = this.edtPhone.getText();
+			String email =  this.edtEmail.getText();
+			String city = (String) this.edtCity.getSelectedItem();
+			String pwd1 = new String(this.edtPwd.getPassword());
+			String pwd2 = new String(this.edtPwd2.getPassword());
 			try {
-				BeanUser user=TakeoutAssistantUtil.userManager.reg(userid,name,gender,phone,email,city,pwd1,pwd2);
+				BeanUser user = TakeoutAssistantUtil.userManager.reg(userid,name,gender,phone,email,city,pwd1,pwd2);
+				JOptionPane.showMessageDialog(null, "注册成功", "提示", JOptionPane.INFORMATION_MESSAGE);
 				this.setVisible(false);
 			} catch (BaseException e1) {
 				JOptionPane.showMessageDialog(null, e1.getMessage(),"错误",JOptionPane.ERROR_MESSAGE);
