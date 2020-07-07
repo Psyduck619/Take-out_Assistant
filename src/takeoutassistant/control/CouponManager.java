@@ -29,6 +29,9 @@ public class CouponManager implements ICouponManager {
             throw new BusinessException("集单数必须大于0");
         }
         //判断时间是否合理
+        if(begin.getTime() < System.currentTimeMillis()){
+            throw new BusinessException("开始时间不能早于现在");
+        }
         if(begin.getTime() > end.getTime()){
             throw new BusinessException("开始时间无法晚于结束时间");
         }
@@ -162,15 +165,22 @@ public class CouponManager implements ICouponManager {
             sql = "update tbl_coupon set coupon_amount=? where coupon_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, amount);
+            pst.setInt(2, coupon.getCoupon_id());
+            pst.execute();
             sql = "update tbl_coupon set coupon_request=? where coupon_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, request);
-            sql = "update tbl_coupon set begin=? where coupon_id=?";
+            pst.setInt(2, coupon.getCoupon_id());
+            pst.execute();
+            sql = "update tbl_coupon set begin_date=? where coupon_id=?";
             pst = conn.prepareStatement(sql);
             pst.setTimestamp(1, new java.sql.Timestamp(begin.getTime()));
-            sql = "update tbl_coupon set end=? where coupon_id=?";
+            pst.setInt(2, coupon.getCoupon_id());
+            pst.execute();
+            sql = "update tbl_coupon set end_date=? where coupon_id=?";
             pst = conn.prepareStatement(sql);
             pst.setTimestamp(1, new java.sql.Timestamp(end.getTime()));
+            pst.setInt(2, coupon.getCoupon_id());
             pst.execute();
             pst.close();
         }catch (SQLException e) {
