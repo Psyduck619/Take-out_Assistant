@@ -10,7 +10,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
-import static takeoutassistant.ui.FrmLogin.loginType;
 
 public class FrmMain_seller extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;

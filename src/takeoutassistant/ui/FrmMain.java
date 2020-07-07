@@ -19,8 +19,7 @@ public class FrmMain extends JFrame implements ActionListener {
     private JMenu menu_seller=new JMenu("商家管理");
     private JMenu menu_type=new JMenu("商品类别管理");
     private JMenu menu_goods=new JMenu("商品管理");
-    private JMenu menu_rider=new JMenu("骑手管理");
-    private JMenu menu_user=new JMenu("用户管理");
+    private JMenu menu_others=new JMenu("更多管理");
     private JMenu menu_admin=new JMenu("管理员设置");
     //商家菜单选项
     private JMenuItem  menuItem_AddSeller=new JMenuItem("添加商家");
@@ -37,17 +36,11 @@ public class FrmMain extends JFrame implements ActionListener {
     private JMenuItem  menuItem_DeleteGoods=new JMenuItem("删除商品");
     private JMenuItem  menuItem_ModifyGoods=new JMenuItem("更新商品信息");
 
-    private JMenuItem  menuItem_AddStep=new JMenuItem("添加");
-    private JMenuItem  menuItem_DeleteStep=new JMenuItem("删除步骤");
-    private JMenuItem  menuItem_startStep=new JMenuItem("开始步骤");
-    private JMenuItem  menuItem_finishStep=new JMenuItem("结束步骤");
-    private JMenuItem  menuItem_moveUpStep=new JMenuItem("步骤上移");
-    private JMenuItem  menuItem_moveDownStep=new JMenuItem("步骤下移");
+    private JMenuItem  menuItem_Rider=new JMenuItem("骑手管理");
+    private JMenuItem  menuItem_User=new JMenuItem("用户管理");
 
     private JMenuItem  menuItem_AddAdmin=new JMenuItem("管理员添加");
     private JMenuItem  menuItem_modifyPwd=new JMenuItem("密码修改");
-
-    private JMenuItem  menuItem_static1=new JMenuItem("统计1");
 
     //主界面
     private FrmLogin dlgLogin = null;
@@ -176,22 +169,15 @@ public class FrmMain extends JFrame implements ActionListener {
         this.menu_goods.add(this.menuItem_AddGoods); this.menuItem_AddGoods.addActionListener(this);
         this.menu_goods.add(this.menuItem_DeleteGoods); this.menuItem_DeleteGoods.addActionListener(this);
         this.menu_goods.add(this.menuItem_ModifyGoods); this.menuItem_ModifyGoods.addActionListener(this);
-        //
-        this.menu_rider.add(this.menuItem_AddStep); this.menuItem_AddStep.addActionListener(this);
-        this.menu_rider.add(this.menuItem_DeleteStep); this.menuItem_DeleteStep.addActionListener(this);
-        this.menu_rider.add(this.menuItem_startStep); this.menuItem_startStep.addActionListener(this);
-        this.menu_rider.add(this.menuItem_finishStep); this.menuItem_finishStep.addActionListener(this);
-        this.menu_rider.add(this.menuItem_moveUpStep); this.menuItem_moveUpStep.addActionListener(this);
-        this.menu_rider.add(this.menuItem_moveDownStep); this.menuItem_moveDownStep.addActionListener(this);
-        this.menu_user.add(this.menuItem_static1); this.menuItem_static1.addActionListener(this);
+        //其他管理菜单
+        this.menu_others.add(this.menuItem_Rider); this.menuItem_Rider.addActionListener(this);
         this.menu_admin.add(this.menuItem_AddAdmin); this.menuItem_AddAdmin.addActionListener(this);
         this.menu_admin.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
 
         menubar.add(menu_seller);
         menubar.add(menu_type);
         menubar.add(menu_goods);
-        menubar.add(menu_rider);
-        menubar.add(menu_user);
+        menubar.add(menu_others);
         menubar.add(menu_admin);
         this.setJMenuBar(menubar);
 
@@ -380,6 +366,11 @@ public class FrmMain extends JFrame implements ActionListener {
             FrmModifyGoods dlg = new FrmModifyGoods(this,"更新商品信息",true);
             dlg.setVisible(true);
             FrmMain.this.reloadGoodsTabel(FrmMain.this.dataTableGoods.getSelectedRow());
+        }
+
+        //骑手管理界面
+        else if(e.getSource() == this.menuItem_Rider){
+            new FrmMain_rider();
         }
 
         //添加管理员

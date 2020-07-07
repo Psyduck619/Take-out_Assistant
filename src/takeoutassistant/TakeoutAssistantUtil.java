@@ -13,4 +13,5 @@ public class TakeoutAssistantUtil {
     public static IUserManager userManager = new UserManager();
     public static IManjianManager manjianManager = new ManjianManager();
     public static ICouponManager couponManager = new CouponManager();
+    public static IRiderAccountManager riderAccountManager = new RiderAccountManager();
 }

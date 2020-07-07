@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import static takeoutassistant.ui.FrmMain.curType;
 
 public class FrmModifyType extends JDialog implements ActionListener {
+
     private JPanel toolBar = new JPanel();
     private JPanel workPane = new JPanel();
     private Button btnOk = new Button("È·¶¨");

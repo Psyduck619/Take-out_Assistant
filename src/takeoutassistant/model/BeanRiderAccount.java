@@ -3,17 +3,20 @@ package takeoutassistant.model;
 import java.util.Date;
 
 public class BeanRiderAccount {
-    private String account_id;
+
+    public static final String[] tblRiderAccountTitle={"订单编号","订单完成时间","订单评价","本单收入"};
+    private int account_id;
     private Date finish_time;
     private String order_comment;
     private Double per_income;
-    private String rider_id;
+    private int rider_id;
+    private int order_id;
 
-    public String getAccount_id() {
+    public int getAccount_id() {
         return account_id;
     }
 
-    public void setAccount_id(String account_id) {
+    public void setAccount_id(int account_id) {
         this.account_id = account_id;
     }
 
@@ -41,11 +44,28 @@ public class BeanRiderAccount {
         this.per_income = per_income;
     }
 
-    public String getRider_id() {
+    public int getRider_id() {
         return rider_id;
     }
 
-    public void setRider_id(String rider_id) {
+    public void setRider_id(int rider_id) {
         this.rider_id = rider_id;
     }
+
+    public int getOrder_id() {
+        return order_id;
+    }
+
+    public void setOrder_id(int order_id) {
+        this.order_id = order_id;
+    }
+
+    public String getCell(int col){
+        if(col==0) return ""+this.order_id;
+        else if(col==1) return ""+this.finish_time;
+        else if(col==2) return ""+this.order_comment;
+        else if(col==3) return ""+this.per_income;
+        else return "";
+    }
+
 }

@@ -68,7 +68,7 @@ public class RiderManager implements IRiderManager {
         try {
             conn = DBUtil.getConnection();
             //实现从数据库查找所有骑手信息
-            sql = "select rider_id,rider_name,entry_date,rider_status from tbl_seller";
+            sql = "select rider_id,rider_name,entry_date,rider_status from tbl_rider";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             while(rs.next()){
@@ -81,6 +81,7 @@ public class RiderManager implements IRiderManager {
             }
             rs.close();
             pst.close();
+            return result;
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -105,8 +106,6 @@ public class RiderManager implements IRiderManager {
         java.sql.ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
-            rs.close();
-            pst.close();
             //实现从数据库中删除骑手信息
             sql = "delete from tbl_rider where rider_id=?";
             pst = conn.prepareStatement(sql);
@@ -136,8 +135,6 @@ public class RiderManager implements IRiderManager {
         java.sql.ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
-            rs.close();
-            pst.close();
             //实现数据库中修改骑手身份
             sql = "update tbl_rider set rider_status=? where rider_id=?";
             pst = conn.prepareStatement(sql);
