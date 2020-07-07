@@ -133,7 +133,12 @@ public class FrmMain extends JFrame implements ActionListener {
     }
     //显示所有商品
     private void reloadGoodsTabel(int typeIdx){
-        if(typeIdx < 0) return;
+        if(typeIdx < 0) {
+            while(tabGoodsModel.getRowCount() > 0){
+                tabGoodsModel.removeRow(tabGoodsModel.getRowCount()-1);
+            }
+            return;
+        }
         curType = allType.get(typeIdx);
         try {
             allGoods = TakeoutAssistantUtil.goodsManager.loadGoods(curType);
@@ -192,11 +197,11 @@ public class FrmMain extends JFrame implements ActionListener {
 
         //主界面布局
         JScrollPane js1 = new JScrollPane(this.dataTableSeller);
-        js1.setPreferredSize(new Dimension(800, 10));
+        js1.setPreferredSize(new Dimension(500, 10));
         JScrollPane js2 = new JScrollPane(this.dataTableGType);
-        js2.setPreferredSize(new Dimension(300, 10));
+        js2.setPreferredSize(new Dimension(200, 10));
         JScrollPane js3 = new JScrollPane(this.dataTableGoods);
-        js3.setPreferredSize(new Dimension(600, 10));
+        js3.setPreferredSize(new Dimension(400, 10));
         //商家信息在左
         //this.getContentPane().add(new JScrollPane(this.dataTableSeller), BorderLayout.WEST);
         this.getContentPane().add(js1, BorderLayout.WEST);
@@ -208,6 +213,7 @@ public class FrmMain extends JFrame implements ActionListener {
                     return;
                 }
                 FrmMain.this.reloadGTypeTabel(i);
+                FrmMain.this.reloadGoodsTabel(-1);
             }
         });
         //商品类别在中
