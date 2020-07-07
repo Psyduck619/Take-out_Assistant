@@ -18,6 +18,9 @@ public class ManjianManager implements IManjianManager {
     //增加满减种类
     public void addManjian(BeanSeller seller, int full, int discount, boolean together) throws BaseException{
         //满减是否合法
+        if(full < 0 || discount < 0){
+            throw new BusinessException("金额不能小于0");
+        }
         if(full < discount){
             throw new BusinessException("满足金额不能小于优惠金额");
         }
@@ -25,8 +28,33 @@ public class ManjianManager implements IManjianManager {
         Connection conn = null;
         String sql = null;
         java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
+            //判断是否已有类似的满减存在
+            sql = "select * from tbl_manjian where manjian_amount=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,full);
+            rs = pst.executeQuery();
+            if(rs.next()){
+                rs.close();
+                pst.close();
+                throw new BusinessException("已有相同满足金额存在,请重新输入");
+            }
+            rs.close();
+            pst.close();
+            //判断是否已有类似的满减存在
+            sql = "select * from tbl_manjian where manjian_discount=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,discount);
+            rs = pst.executeQuery();
+            if(rs.next()){
+                rs.close();
+                pst.close();
+                throw new BusinessException("已有相同优惠金额存在,请重新输入");
+            }
+            rs.close();
+            pst.close();
             //实现类别添加到数据库
             sql = "insert into tbl_manjian(seller_id,manjian_amount,discount_amount,ifTogether) values(?,?,?,?)";
             pst = conn.prepareStatement(sql);
@@ -131,12 +159,19 @@ public class ManjianManager implements IManjianManager {
             sql = "update tbl_manjian set manjian_amount=? where manjian_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, full);
+            pst.setInt(2, manjian.getManjian_id());
+            pst.execute();
+            pst.close();
             sql = "update tbl_manjian set discount_amount=? where manjian_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, discount);
+            pst.setInt(2, manjian.getManjian_id());
+            pst.execute();
+            pst.close();
             sql = "update tbl_manjian set ifTogether=? where manjian_id=?";
             pst = conn.prepareStatement(sql);
             pst.setBoolean(1, together);
+            pst.setInt(2, manjian.getManjian_id());
             pst.execute();
             pst.close();
         }catch (SQLException e) {
