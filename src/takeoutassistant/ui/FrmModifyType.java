@@ -16,7 +16,7 @@ public class FrmModifyType extends JDialog implements ActionListener {
     private Button btnOk = new Button("确定");
     private Button btnCancel = new Button("取消");
     private JLabel labelName = new JLabel("类别名称：");
-    private JTextField edtName = new JTextField(20);
+    private JTextField edtName = new JTextField(curType.getType_name(),20);
 
     public FrmModifyType(Frame f, String s, boolean b) {
 
