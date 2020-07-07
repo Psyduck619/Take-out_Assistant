@@ -39,7 +39,7 @@ public class BeanUser {
         this.user_name = user_name;
     }
 
-    public String isUser_gender() {
+    public String getUser_gender() {
         return user_gender;
     }
 

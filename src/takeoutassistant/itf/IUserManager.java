@@ -9,6 +9,8 @@ public interface IUserManager {
     public BeanUser reg(String userid, String name, String gender, String phone, String email, String city, String pwd, String pwd2) throws BaseException;
     //用户登录
     public BeanUser login(String userid, String pwd) throws BaseException;
+    //用户修改信息
+    public void modifyUser(BeanUser user, String name, String gender, String phone, String email, String city) throws BaseException;
     //用户修改密码
     public void changePwd(BeanUser user, String oldPwd, String newPwd, String newPwd2) throws BaseException;
     //用户点单

@@ -1,7 +1,6 @@
 package takeoutassistant.ui;
 
 import takeoutassistant.TakeoutAssistantUtil;
-import takeoutassistant.model.BeanAdmin;
 import takeoutassistant.model.BeanUser;
 import takeoutassistant.util.BaseException;
 
@@ -11,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class FrmRegister extends JDialog implements ActionListener {
+
 	private JPanel toolBar = new JPanel();
 	private JPanel workPane = new JPanel();
 	private Button btnOk = new Button("зЂВс");
@@ -111,4 +111,5 @@ public class FrmRegister extends JDialog implements ActionListener {
 			}
 		}
 	}
+
 }

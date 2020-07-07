@@ -78,6 +78,7 @@ public class FrmLogin extends JDialog implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+
 		if (e.getSource() == this.btnLogin) {
 			String userid = this.edtUserId.getText();
 			String pwd = new String(this.edtPwd.getPassword());

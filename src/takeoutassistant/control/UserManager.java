@@ -141,7 +141,7 @@ public class UserManager implements IUserManager {
             pst = conn.prepareStatement(sql);
             pst.setString(1,userid);
             rs = pst.executeQuery();
-            if(!rs.next()){
+            if(rs.next()){
                 user.setUser_name(rs.getString(1));
                 user.setUser_gender(rs.getString(2));
                 user.setUser_phone(rs.getString(3));
@@ -151,6 +151,66 @@ public class UserManager implements IUserManager {
                 user.setVIP_end_time(rs.getTimestamp(7));
             }
             rs.close();
+            pst.close();
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if(conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
+    //用户修改个人信息
+    public void modifyUser(BeanUser user, String name, String gender, String phone, String email, String city) throws BaseException{
+        Pattern p = null;
+        //判断名字是否合法
+        if(name == null || "".equals(name)){
+            throw new BusinessException("名字不能为空!");
+        }
+        if(name.length() > 20){
+            throw new BusinessException("名字不能超过20字!");
+        }
+        //判断电话号是否合法
+        if(phone == null || "".equals(phone)){
+            throw new BusinessException("名字不能为空!");
+        }
+        p = Pattern.compile("[0-9]*");
+        if(!p.matcher(phone).matches()){
+            throw new BusinessException("手机号只能为数字!");
+        }
+        if(phone.length() != 11){
+            throw new BusinessException("手机号必须为11位!");
+        }
+        //判断邮箱是否合法
+        if(email != null && !"".equals(email)){
+            p = Pattern.compile("\\w+@(\\w+.)+[a-z]{2,3}");
+            if(!p.matcher(email).matches()){
+                throw new BusinessException("邮箱格式错误!");
+            }
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try{
+            conn = DBUtil.getConnection();
+            //实现修改
+            sql = "update tbl_user set user_name=?,user_gender=?,user_phone=?,user_email=?,user_city=? where user_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,name);
+            pst.setString(2,gender);
+            pst.setString(3,phone);
+            pst.setString(4,email);
+            pst.setString(5,city);
+            pst.setString(6,user.getUser_id());
+            pst.execute();
             pst.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -163,7 +223,6 @@ public class UserManager implements IUserManager {
                     e.printStackTrace();
                 }
         }
-        return user;
     }
 
     //用户修改密码
