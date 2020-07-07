@@ -164,11 +164,11 @@ public class FrmMain_seller extends JFrame implements ActionListener {
 
         //主界面布局
         JScrollPane js1 = new JScrollPane(this.dataTableSeller);
-        js1.setPreferredSize(new Dimension(700, 10));
+        js1.setPreferredSize(new Dimension(400, 10));
         JScrollPane js2 = new JScrollPane(this.dataTableManjian);
-        js2.setPreferredSize(new Dimension(300, 10));
+        js2.setPreferredSize(new Dimension(200, 10));
         JScrollPane js3 = new JScrollPane(this.dataTableCoupon);
-        js3.setPreferredSize(new Dimension(700, 10));
+        js3.setPreferredSize(new Dimension(650, 10));
         //商家信息在左
         this.getContentPane().add(js1, BorderLayout.WEST);
         this.dataTableSeller.addMouseListener(new MouseAdapter(){
@@ -191,7 +191,8 @@ public class FrmMain_seller extends JFrame implements ActionListener {
                 if(i < 0) {
                     return;
                 }
-                FrmMain_seller.this.reloadManjianTabel(i);
+                curManjian = allManjian.get(i);
+                //FrmMain_seller.this.reloadManjianTabel(i);
             }
         });
         this.getContentPane().add(js3, BorderLayout.EAST);
@@ -202,7 +203,8 @@ public class FrmMain_seller extends JFrame implements ActionListener {
                 if(i < 0) {
                     return;
                 }
-                FrmMain_seller.this.reloadCouponTabel(i);
+                curCoupon = allCoupon.get(i);
+                //FrmMain_seller.this.reloadCouponTabel(i);
             }
         });
 
@@ -264,31 +266,67 @@ public class FrmMain_seller extends JFrame implements ActionListener {
             FrmAddManjian dlg = new FrmAddManjian(this,"添加满减",true);
             dlg.seller = curSeller;
             dlg.setVisible(true);
-            FrmMain_seller.this.reloadManjianTabel(FrmMain_seller.this.dataTableManjian.getSelectedRow());
+            FrmMain_seller.this.reloadManjianTabel(FrmMain_seller.this.dataTableSeller.getSelectedRow());
         }
-        //删除商家
-        else if(e.getSource() == this.menuItem_DeleteSeller){
-            if(this.curSeller == null) {
-                JOptionPane.showMessageDialog(null, "请选择商家", "错误",JOptionPane.ERROR_MESSAGE);
+        //删除满减
+        else if(e.getSource() == this.menuItem_DeleteManjian){
+            if(this.curManjian == null) {
+                JOptionPane.showMessageDialog(null, "请选择满减", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try {
-                TakeoutAssistantUtil.sellerManager.deleteSeller(this.curSeller);
-                reloadSellerTable();
+                TakeoutAssistantUtil.manjianManager.deleteManjian(this.curManjian);
+                FrmMain_seller.this.reloadManjianTabel(FrmMain_seller.this.dataTableSeller.getSelectedRow());
             } catch (BaseException e1) {
                 JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
         }
-        //修改商家名称
-        else if(e.getSource() == this.menuItem_ModifyName){
+        //修改满减
+        else if(e.getSource() == this.menuItem_ModifyManjian){
             if(this.curSeller == null) {
                 JOptionPane.showMessageDialog(null, "请选择商家", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            FrmModifySeller dlg = new FrmModifySeller(this,"添加商家",true);
+            FrmModifyManjian dlg = new FrmModifyManjian(this,"满减修改",true);
             dlg.setVisible(true);
-            reloadSellerTable();
+            FrmMain_seller.this.reloadManjianTabel(FrmMain_seller.this.dataTableSeller.getSelectedRow());
+        }
+
+        //添加优惠券
+        if(e.getSource() == this.menuItem_AddCoupon){
+            if(this.curSeller == null) {
+                JOptionPane.showMessageDialog(null, "请选择商家", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            FrmAddCoupon dlg = new FrmAddCoupon(this,"添加优惠券",true);
+            dlg.seller = curSeller;
+            dlg.setVisible(true);
+            FrmMain_seller.this.reloadCouponTabel(FrmMain_seller.this.dataTableSeller.getSelectedRow());
+        }
+        //删除优惠券
+        else if(e.getSource() == this.menuItem_DeleteCoupon){
+            if(this.curCoupon == null) {
+                JOptionPane.showMessageDialog(null, "请选择优惠券", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            try {
+                TakeoutAssistantUtil.couponManager.deleteCoupon(this.curCoupon);
+                FrmMain_seller.this.reloadCouponTabel(FrmMain_seller.this.dataTableSeller.getSelectedRow());
+            } catch (BaseException e1) {
+                JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        //修改优惠券
+        else if(e.getSource() == this.menuItem_ModifyCoupon){
+            if(this.curSeller == null) {
+                JOptionPane.showMessageDialog(null, "请选择商家", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            FrmModifyCoupon dlg = new FrmModifyCoupon(this,"优惠券修改",true);
+            dlg.setVisible(true);
+            FrmMain_seller.this.reloadCouponTabel(FrmMain_seller.this.dataTableSeller.getSelectedRow());
         }
     }
 }
