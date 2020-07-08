@@ -73,7 +73,7 @@ public class UserManager implements IUserManager {
             rs.close();
             pst.close();
             //ÊµÏÖ×¢²á
-            sql = "insert into tbl_user(user_id,user_name,user_gender,user_pwd,user_phone,user_email,user_city,user_reg_time) values(?,?,?,?,?,?,?,?)";
+            sql = "insert into tbl_user(user_id,user_name,user_gender,user_pwd,user_phone,user_email,user_city,user_reg_time,VIP) values(?,?,?,?,?,?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setString(1, userid);
             pst.setString(2, name);
@@ -83,6 +83,7 @@ public class UserManager implements IUserManager {
             pst.setString(6, email);
             pst.setString(7, city);
             pst.setTimestamp(8, new java.sql.Timestamp(System.currentTimeMillis()));
+            pst.setBoolean(9,false);
             pst.execute();
             pst.close();
         } catch (SQLException e) {

@@ -15,7 +15,7 @@ public class BeanUser {
     private boolean VIP;
     private Date VIP_end_time;
 
-    public boolean isVIP() {
+    public boolean getVIP() {
         return VIP;
     }
 

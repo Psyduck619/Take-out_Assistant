@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Date;
 
 import static takeoutassistant.model.BeanUser.currentLoginUser;
 import static takeoutassistant.ui.FrmLogin.loginType;
@@ -31,6 +32,9 @@ public class FrmMain_user extends JFrame implements ActionListener {
     private JMenuItem menuItem_myCoupon=new JMenuItem("我的优惠券");
     private JMenuItem menuItem_modifyUser=new JMenuItem("修改个人信息");
     private JMenuItem menuItem_modifyPwd=new JMenuItem("修改密码");
+    //会员菜单组件
+    private JMenuItem menuItem_openVIP=new JMenuItem("开通会员");
+    private JMenuItem menuItem_renewVIP=new JMenuItem("续费会员");
 
     //主界面
     private JPanel statusBar = new JPanel();
@@ -80,6 +84,9 @@ public class FrmMain_user extends JFrame implements ActionListener {
         this.menu_user.add(this.menuItem_myCoupon); this.menuItem_myCoupon.addActionListener(this);
         this.menu_user.add(this.menuItem_modifyUser); this.menuItem_modifyUser.addActionListener(this);
         this.menu_user.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
+        //会员菜单
+        this.menu_VIP.add(this.menuItem_openVIP); this.menuItem_openVIP.addActionListener(this);
+        this.menu_VIP.add(this.menuItem_renewVIP); this.menuItem_renewVIP.addActionListener(this);
 
         menubar.add(menu_buy);
         menubar.add(menu_order);
@@ -106,7 +113,12 @@ public class FrmMain_user extends JFrame implements ActionListener {
 //        this.reloadPlanTable();
         //状态栏
         statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JLabel label=new JLabel("您好!用户!");
+        String name = currentLoginUser.getUser_name();
+        Date dt = currentLoginUser.getVIP_end_time();
+        if(currentLoginUser.getVIP()){
+            name = "会员" + name + "!      会员到期时间:" +dt;
+        }
+        JLabel label=new JLabel("您好!尊敬的" + name);
         statusBar.add(label);
         this.getContentPane().add(statusBar,BorderLayout.SOUTH);
         this.addWindowListener(new WindowAdapter(){  //关闭窗口即退出程序
@@ -147,6 +159,42 @@ public class FrmMain_user extends JFrame implements ActionListener {
                 return;
             }
             new FrmShowMyCoupon();
+        }
+        //用户开通会员
+        else if(e.getSource() == this.menuItem_openVIP){
+            if(currentLoginUser == null) {
+                JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if(currentLoginUser.getVIP()){
+                JOptionPane.showMessageDialog(null, "您已是尊贵的会员用户!", "提示", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            FrmOpenVIP dlg = new FrmOpenVIP(this,"开通会员",true);
+            dlg.setVisible(true);
+            //改变对用户的称呼
+            try {
+                Thread.sleep(1000);
+                if(currentLoginUser.getVIP()){
+                    this.setVisible(false);
+                    new FrmMain_user();
+                }
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
+            }
+        }
+        //用户续费会员
+        else if(e.getSource() == this.menuItem_renewVIP){
+            if(currentLoginUser == null) {
+                JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if(!currentLoginUser.getVIP()){
+                JOptionPane.showMessageDialog(null, "您还不是会员用户,请先开通会员", "提示", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            FrmRenewVIP dlg = new FrmRenewVIP(this,"续费会员",true);
+            dlg.setVisible(true);
         }
 
     }
