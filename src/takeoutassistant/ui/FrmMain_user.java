@@ -132,13 +132,21 @@ public class FrmMain_user extends JFrame implements ActionListener {
             dlg.setVisible(true);
         }
         //用户修改密码
-        if(e.getSource() == this.menuItem_modifyPwd){
+        else if(e.getSource() == this.menuItem_modifyPwd){
             if(currentLoginUser == null) {
                 JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             FrmModifyPwd_user dlg = new FrmModifyPwd_user(this,"修改密码",true);
             dlg.setVisible(true);
+        }
+        //显示我的优惠券信息
+        else if(e.getSource() == this.menuItem_myCoupon){
+            if(currentLoginUser == null) {
+                JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            new FrmShowMyCoupon();
         }
 
     }

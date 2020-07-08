@@ -2,11 +2,13 @@
   <dictionary name="原味">
     <words>
       <w>adminid</w>
+      <w>couponid</w>
       <w>goodstype</w>
       <w>jdbc</w>
       <w>jidan</w>
       <w>manjian</w>
       <w>menubar</w>
+      <w>mycoupon</w>
       <w>pika</w>
       <w>rideraccount</w>
       <w>riderid</w>

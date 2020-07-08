@@ -3,26 +3,36 @@ package takeoutassistant.model;
 import java.util.Date;
 
 public class BeanMyCoupon {
-    private int user_id;
-    private String conpon_id;
+    public static final String[] tblMyCouponTitle={"商家","优惠金额","数量","到期时间"};
+    private String user_id;
+    private int coupon_id;
     private int coupon_amount;
     private int coupon_count;
     private Date end_date;
+    private String seller_name;
 
-    public int getUser_id() {
+    public String getSeller_name() {
+        return seller_name;
+    }
+
+    public void setSeller_name(String seller_name) {
+        this.seller_name = seller_name;
+    }
+
+    public String getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(int user_id) {
+    public void setUser_id(String user_id) {
         this.user_id = user_id;
     }
 
-    public String getConpon_id() {
-        return conpon_id;
+    public int getCoupon_id() {
+        return coupon_id;
     }
 
-    public void setConpon_id(String conpon_id) {
-        this.conpon_id = conpon_id;
+    public void setCoupon_id(int coupon_id) {
+        this.coupon_id = coupon_id;
     }
 
     public int getCoupon_amount() {
@@ -48,4 +58,13 @@ public class BeanMyCoupon {
     public void setEnd_date(Date end_date) {
         this.end_date = end_date;
     }
+
+    public String getCell(int col){
+        if(col==0) return this.seller_name;
+        else if(col==1) return ""+this.coupon_amount;
+        else if(col==2) return ""+this.coupon_count;
+        else if(col==3) return ""+this.end_date;
+        else return "";
+    }
+
 }
