@@ -30,6 +30,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
     private JMenuItem menuItem_startStep=new JMenuItem("评价订单");
     //个人菜单组件
     private JMenuItem menuItem_myCoupon=new JMenuItem("我的优惠券");
+    private JMenuItem menuItem_myaddress=new JMenuItem("我的地址");
     private JMenuItem menuItem_modifyUser=new JMenuItem("修改个人信息");
     private JMenuItem menuItem_modifyPwd=new JMenuItem("修改密码");
     //会员菜单组件
@@ -82,6 +83,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
 //        this.menu_more.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
         //个人菜单
         this.menu_user.add(this.menuItem_myCoupon); this.menuItem_myCoupon.addActionListener(this);
+        this.menu_user.add(this.menuItem_myaddress); this.menuItem_myaddress.addActionListener(this);
         this.menu_user.add(this.menuItem_modifyUser); this.menuItem_modifyUser.addActionListener(this);
         this.menu_user.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
         //会员菜单
@@ -159,6 +161,14 @@ public class FrmMain_user extends JFrame implements ActionListener {
                 return;
             }
             new FrmShowMyCoupon();
+        }
+        //弹出用户地址管理窗口
+        else if(e.getSource() == this.menuItem_myaddress){
+            if(currentLoginUser == null) {
+                JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            new FrmMyAddress();
         }
         //用户开通会员
         else if(e.getSource() == this.menuItem_openVIP){

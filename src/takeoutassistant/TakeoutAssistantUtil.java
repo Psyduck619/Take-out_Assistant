@@ -16,4 +16,5 @@ public class TakeoutAssistantUtil {
     public static IRiderAccountManager riderAccountManager = new RiderAccountManager();
     public static IMyCouponManager myCouponManager = new MyCouponManager();
     public static IVIPManager VIPManager = new VIPManager();
+    public static IAddressManager addressManager = new AddressManager();
 }

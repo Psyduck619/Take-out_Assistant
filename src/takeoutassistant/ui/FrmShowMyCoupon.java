@@ -56,14 +56,6 @@ public class FrmShowMyCoupon extends JFrame {
         this.setLocation((int) (width - this.getWidth()) / 2,
                 (int) (height - this.getHeight()) / 2);
 
-        //界面布局
-//        JScrollPane js1 = new JScrollPane(this.dataTableMyCoupon);
-//        js1.setPreferredSize(new Dimension(100, 10));
-//        JScrollPane js2 = new JScrollPane(this.dataTableMyCoupon);
-//        js1.setPreferredSize(new Dimension(400, 10));
-//        JScrollPane js3 = new JScrollPane(this.dataTableMyCoupon);
-//        js1.setPreferredSize(new Dimension(100, 10));
-
         this.getContentPane().add(new JScrollPane(this.dataTableMyCoupon), BorderLayout.CENTER);
 
         this.reloadMyCouponTable();  //加载信息

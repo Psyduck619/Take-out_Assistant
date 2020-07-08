@@ -1,17 +1,18 @@
 package takeoutassistant.model;
 
 public class BeanAddress {
-    private String add_id;
+    public static final String[] tblAddressTitle={"地址名称","联系人","联系电话"};
+    private int add_id;
     private String user_id;
-    private String address;
+    private String address_name;
     private String linkMan;
-    private int linkPhone;
+    private String linkPhone;
 
-    public String getAdd_id() {
+    public int getAdd_id() {
         return add_id;
     }
 
-    public void setAdd_id(String add_id) {
+    public void setAdd_id(int add_id) {
         this.add_id = add_id;
     }
 
@@ -23,12 +24,12 @@ public class BeanAddress {
         this.user_id = user_id;
     }
 
-    public String getAddress() {
-        return address;
+    public String getAddress_name() {
+        return address_name;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setAddress_name(String address_name) {
+        this.address_name = address_name;
     }
 
     public String getLinkMan() {
@@ -39,11 +40,19 @@ public class BeanAddress {
         this.linkMan = linkMan;
     }
 
-    public int getLinkPhone() {
+    public String getLinkPhone() {
         return linkPhone;
     }
 
-    public void setLinkPhone(int linkPhone) {
+    public void setLinkPhone(String linkPhone) {
         this.linkPhone = linkPhone;
     }
+
+    public String getCell(int col){
+        if(col==0) return this.address_name;
+        else if(col==1) return this.linkMan;
+        else if(col==2) return this.linkPhone;
+        else return "";
+    }
+
 }

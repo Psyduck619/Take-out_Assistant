@@ -366,6 +366,7 @@ public class FrmMain extends JFrame implements ActionListener {
             FrmModifyGoods dlg = new FrmModifyGoods(this,"更新商品信息",true);
             dlg.setVisible(true);
             FrmMain.this.reloadGoodsTabel(FrmMain.this.dataTableGoods.getSelectedRow());
+            curGoods = null;
         }
 
         //骑手管理界面
