@@ -20,7 +20,6 @@ public class FrmMain_user extends JFrame implements ActionListener {
     private JMenu menu_order=new JMenu("订单");
     private JMenu menu_user=new JMenu("个人");
     private JMenu menu_VIP=new JMenu("会员");
-    private JMenu menu_address=new JMenu("地址");
 
     private JMenuItem menuItem_AddPlan=new JMenuItem("新建计划");
     private JMenuItem menuItem_DeletePlan=new JMenuItem("删除计划");
@@ -30,6 +29,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
     private JMenuItem menuItem_startStep=new JMenuItem("评价订单");
     //个人菜单组件
     private JMenuItem menuItem_myCoupon=new JMenuItem("我的优惠券");
+    private JMenuItem menuItem_myJidan=new JMenuItem("我的集单");
     private JMenuItem menuItem_myaddress=new JMenuItem("我的地址");
     private JMenuItem menuItem_modifyUser=new JMenuItem("修改个人信息");
     private JMenuItem menuItem_modifyPwd=new JMenuItem("修改密码");
@@ -83,6 +83,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
 //        this.menu_more.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
         //个人菜单
         this.menu_user.add(this.menuItem_myCoupon); this.menuItem_myCoupon.addActionListener(this);
+        this.menu_user.add(this.menuItem_myJidan); this.menuItem_myJidan.addActionListener(this);
         this.menu_user.add(this.menuItem_myaddress); this.menuItem_myaddress.addActionListener(this);
         this.menu_user.add(this.menuItem_modifyUser); this.menuItem_modifyUser.addActionListener(this);
         this.menu_user.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
@@ -94,7 +95,6 @@ public class FrmMain_user extends JFrame implements ActionListener {
         menubar.add(menu_order);
         menubar.add(menu_user);
         menubar.add(menu_VIP);
-        menubar.add(menu_address);
         this.setJMenuBar(menubar);
 
 //        this.getContentPane().add(new JScrollPane(this.dataTablePlan), BorderLayout.WEST);
@@ -114,23 +114,23 @@ public class FrmMain_user extends JFrame implements ActionListener {
 //
 //        this.reloadPlanTable();
         //状态栏
-        statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        String name = currentLoginUser.getUser_name();
-        Date dt = currentLoginUser.getVIP_end_time();
-        if(currentLoginUser.getVIP()){
-            name = "会员" + name + "!      会员到期时间:" +dt;
+        if(loginType == "用户"){  //用户登录界面
+            statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
+            String name = currentLoginUser.getUser_name();
+            Date dt = currentLoginUser.getVIP_end_time();
+            if(currentLoginUser.getVIP()){
+                name = "会员" + name + "!      会员到期时间:" +dt;
+            }
+            JLabel label=new JLabel("您好!尊敬的" + name);
+            statusBar.add(label);
+            this.getContentPane().add(statusBar,BorderLayout.SOUTH);
+            this.setVisible(true);
         }
-        JLabel label=new JLabel("您好!尊敬的" + name);
-        statusBar.add(label);
-        this.getContentPane().add(statusBar,BorderLayout.SOUTH);
         this.addWindowListener(new WindowAdapter(){  //关闭窗口即退出程序
             public void windowClosing(WindowEvent e){
                 System.exit(0);
             }
         });
-        if(loginType == "用户"){  //用户登录界面
-            this.setVisible(true);
-        }
     }
 
     @Override
@@ -162,7 +162,15 @@ public class FrmMain_user extends JFrame implements ActionListener {
             }
             new FrmShowMyCoupon();
         }
-        //弹出用户地址管理窗口
+        //显示我的集单信息
+        else if(e.getSource() == this.menuItem_myJidan){
+            if(currentLoginUser == null) {
+                JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            new FrmShowMyJidan();
+        }
+        //用户地址管理
         else if(e.getSource() == this.menuItem_myaddress){
             if(currentLoginUser == null) {
                 JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);

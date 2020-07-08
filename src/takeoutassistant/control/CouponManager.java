@@ -19,7 +19,7 @@ public class CouponManager implements ICouponManager {
 
 
     //增加优惠券种类
-    public void addCoupon(BeanSeller seller, int amount, int request, Date begin, Date end) throws BaseException{
+    public void addCoupon(BeanSeller seller, int amount, int request, Date begin, Date end, boolean together) throws BaseException{
         //判断优惠金额是否合理
         if(amount < 0) {
             throw new BusinessException("优惠金额必须大于0");
@@ -42,13 +42,14 @@ public class CouponManager implements ICouponManager {
         try {
             conn = DBUtil.getConnection();
             //实现优惠券添加到数据库
-            sql = "insert into tbl_coupon(seller_id, coupon_amount, coupon_request, begin_date, end_date) values(?,?,?,?,?)";
+            sql = "insert into tbl_coupon(seller_id, coupon_amount, coupon_request, begin_date, end_date, ifTogether) values(?,?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, seller.getSeller_id());
             pst.setInt(2, amount);
             pst.setInt(3, request);
             pst.setTimestamp(4, new java.sql.Timestamp(begin.getTime()));
             pst.setTimestamp(5, new java.sql.Timestamp(end.getTime()));
+            pst.setBoolean(6,together);
             pst.execute();
             pst.close();
         } catch (SQLException e) {
@@ -73,7 +74,7 @@ public class CouponManager implements ICouponManager {
         try {
             conn = DBUtil.getConnection();
             //实现显示全部优惠券功能
-            sql = "select coupon_id,coupon_amount,coupon_request,begin_date,end_date from tbl_coupon where seller_id=? order by coupon_id";
+            sql = "select coupon_id,coupon_amount,coupon_request,begin_date,end_date,ifTogether from tbl_coupon where seller_id=? order by coupon_id";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, seller.getSeller_id());
             java.sql.ResultSet rs = pst.executeQuery();
@@ -85,6 +86,7 @@ public class CouponManager implements ICouponManager {
                 bc.setCoupon_request(rs.getInt(3));
                 bc.setBegin_date(rs.getTimestamp(4));
                 bc.setEnd_date(rs.getTimestamp(5));
+                bc.setIfTogether(rs.getBoolean(6));
                 result.add(bc);
             }
             rs.close();
@@ -144,7 +146,7 @@ public class CouponManager implements ICouponManager {
         }
     }
     //修改优惠券
-    public void modifyCoupon(BeanCoupon coupon, int amount, int request, Date begin, Date end) throws BaseException{
+    public void modifyCoupon(BeanCoupon coupon, int amount, int request, Date begin, Date end, boolean together) throws BaseException{
 
         if(amount < 0) {//判断优惠金额是否合理
             throw new BusinessException("优惠金额必须大于0");
@@ -180,6 +182,12 @@ public class CouponManager implements ICouponManager {
             sql = "update tbl_coupon set end_date=? where coupon_id=?";
             pst = conn.prepareStatement(sql);
             pst.setTimestamp(1, new java.sql.Timestamp(end.getTime()));
+            pst.setInt(2, coupon.getCoupon_id());
+            pst.execute();
+            pst.close();
+            sql = "update tbl_manjian set ifTogether=? where coupon_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setBoolean(1, together);
             pst.setInt(2, coupon.getCoupon_id());
             pst.execute();
             pst.close();

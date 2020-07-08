@@ -19,12 +19,8 @@ public class FrmModifyManjian extends JDialog implements ActionListener {
     private Button btnCancel = new Button("取消");
     private JLabel labelFull = new JLabel("满足金额：");
     private JLabel labelDiscount = new JLabel("优惠金额：");
-    private JLabel labelTogether = new JLabel("优惠券是否可同享：");
     private JTextField edtFull = new JTextField(Integer.toString(curManjian.getManjian_amount()),20);
     private JTextField edtDiscount = new JTextField(Integer.toString(curManjian.getDiscount_amount()),20);
-    private JRadioButton edtYes = new JRadioButton("是");
-    private JRadioButton edtNo = new JRadioButton("否");
-    private ButtonGroup group = new ButtonGroup();
 
     public FrmModifyManjian(Frame f, String s, boolean b) {
 
@@ -37,18 +33,8 @@ public class FrmModifyManjian extends JDialog implements ActionListener {
         workPane.add(edtFull);
         workPane.add(labelDiscount);
         workPane.add(edtDiscount);
-        //单选按钮设置
-        group.add(edtYes);
-        group.add(edtNo);
-        if(curManjian.isIfTogether())
-            edtYes.setSelected(true);
-        else
-            edtNo.setSelected(true);
-        workPane.add(labelTogether);
-        workPane.add(edtYes);
-        workPane.add(edtNo);
         this.getContentPane().add(workPane, BorderLayout.CENTER);
-        this.setSize(280, 220);
+        this.setSize(280, 200);
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -73,12 +59,8 @@ public class FrmModifyManjian extends JDialog implements ActionListener {
                 JOptionPane.showMessageDialog(null, "金额必须为整数", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            boolean flag = true;
-            if(edtNo.isSelected()){
-                flag = false;
-            }
             try {
-                TakeoutAssistantUtil.manjianManager.modifyManjian(curManjian, Integer.parseInt(full), Integer.parseInt(discount), flag);
+                TakeoutAssistantUtil.manjianManager.modifyManjian(curManjian, Integer.parseInt(full), Integer.parseInt(discount));
                 this.setVisible(false);
             } catch (BaseException e1) {
                 JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);

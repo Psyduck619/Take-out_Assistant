@@ -33,6 +33,7 @@ public class FrmModifyCoupon extends JDialog implements ActionListener {
     private JLabel labelEndYear = new JLabel("年");
     private JLabel labelEndMonth = new JLabel("月");
     private JLabel labelEndDay = new JLabel("日");
+    private JLabel labelTogether = new JLabel("优惠券是否可同享：");
     private JTextField edtDiscount = new JTextField(Integer.toString(curCoupon.getCoupon_amount()), 15);
     private JTextField edtJidan = new JTextField(Integer.toString(curCoupon.getCoupon_request()), 15);
     private JTextField edtBeginYear = new JTextField(4);
@@ -41,6 +42,9 @@ public class FrmModifyCoupon extends JDialog implements ActionListener {
     private JTextField edtEndYear = new JTextField(4);
     private JTextField edtEndMonth = new JTextField(4);
     private JTextField edtEndDay = new JTextField(4);
+    private JRadioButton edtYes = new JRadioButton("是");
+    private JRadioButton edtNo = new JRadioButton("否");
+    private ButtonGroup group = new ButtonGroup();
 
     public FrmModifyCoupon(Frame f, String s, boolean b) {
         super(f, s, b);
@@ -68,9 +72,19 @@ public class FrmModifyCoupon extends JDialog implements ActionListener {
         workPane.add(labelEndMonth);
         workPane.add(edtEndDay);
         workPane.add(labelEndDay);
+        //单选按钮设置
+        group.add(edtYes);
+        group.add(edtNo);
+        if(curCoupon.isIfTogether())
+            edtYes.setSelected(true);
+        else
+            edtNo.setSelected(true);
+        workPane.add(labelTogether);
+        workPane.add(edtYes);
+        workPane.add(edtNo);
         this.getContentPane().add(workPane, BorderLayout.CENTER);
 
-        this.setSize(280, 240);
+        this.setSize(280, 300);
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -134,6 +148,10 @@ public class FrmModifyCoupon extends JDialog implements ActionListener {
                 JOptionPane.showMessageDialog(null, "日期信息必须为整数,请重新输入", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            boolean flag = true;
+            if(edtNo.isSelected()){
+                flag = false;
+            }
             try {
                 dt1 = sdf.parse(y1 + "-" + m1 + "-" + d1);
                 dt2 = sdf.parse(y2 + "-" + m2 + "-" + d2);
@@ -141,7 +159,7 @@ public class FrmModifyCoupon extends JDialog implements ActionListener {
                 parseException.printStackTrace();
             }
             try {
-                TakeoutAssistantUtil.couponManager.modifyCoupon(curCoupon, Integer.parseInt(discount), Integer.parseInt(jidan), dt1, dt2);
+                TakeoutAssistantUtil.couponManager.modifyCoupon(curCoupon, Integer.parseInt(discount), Integer.parseInt(jidan), dt1, dt2, flag);
                 this.setVisible(false);
             } catch (BaseException e1) {
                 JOptionPane.showMessageDialog(null, e1.getMessage(), "错误", JOptionPane.ERROR_MESSAGE);

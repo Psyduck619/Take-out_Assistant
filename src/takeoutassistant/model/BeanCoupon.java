@@ -3,13 +3,14 @@ package takeoutassistant.model;
 import java.util.Date;
 
 public class BeanCoupon {
-    public static final String[] tblCouponTitle={"优惠券序号","优惠金额","集单数","开始时间","结束时间"};
+    public static final String[] tblCouponTitle={"优惠券序号","优惠金额","集单数","开始时间","结束时间","是否同享"};
     private int coupon_id;
     private int seller_id;
     private int coupon_amount;
     private int coupon_request;
     private Date begin_date;
     private Date end_date;
+    private boolean ifTogether;
 
     public int getCoupon_id() {
         return coupon_id;
@@ -59,12 +60,24 @@ public class BeanCoupon {
         this.end_date = end_date;
     }
 
+    public boolean isIfTogether() {
+        return ifTogether;
+    }
+
+    public void setIfTogether(boolean ifTogether) {
+        this.ifTogether = ifTogether;
+    }
+
     public String getCell(int col){
         if(col==0) return  ""+this.coupon_id;
         else if(col==1) return ""+this.coupon_amount;
         else if(col==2) return ""+this.coupon_request;
         else if(col==3) return  ""+this.begin_date;
         else if(col==4) return  ""+this.end_date;
+        else if(col==5){
+            if(this.ifTogether) return "是";
+            else return "否";
+        }
         else return "";
     }
 }

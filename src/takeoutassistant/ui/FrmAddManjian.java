@@ -20,12 +20,8 @@ public class FrmAddManjian extends JDialog implements ActionListener {
     private Button btnCancel = new Button("取消");
     private JLabel labelFull = new JLabel("满足金额：");
     private JLabel labelDiscount = new JLabel("优惠金额：");
-    private JLabel labelTogether = new JLabel("优惠券是否可同享：");
     private JTextField edtFull = new JTextField(20);
     private JTextField edtDiscount = new JTextField(20);
-    private JRadioButton edtYes = new JRadioButton("是");
-    private JRadioButton edtNo = new JRadioButton("否");
-    private ButtonGroup group = new ButtonGroup();
 
     public FrmAddManjian(Frame f, String s, boolean b) {
         super(f, s, b);
@@ -37,13 +33,6 @@ public class FrmAddManjian extends JDialog implements ActionListener {
         workPane.add(edtFull);
         workPane.add(labelDiscount);
         workPane.add(edtDiscount);
-        //单选按钮设置
-        group.add(edtYes);
-        group.add(edtNo);
-        edtYes.setSelected(true);
-        workPane.add(labelTogether);
-        workPane.add(edtYes);
-        workPane.add(edtNo);
         this.getContentPane().add(workPane, BorderLayout.CENTER);
         this.setSize(280, 220);
         // 窗口居中
@@ -70,12 +59,8 @@ public class FrmAddManjian extends JDialog implements ActionListener {
                 JOptionPane.showMessageDialog(null, "金额必须为整数", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            boolean flag = true;
-            if(edtNo.isSelected()){
-                flag = false;
-            }
             try {
-                TakeoutAssistantUtil.manjianManager.addManjian(seller, Integer.parseInt(full), Integer.parseInt(discount), flag);
+                TakeoutAssistantUtil.manjianManager.addManjian(seller, Integer.parseInt(full), Integer.parseInt(discount));
                 this.setVisible(false);
             } catch (BaseException e1) {
                 JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);

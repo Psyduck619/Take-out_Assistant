@@ -64,7 +64,7 @@ public class MyCouponManager implements IMyCouponManager {
                 rs.close();
                 pst.close();
                 //添加我的优惠券
-                sql = "insert into tbl_mycoupon(user_id,coupon_id,coupon_amount,coupon_count,end_date,seller_name) values(?,?,?,?,?,?)";
+                sql = "insert into tbl_mycoupon(user_id,coupon_id,coupon_amount,coupon_count,end_date,seller_name,ifTogether) values(?,?,?,?,?,?)";
                 pst = conn.prepareStatement(sql);
                 pst.setString(1, user.getUser_id());
                 pst.setInt(2, coupon.getCoupon_id());
@@ -72,6 +72,7 @@ public class MyCouponManager implements IMyCouponManager {
                 pst.setInt(4,1);
                 pst.setTimestamp(5, new java.sql.Timestamp(coupon.getEnd_date().getTime()));
                 pst.setString(6,name);
+                pst.setBoolean(7, coupon.isIfTogether());
                 pst.execute();
                 pst.close();
             }
@@ -90,6 +91,7 @@ public class MyCouponManager implements IMyCouponManager {
     }
     //显示所有优惠券
     public List<BeanMyCoupon> loadMyCoupon(BeanUser user) throws BaseException{
+
         //初始化
         List<BeanMyCoupon> result = new ArrayList<BeanMyCoupon>();
         Connection conn = null;
@@ -98,7 +100,7 @@ public class MyCouponManager implements IMyCouponManager {
         try {
             conn = DBUtil.getConnection();
             //显示所有我的优惠券
-            sql = "select user_id,coupon_id,coupon_amount,coupon_count,end_date,seller_name from tbl_mycoupon where user_id=?";
+            sql = "select user_id,coupon_id,coupon_amount,coupon_count,end_date,seller_name,ifTogether from tbl_mycoupon where user_id=?";
             pst = conn.prepareStatement(sql);
             pst.setString(1, user.getUser_id());
             java.sql.ResultSet rs = pst.executeQuery();
@@ -110,6 +112,7 @@ public class MyCouponManager implements IMyCouponManager {
                 bgc.setCoupon_count(rs.getInt(4));
                 bgc.setEnd_date(rs.getTimestamp(5));
                 bgc.setSeller_name(rs.getString(6));
+                bgc.setIfTogether(rs.getBoolean(7));
                 result.add(bgc);
             }
             rs.close();

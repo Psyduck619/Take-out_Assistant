@@ -16,7 +16,7 @@ import java.util.List;
 public class ManjianManager implements IManjianManager {
 
     //增加满减种类
-    public void addManjian(BeanSeller seller, int full, int discount, boolean together) throws BaseException{
+    public void addManjian(BeanSeller seller, int full, int discount) throws BaseException{
         //满减是否合法
         if(full < 0 || discount < 0){
             throw new BusinessException("金额不能小于0");
@@ -56,12 +56,11 @@ public class ManjianManager implements IManjianManager {
             rs.close();
             pst.close();
             //实现类别添加到数据库
-            sql = "insert into tbl_manjian(seller_id,manjian_amount,discount_amount,ifTogether) values(?,?,?,?)";
+            sql = "insert into tbl_manjian(seller_id,manjian_amount,discount_amount) values(?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1,seller.getSeller_id());
             pst.setInt(2,full);
             pst.setInt(3,discount);
-            pst.setBoolean(4,together);
             pst.execute();
             pst.close();
         } catch (SQLException e) {
@@ -86,7 +85,7 @@ public class ManjianManager implements IManjianManager {
         try {
             conn = DBUtil.getConnection();
             //实现显示全部满减功能
-            sql = "select manjian_id, manjian_amount, discount_amount, ifTogether from tbl_manjian where seller_id=?";
+            sql = "select manjian_id, manjian_amount, discount_amount from tbl_manjian where seller_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, seller.getSeller_id());
             java.sql.ResultSet rs = pst.executeQuery();
@@ -96,7 +95,6 @@ public class ManjianManager implements IManjianManager {
                 bm.setSeller_id(seller.getSeller_id());
                 bm.setManjian_amount(rs.getInt(2));
                 bm.setDiscount_amount(rs.getInt(3));
-                bm.setIfTogether(rs.getBoolean(4));
                 result.add(bm);
             }
             rs.close();
@@ -144,7 +142,7 @@ public class ManjianManager implements IManjianManager {
         }
     }
     //修改满减
-    public void modifyManjian(BeanManjian manjian, int full, int discount, boolean together) throws BaseException{
+    public void modifyManjian(BeanManjian manjian, int full, int discount) throws BaseException{
         //判断满减是否合理
         if(full < discount) {
             throw new BusinessException("满足金额不能小于优惠金额");
@@ -165,12 +163,6 @@ public class ManjianManager implements IManjianManager {
             sql = "update tbl_manjian set discount_amount=? where manjian_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, discount);
-            pst.setInt(2, manjian.getManjian_id());
-            pst.execute();
-            pst.close();
-            sql = "update tbl_manjian set ifTogether=? where manjian_id=?";
-            pst = conn.prepareStatement(sql);
-            pst.setBoolean(1, together);
             pst.setInt(2, manjian.getManjian_id());
             pst.execute();
             pst.close();
