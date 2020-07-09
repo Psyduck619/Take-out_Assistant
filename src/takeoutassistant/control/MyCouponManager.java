@@ -88,7 +88,6 @@ public class MyCouponManager implements IMyCouponManager {
     }
     //显示所有优惠券
     public List<BeanMyCoupon> loadMyCoupon(BeanUser user) throws BaseException{
-
         //初始化
         List<BeanMyCoupon> result = new ArrayList<BeanMyCoupon>();
         Connection conn = null;
@@ -171,4 +170,5 @@ public class MyCouponManager implements IMyCouponManager {
                 }
         }
     }
+
 }

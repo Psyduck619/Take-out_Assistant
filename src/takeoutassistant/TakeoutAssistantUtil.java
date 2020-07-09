@@ -18,4 +18,6 @@ public class TakeoutAssistantUtil {
     public static IMyJidanManager myJidanManager = new MyJidanManager();
     public static IVIPManager VIPManager = new VIPManager();
     public static IAddressManager addressManager = new AddressManager();
+    public static IOrderManager orderManager = new OrderManager();
+    public static IOrderInfoManager orderInfoManager = new OrderInfoManager();
 }

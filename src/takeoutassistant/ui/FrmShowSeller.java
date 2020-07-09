@@ -30,8 +30,8 @@ public class FrmShowSeller extends JFrame implements ActionListener {
     private JButton btManjian = new JButton("商家满减");
     private JButton btCoupon = new JButton("商家优惠券");
     private JButton btMyCoupon = new JButton("我的优惠券");
-    private JButton btAddCart = new JButton("加入购物车");
     private JButton btMyCart = new JButton("我的购物车");
+    private JButton btAddCart = new JButton("加入购物车");
     private JButton btBuy = new JButton("结算");
 
     //菜单栏
@@ -52,7 +52,7 @@ public class FrmShowSeller extends JFrame implements ActionListener {
     //初始化信息
     private BeanGoodsType curType = null;
     List<BeanGoodsType> allType = null;
-    private BeanGoods curGoods = null;
+    public static BeanGoods curGoods = null;
     List<BeanGoods> allGoods = null;
     //显示所有商品类型
     private void reloadGTypeTabel(){
@@ -191,6 +191,19 @@ public class FrmShowSeller extends JFrame implements ActionListener {
         else if(e.getSource() == btMyCoupon){
             new FrmShowMyCoupon2();
         }
-
+        //显示我的购物车
+        else if(e.getSource() == btMyCart){
+            new FrmShowMyCart();
+        }
+        //添加商品到购物车,选择数量
+        else if(e.getSource() == btAddCart){
+            if(this.curGoods == null) {
+                JOptionPane.showMessageDialog(null, "请选择一个商品", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            FrmAddtoCart dlg = new FrmAddtoCart(this,"添加到购物车",true);
+            dlg.setVisible(true);
+            curGoods= null;
+        }
     }
 }

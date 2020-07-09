@@ -16,7 +16,7 @@ public class VIPManager implements IVIPManager {
     //开通会员(一个月按30天算)//3个月九折//12个月8折
     public double openVIP(BeanUser user, int month) throws BaseException{
         //判断是否已是会员
-        if(user.getVIP()){
+        if(user.isVIP()){
             throw new BusinessException("您已是尊贵的会员用户");
         }
         //判空
@@ -63,7 +63,7 @@ public class VIPManager implements IVIPManager {
     //续费会员(一个月按30天算)//3个月九折//12个月8折
     public double renewVIP(BeanUser user, int month) throws BaseException{
         //判断是否已是会员
-        if(!user.getVIP()){
+        if(!user.isVIP()){
             throw new BusinessException("您还不是会员,请先选择开通会员");
         }
         //判空

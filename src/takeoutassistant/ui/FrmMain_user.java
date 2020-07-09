@@ -177,7 +177,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
             statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
             String name = currentLoginUser.getUser_name();
             Date dt = currentLoginUser.getVIP_end_time();
-            if(currentLoginUser.getVIP()){
+            if(currentLoginUser.isVIP()){
                 name = "会员" + name + "!      会员到期时间:" +dt;
             }
             JLabel label=new JLabel("您好!尊敬的" + name);
@@ -251,7 +251,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if(currentLoginUser.getVIP()){
+            if(currentLoginUser.isVIP()){
                 JOptionPane.showMessageDialog(null, "您已是尊贵的会员用户!", "提示", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -260,7 +260,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
             //改变对用户的称呼
             try {
                 Thread.sleep(1000);
-                if(currentLoginUser.getVIP()){
+                if(currentLoginUser.isVIP()){
                     this.setVisible(false);
                     new FrmMain_user();
                 }
@@ -274,7 +274,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if(!currentLoginUser.getVIP()){
+            if(!currentLoginUser.isVIP()){
                 JOptionPane.showMessageDialog(null, "您还不是会员用户,请先开通会员", "提示", JOptionPane.ERROR_MESSAGE);
                 return;
             }

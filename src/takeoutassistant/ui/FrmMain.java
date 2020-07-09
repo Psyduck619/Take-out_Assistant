@@ -226,6 +226,7 @@ public class FrmMain extends JFrame implements ActionListener {
                     return;
                 }
                 curGoods = allGoods.get(i);
+                System.out.println(curGoods);
             }
         });
 
