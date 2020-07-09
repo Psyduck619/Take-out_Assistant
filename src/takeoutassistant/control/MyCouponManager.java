@@ -1,10 +1,7 @@
 package takeoutassistant.control;
 
 import takeoutassistant.itf.IMyCouponManager;
-import takeoutassistant.model.BeanCoupon;
-import takeoutassistant.model.BeanGoodsType;
-import takeoutassistant.model.BeanMyCoupon;
-import takeoutassistant.model.BeanUser;
+import takeoutassistant.model.*;
 import takeoutassistant.util.BaseException;
 import takeoutassistant.util.BusinessException;
 import takeoutassistant.util.DBUtil;
@@ -131,5 +128,47 @@ public class MyCouponManager implements IMyCouponManager {
                 }
         }
     }
-
+    //显示我的指定商家的优惠券
+    public List<BeanMyCoupon> loadMyCoupon2(BeanUser user, BeanSeller seller) throws BaseException{
+        //初始化
+        List<BeanMyCoupon> result = new ArrayList<BeanMyCoupon>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            //显示所有我的优惠券
+            sql = "select a.user_id,a.coupon_id,a.coupon_amount,a.coupon_count,a.end_date,a.seller_name,a.ifTogether" +
+                    " from tbl_mycoupon a,tbl_coupon b where a.coupon_id=b.coupon_id and user_id=? and seller_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, user.getUser_id());
+            pst.setInt(2, seller.getSeller_id());
+            java.sql.ResultSet rs = pst.executeQuery();
+            while(rs.next()){
+                BeanMyCoupon bgc = new BeanMyCoupon();
+                bgc.setUser_id(rs.getString(1));
+                bgc.setCoupon_id(rs.getInt(2));
+                bgc.setCoupon_amount(rs.getInt(3));
+                bgc.setCoupon_count(rs.getInt(4));
+                bgc.setEnd_date(rs.getTimestamp(5));
+                bgc.setSeller_name(rs.getString(6));
+                bgc.setIfTogether(rs.getBoolean(7));
+                result.add(bgc);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        }
+        finally{
+            if(conn!=null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
 }

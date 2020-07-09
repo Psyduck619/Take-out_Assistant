@@ -194,6 +194,7 @@ public class FrmMain_seller extends JFrame implements ActionListener {
                 //FrmMain_seller.this.reloadManjianTabel(i);
             }
         });
+        //优惠券信息在右
         this.getContentPane().add(js3, BorderLayout.EAST);
         this.dataTableCoupon.addMouseListener(new MouseAdapter(){
             @Override

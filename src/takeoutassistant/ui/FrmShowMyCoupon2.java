@@ -11,14 +11,15 @@ import java.awt.*;
 import java.util.List;
 
 import static takeoutassistant.model.BeanUser.currentLoginUser;
+import static takeoutassistant.ui.FrmMain_user.curSeller;
 
-public class FrmShowMyCoupon extends JFrame {
+public class FrmShowMyCoupon2 extends JFrame {
 
     private static final long serialVersionUID = 1L;
     //主界面
     private JPanel statusBar = new JPanel();
     //我的优惠券表构造
-    private static Object tblMyCouponTitle[] = BeanMyCoupon.tblMyCouponTitle;
+    private static Object tblMyCouponTitle[] = BeanMyCoupon.tblMyCouponTitle2;
     private static Object tblMyCouponData[][];
     private static DefaultTableModel tabMyCouponModel = new DefaultTableModel();
     private static JTable dataTableMyCoupon = new JTable(tabMyCouponModel);
@@ -29,15 +30,15 @@ public class FrmShowMyCoupon extends JFrame {
     //显示所有我的优惠券
     private void reloadMyCouponTable(){
         try {
-            allMyCoupon = TakeoutAssistantUtil.myCouponManager.loadMyCoupon(curUser);
+            allMyCoupon = TakeoutAssistantUtil.myCouponManager.loadMyCoupon2(curUser, curSeller);
         } catch (BaseException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
             return;
         }
-        tblMyCouponData = new Object[allMyCoupon.size()][BeanMyCoupon.tblMyCouponTitle.length];
+        tblMyCouponData = new Object[allMyCoupon.size()][BeanMyCoupon.tblMyCouponTitle2.length];
         for(int i = 0 ; i < allMyCoupon.size() ; i++){
-            for(int j = 0 ; j < BeanMyCoupon.tblMyCouponTitle.length ; j++)
-                tblMyCouponData[i][j] = allMyCoupon.get(i).getCell(j);
+            for(int j = 0 ; j < BeanMyCoupon.tblMyCouponTitle2.length ; j++)
+                tblMyCouponData[i][j] = allMyCoupon.get(i).getCell2(j);
         }
         tabMyCouponModel.setDataVector(tblMyCouponData,tblMyCouponTitle);
         this.dataTableMyCoupon.validate();
@@ -45,7 +46,7 @@ public class FrmShowMyCoupon extends JFrame {
     }
 
     //主界面
-    public FrmShowMyCoupon(){
+    public FrmShowMyCoupon2(){
         //设置窗口信息
         this.setExtendedState(Frame.NORMAL);
         this.setSize(700,400);

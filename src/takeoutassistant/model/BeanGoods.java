@@ -2,6 +2,7 @@ package takeoutassistant.model;
 
 public class BeanGoods {
     public static final String[] tblGoodsTitle={"商品名称","单价","会员价"};
+    public static final String[] tblGoodsTitle2={"热门商品","单价","会员价"};
     private int goods_id;
     private int type_id;
     private String goods_type;
@@ -63,4 +64,12 @@ public class BeanGoods {
         else if(col==2) return ""+this.discount_price;
         else return "";
     }
+
+    public String getCell2(int col){
+        if(col==0) return this.goods_name;
+        else if(col==1) return ""+this.price;
+        else if(col==2) return ""+this.discount_price;
+        else return "";
+    }
+
 }

@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class BeanMyCoupon {
     public static final String[] tblMyCouponTitle={"商家","优惠金额","数量","到期时间","是否同享满减"};
+    public static final String[] tblMyCouponTitle2={"优惠金额","数量","到期时间","是否同享满减"};
     private String user_id;
     private int coupon_id;
     private int coupon_amount;
@@ -74,6 +75,17 @@ public class BeanMyCoupon {
         else if(col==2) return ""+this.coupon_count;
         else if(col==3) return ""+this.end_date;
         else if(col==4){
+            if(this.ifTogether) return "是";
+            else return "否";
+        }
+        else return "";
+    }
+
+    public String getCell2(int col){
+        if(col==0) return ""+this.coupon_amount;
+        else if(col==1) return ""+this.coupon_count;
+        else if(col==2) return ""+this.end_date;
+        else if(col==3){
             if(this.ifTogether) return "是";
             else return "否";
         }

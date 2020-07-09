@@ -115,17 +115,17 @@ public class CouponManager implements ICouponManager {
         try {
             conn = DBUtil.getConnection();
             //判断是否有用户有这个优惠券,若有,则无法删除
-//            sql = "select quantity from tbl_goodstype where type_id=?";
-//            pst = conn.prepareStatement(sql);
-//            pst.setInt(1,goodstype.getType_id());
-//            rs = pst.executeQuery();
-//            if(rs.next()){
-//                if(rs.getInt(1) != 0){
-//                    rs.close();
-//                    pst.close();
-//                    throw new BusinessException("该类别存在商品,无法删除");
-//                }
-//            }
+            sql = "select * from tbl_mycoupon where coupon_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, coupon.getCoupon_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                rs.close();
+                pst.close();
+                throw new BusinessException("仍有用户拥有该优惠券,无法删除");
+            }
+            rs.close();
+            pst.close();
             //实现删除
             sql = "delete from tbl_coupon where coupon_id=?";
             pst = conn.prepareStatement(sql);
