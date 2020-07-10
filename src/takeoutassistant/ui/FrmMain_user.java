@@ -55,7 +55,6 @@ public class FrmMain_user extends JFrame implements ActionListener {
     private Object tblGoodsData[][];
     DefaultTableModel tabGoodsModel = new DefaultTableModel();
     private JTable dataTableGoods = new JTable(tabGoodsModel);
-//    //经典商品表
 
     public static BeanSeller curSeller = null;
     List<BeanSeller> allSeller = null;

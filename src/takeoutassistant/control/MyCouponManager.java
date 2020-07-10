@@ -30,6 +30,7 @@ public class MyCouponManager implements IMyCouponManager {
         java.sql.ResultSet rs = null;
         try {
             conn = DBUtil.getConnection();
+            conn.setAutoCommit(false);
             //查询是否已有该优惠券
             boolean flag = false;
             sql = "select * from tbl_mycoupon where coupon_id=?";
@@ -53,6 +54,7 @@ public class MyCouponManager implements IMyCouponManager {
                 //先查询优惠券所属商家名字
                 sql = "select a.seller_name from tbl_seller a,tbl_coupon b where a.seller_id=b.seller_id and b.coupon_id=?";
                 pst = conn.prepareStatement(sql);
+                pst.setInt(1,coupon.getCoupon_id());
                 rs = pst.executeQuery();
                 String name =null;
                 if(rs.next()){
@@ -61,7 +63,7 @@ public class MyCouponManager implements IMyCouponManager {
                 rs.close();
                 pst.close();
                 //添加我的优惠券
-                sql = "insert into tbl_mycoupon(user_id,coupon_id,coupon_amount,coupon_count,end_date,seller_name,ifTogether) values(?,?,?,?,?,?)";
+                sql = "insert into tbl_mycoupon(user_id,coupon_id,coupon_amount,coupon_count,end_date,seller_name,ifTogether) values(?,?,?,?,?,?,?)";
                 pst = conn.prepareStatement(sql);
                 pst.setString(1, user.getUser_id());
                 pst.setInt(2, coupon.getCoupon_id());
@@ -70,12 +72,18 @@ public class MyCouponManager implements IMyCouponManager {
                 pst.setTimestamp(5, new java.sql.Timestamp(coupon.getEnd_date().getTime()));
                 pst.setString(6,name);
                 pst.setBoolean(7, coupon.isIfTogether());
+                conn.commit();
                 pst.execute();
                 pst.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
+            try {
+                conn.rollback();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             if(conn != null){
                 try {
                     conn.close();

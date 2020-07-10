@@ -22,6 +22,7 @@ import static takeoutassistant.ui.FrmMain_user.curSeller;
 
 public class FrmShowSeller extends JFrame implements ActionListener {
 
+    public static boolean flag = true;
     private static final long serialVersionUID = 1L;
     //购买界面操作按钮
     private JPanel  menuBar1 = new JPanel();
@@ -204,6 +205,12 @@ public class FrmShowSeller extends JFrame implements ActionListener {
             FrmAddtoCart dlg = new FrmAddtoCart(this,"添加到购物车",true);
             dlg.setVisible(true);
             curGoods= null;
+        }
+        //订单结算
+        else if(e.getSource() == btBuy){
+            FrmBuy dlg = new FrmBuy(this,"订单结算",true);
+            if(flag)
+                dlg.setVisible(true);
         }
     }
 }

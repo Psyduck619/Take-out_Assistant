@@ -89,6 +89,7 @@ public class FrmShowMyCart extends JFrame implements ActionListener {
                 if(i < 0) {
                     return;
                 }
+                System.out.println(i);
                 curMyCart = allMyCart.get(i);
             }
         });

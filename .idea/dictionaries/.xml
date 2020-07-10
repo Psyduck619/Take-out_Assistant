@@ -3,6 +3,7 @@
     <words>
       <w>adminid</w>
       <w>couponid</w>
+      <w>goodsorder</w>
       <w>goodstype</w>
       <w>jdbc</w>
       <w>jidan</w>
