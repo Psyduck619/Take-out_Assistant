@@ -5,7 +5,7 @@ public class BeanSeller {
     public static final String[] tableTitles2={"商家名称","星级","平均消费","总销量"};
     private int seller_id;
     private String seller_name;
-    private int seller_level;
+    private Double seller_level;
     private double per_cost;
     private int total_sales;
 
@@ -25,11 +25,11 @@ public class BeanSeller {
         this.seller_name = seller_name;
     }
 
-    public int getSeller_level() {
+    public Double getSeller_level() {
         return seller_level;
     }
 
-    public void setSeller_level(int seller_level) {
+    public void setSeller_level(Double seller_level) {
         this.seller_level = seller_level;
     }
 

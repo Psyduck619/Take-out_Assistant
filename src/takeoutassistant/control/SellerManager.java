@@ -33,7 +33,7 @@ public class SellerManager implements ISellerManager {
             sql = "insert into tbl_seller(seller_name,seller_level,total_sales) values(?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setString(1,name);
-            pst.setInt(2,1);
+            pst.setDouble(2,0);
             pst.setInt(3,0);
             pst.execute();
             pst.close();
@@ -70,7 +70,7 @@ public class SellerManager implements ISellerManager {
                 BeanSeller bs = new BeanSeller();
                 bs.setSeller_id(rs.getInt(1));
                 bs.setSeller_name(rs.getString(2));
-                bs.setSeller_level(rs.getInt(3));
+                bs.setSeller_level(rs.getDouble(3));
                 bs.setPer_cost(rs.getDouble(4));
                 bs.setTotal_sales(rs.getInt(5));
                 result.add(bs);
@@ -204,7 +204,7 @@ public class SellerManager implements ISellerManager {
                     BeanSeller bs = new BeanSeller();
                     bs.setSeller_id(rs.getInt(1));
                     bs.setSeller_name(rs.getString(2));
-                    bs.setSeller_level(rs.getInt(3));
+                    bs.setSeller_level(rs.getDouble(3));
                     bs.setPer_cost(rs.getDouble(4));
                     bs.setTotal_sales(rs.getInt(5));
                     result.add(bs);
@@ -221,7 +221,7 @@ public class SellerManager implements ISellerManager {
                     BeanSeller bs = new BeanSeller();
                     bs.setSeller_id(rs.getInt(1));
                     bs.setSeller_name(rs.getString(2));
-                    bs.setSeller_level(rs.getInt(3));
+                    bs.setSeller_level(rs.getDouble(3));
                     bs.setPer_cost(rs.getDouble(4));
                     bs.setTotal_sales(rs.getInt(5));
                     result.add(bs);
@@ -241,6 +241,47 @@ public class SellerManager implements ISellerManager {
             }
         }
         return result;
+    }
+
+    //根据商家编号得到商家名
+    public String getSellerName(int seller) throws BaseException{
+        //判断商家ID是否合理
+        if(seller <= 0){
+            throw new BusinessException("商家为空");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //查询商家名
+            String name = null;
+            sql = "select seller_name from tbl_seller where seller_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,seller);
+            rs = pst.executeQuery();
+            if(rs.next()){
+                name = rs.getString(1);
+                rs.close();
+                pst.close();
+                return name;
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 
 }

@@ -20,7 +20,7 @@ public class FrmSelectAddress extends JDialog implements ActionListener {
 
     private JPanel  menuBar = new JPanel();
     private JButton btSelect = new JButton("选择");//选择按钮
-    //我的优惠券表构造
+    //我的地址表构造
     private static Object tblAddressTitle[] = BeanAddress.tblAddressTitle;
     private static Object tblAddressData[][];
     private static DefaultTableModel tabAddressModel = new DefaultTableModel();
@@ -30,7 +30,7 @@ public class FrmSelectAddress extends JDialog implements ActionListener {
     private BeanUser curUser = currentLoginUser;
     private List<BeanAddress> allAddress = null;
     public static BeanAddress curAddress = null;
-    //显示所有我的优惠券
+    //显示所有我的地址
     private void reloadAddressTable(){
         try {
             allAddress = TakeoutAssistantUtil.addressManager.loadAddress(curUser);

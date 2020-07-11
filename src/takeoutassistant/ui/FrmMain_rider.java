@@ -88,6 +88,11 @@ public class FrmMain_rider extends JFrame implements ActionListener {
     public FrmMain_rider(){
         this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setTitle("骑手管理");
+        // 窗口居中
+        double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+        double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        this.setLocation((int) (width - this.getWidth()) / 2,
+                (int) (height - this.getHeight()) / 2);
         //骑手功能菜单
         this.menu_Rider.add(this.menuItem_AddRider); this.menuItem_AddRider.addActionListener(this);
         this.menu_Rider.add(this.menuItem_DeleteRider); this.menuItem_DeleteRider.addActionListener(this);
@@ -103,9 +108,9 @@ public class FrmMain_rider extends JFrame implements ActionListener {
 
         //主界面布局
         JScrollPane js1 = new JScrollPane(this.dataTableRider);
-        js1.setPreferredSize(new Dimension(400, 10));
+        js1.setPreferredSize(new Dimension(750, 10));
         JScrollPane js2 = new JScrollPane(this.dataTableRiderAccount);
-        js2.setPreferredSize(new Dimension(400, 10));
+        js2.setPreferredSize(new Dimension(300, 10));
         //骑手信息在左
         this.getContentPane().add(js1, BorderLayout.WEST);
         this.dataTableRider.addMouseListener(new MouseAdapter(){

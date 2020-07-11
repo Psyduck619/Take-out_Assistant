@@ -35,11 +35,13 @@ public class RiderManager implements IRiderManager {
         try{
             conn = DBUtil.getConnection();
             //实现添加骑手
-            sql = "insert into tbl_rider(rider_name,entry_date,rider_status) values(?,?,?)";
+            sql = "insert into tbl_rider(rider_name,entry_date,rider_status,order_count,month_income) values(?,?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setString(1, name);
             pst.setTimestamp(2, new java.sql.Timestamp(date.getTime()));
             pst.setString(3, status);
+            pst.setInt(4, 0);
+            pst.setDouble(5, 0);
             pst.execute();
             pst.close();
         } catch (SQLException e) {

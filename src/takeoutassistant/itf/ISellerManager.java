@@ -16,4 +16,6 @@ public interface ISellerManager {
     public void modifyName(BeanSeller seller, String name) throws BaseException;
     //显示某星级商家
     public List<BeanSeller> loadLevel(int level) throws BaseException;
+    //根据商家编号得到商家名
+    public String getSellerName(int seller) throws BaseException;
 }

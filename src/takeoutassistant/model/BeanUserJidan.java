@@ -1,7 +1,10 @@
 package takeoutassistant.model;
 
+import takeoutassistant.TakeoutAssistantUtil;
+import takeoutassistant.util.BaseException;
+
 public class BeanUserJidan {
-    public static final String[] tblMyJidanTitle={"商家编号","优惠券金额","需要集单数","已集单数"};
+    public static final String[] tblMyJidanTitle = {"商家", "优惠券金额", "需要集单数", "已集单数"};
     private String user_id;
     private int seller_id;
     private int coupon_request;
@@ -58,12 +61,17 @@ public class BeanUserJidan {
         this.coupon_get = coupon_get;
     }
 
-    public String getCell(int col){
-        if(col==0) return ""+this.seller_id;
-        else if(col==1) return ""+this.coupon_amount;
-        else if(col==2) return ""+this.coupon_request;
-        else if(col==3) return ""+this.coupon_get;
+    public String getCell(int col) {
+        if (col == 0) {
+            try {
+                return TakeoutAssistantUtil.sellerManager.getSellerName(this.seller_id);
+            } catch (BaseException e) {
+                e.printStackTrace();
+            }
+        } else if (col == 1) return "" + this.coupon_amount;
+        else if (col == 2) return "" + this.coupon_request;
+        else if (col == 3) return "" + this.coupon_get;
         else return "";
+        return null;
     }
-
 }

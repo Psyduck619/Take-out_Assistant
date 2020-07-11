@@ -1,10 +1,7 @@
 package takeoutassistant.control;
 
 import takeoutassistant.itf.IRiderAccountManager;
-import takeoutassistant.model.BeanGoodsType;
-import takeoutassistant.model.BeanRider;
-import takeoutassistant.model.BeanRiderAccount;
-import takeoutassistant.model.BeanSeller;
+import takeoutassistant.model.*;
 import takeoutassistant.util.BaseException;
 import takeoutassistant.util.BusinessException;
 import takeoutassistant.util.DBUtil;
@@ -171,6 +168,107 @@ public class RiderAccountManager implements IRiderAccountManager {
         }catch (SQLException e) {
             e.printStackTrace();
         }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    //判断订单是否已评价骑手
+    public boolean isComment(BeanGoodsOrder order) throws BaseException{
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //先查询是否已评价
+            sql = "select order_comment from tbl_rideraccount where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,order.getOrder_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                if(!rs.getString(1).equals("未评价")){
+                    rs.close();
+                    pst.close();
+                    return true;
+                }
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
+    //增加骑手评价
+    public void addRiderComment(BeanGoodsOrder order, String comment) throws BaseException{
+        //判空
+        if(comment == null || "".equals(comment)){
+            throw new BusinessException("评价不能为空");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            conn.setAutoCommit(false);
+            //如果是好评,本单收入加0.5;差评减20 //更新入账表和骑手收入
+            Double money = 0.0;
+            if(comment.equals("好评"))
+                money = 0.5;
+            else if(comment.equals("差评"))
+                money = -20.0;
+            else
+                money = 0.0;
+            //实现更新评价到数据库
+            sql = "update tbl_rideraccount set order_comment=?,per_income=per_income+? where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, comment);
+            pst.setDouble(2, money);
+            pst.setInt(3, order.getOrder_id());
+            pst.execute();
+            pst.close();
+            //更新骑手收入(先查询出骑手ID)
+            int riderID = 0;
+            sql = "select rider_id from tbl_rideraccount where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,order.getOrder_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                riderID = rs.getInt(1);
+            }
+            pst.close();
+            rs.close();
+            sql = "update tbl_rider set month_income=month_income+? where rider_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setDouble(1,money);
+            pst.setInt(2,riderID);
+            pst.execute();
+            conn.commit();
+            pst.close();
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
             if(conn != null){
                 try {
                     conn.close();

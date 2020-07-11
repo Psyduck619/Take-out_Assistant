@@ -239,7 +239,7 @@ public class OrderManager implements IOrderManager {
             pst.setDouble(6,price2);
             pst.setTimestamp(7,new java.sql.Timestamp(System.currentTimeMillis()));
             pst.setTimestamp(8,new java.sql.Timestamp(request_date.getTime()));
-            pst.setString(9,"配送中");
+            pst.setString(9,"未配送");
             pst.setString(10,user.getUser_id());
             pst.setInt(11,seller.getSeller_id());
             pst.execute();
@@ -253,11 +253,10 @@ public class OrderManager implements IOrderManager {
                 map.put(rs.getInt(1), rs.getInt(2));
             }
             for (Integer key : map.keySet()){  //循环减少商品数据
-                sql = "update tbl_goods set goods_quantity=goods_quantity-? where goods_id=? and order_id=?";
+                sql = "update tbl_goods set goods_quantity=goods_quantity-? where goods_id=?";
+                pst = conn.prepareStatement(sql);
                 pst.setInt(1, map.get(key));
                 pst.setInt(2, key);
-                pst.setInt(3, orderID);
-                pst = conn.prepareStatement(sql);
                 pst.execute();
             }
             //修改订单详情表中的虚拟订单为真实订单
@@ -393,13 +392,13 @@ public class OrderManager implements IOrderManager {
             //rs.close();
             pst.close();
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
             try {
                 conn.rollback();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
             }
+            e.printStackTrace();
+        } finally {
             if(conn != null){
                 try {
                     conn.close();
@@ -409,9 +408,333 @@ public class OrderManager implements IOrderManager {
             }
         }
     }
-    //显示用户所有订单
-    public List<BeanGoodsOrder> loadOrder(BeanUser user) throws BaseException{
-        return null;
+    //得到用户个人的订单信息
+    public List<BeanGoodsOrder> loadUsers(BeanUser user) throws BaseException{
+        //初始化
+        List<BeanGoodsOrder> result = new ArrayList<BeanGoodsOrder>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现得到所有订单
+            sql = "select order_id,add_id,manjian_id,coupon_id,rider_id,original_price,final_price,order_time," +
+                    "request_time,order_state,user_id,seller_id from tbl_goodsorder where user_id=? and flag=0";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, user.getUser_id());
+            rs = pst.executeQuery();
+            while(rs.next()){
+                BeanGoodsOrder bgo = new BeanGoodsOrder();
+                bgo.setOrder_id(rs.getInt(1));
+                bgo.setAdd_id(rs.getInt(2));
+                bgo.setManjian_id(rs.getInt(3));
+                bgo.setCoupon_id(rs.getInt(4));
+                bgo.setRider_id(rs.getInt(5));
+                bgo.setOriginal_price(rs.getDouble(6));
+                bgo.setFinal_price(rs.getDouble(7));
+                bgo.setOrder_time(rs.getTimestamp(8));
+                bgo.setRequest_time(rs.getTimestamp(9));
+                bgo.setOrder_state(rs.getString(10));
+                bgo.setUser_id(rs.getString(11));
+                bgo.setSeller_id(rs.getInt(12));
+                result.add(bgo);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //得到所有订单
+    public List<BeanGoodsOrder> loadAll() throws BaseException{
+        //初始化
+        List<BeanGoodsOrder> result = new ArrayList<BeanGoodsOrder>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现得到所有订单
+            sql = "select order_id,add_id,manjian_id,coupon_id,rider_id,original_price,final_price,order_time," +
+                    "request_time,order_state,user_id,seller_id from tbl_goodsorder";
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            while(rs.next()){
+                BeanGoodsOrder bgo = new BeanGoodsOrder();
+                bgo.setOrder_id(rs.getInt(1));
+                bgo.setAdd_id(rs.getInt(2));
+                bgo.setManjian_id(rs.getInt(3));
+                bgo.setCoupon_id(rs.getInt(4));
+                bgo.setRider_id(rs.getInt(5));
+                bgo.setOriginal_price(rs.getDouble(6));
+                bgo.setFinal_price(rs.getDouble(7));
+                bgo.setOrder_time(rs.getTimestamp(8));
+                bgo.setRequest_time(rs.getTimestamp(9));
+                bgo.setOrder_state(rs.getString(10));
+                bgo.setUser_id(rs.getString(11));
+                bgo.setSeller_id(rs.getInt(12));
+                result.add(bgo);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //得到"未配送"订单
+    public List<BeanGoodsOrder> loadNoDo() throws BaseException{
+        //初始化
+        List<BeanGoodsOrder> result = new ArrayList<BeanGoodsOrder>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现得到所有订单
+            sql = "select order_id,add_id,manjian_id,coupon_id,rider_id,original_price,final_price,order_time," +
+                    "request_time,order_state,user_id,seller_id from tbl_goodsorder where order_state=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,"未配送");
+            rs = pst.executeQuery();
+            while(rs.next()){
+                BeanGoodsOrder bgo = new BeanGoodsOrder();
+                bgo.setOrder_id(rs.getInt(1));
+                bgo.setAdd_id(rs.getInt(2));
+                bgo.setManjian_id(rs.getInt(3));
+                bgo.setCoupon_id(rs.getInt(4));
+                bgo.setRider_id(rs.getInt(5));
+                bgo.setOriginal_price(rs.getDouble(6));
+                bgo.setFinal_price(rs.getDouble(7));
+                bgo.setOrder_time(rs.getTimestamp(8));
+                bgo.setRequest_time(rs.getTimestamp(9));
+                bgo.setOrder_state(rs.getString(10));
+                bgo.setUser_id(rs.getString(11));
+                bgo.setSeller_id(rs.getInt(12));
+                result.add(bgo);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //得到"配送中"订单
+    public List<BeanGoodsOrder> loadDing() throws BaseException{
+        //初始化
+        List<BeanGoodsOrder> result = new ArrayList<BeanGoodsOrder>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现得到所有订单
+            sql = "select order_id,add_id,manjian_id,coupon_id,rider_id,original_price,final_price,order_time," +
+                    "request_time,order_state,user_id,seller_id from tbl_goodsorder where order_state=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,"配送中");
+            rs = pst.executeQuery();
+            while(rs.next()){
+                BeanGoodsOrder bgo = new BeanGoodsOrder();
+                bgo.setOrder_id(rs.getInt(1));
+                bgo.setAdd_id(rs.getInt(2));
+                bgo.setManjian_id(rs.getInt(3));
+                bgo.setCoupon_id(rs.getInt(4));
+                bgo.setRider_id(rs.getInt(5));
+                bgo.setOriginal_price(rs.getDouble(6));
+                bgo.setFinal_price(rs.getDouble(7));
+                bgo.setOrder_time(rs.getTimestamp(8));
+                bgo.setRequest_time(rs.getTimestamp(9));
+                bgo.setOrder_state(rs.getString(10));
+                bgo.setUser_id(rs.getString(11));
+                bgo.setSeller_id(rs.getInt(12));
+                result.add(bgo);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //得到"确认送达"订单
+    public List<BeanGoodsOrder> loadConfirm() throws BaseException{
+        //初始化
+        List<BeanGoodsOrder> result = new ArrayList<BeanGoodsOrder>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现得到所有订单
+            sql = "select order_id,add_id,manjian_id,coupon_id,rider_id,original_price,final_price,order_time," +
+                    "request_time,order_state,user_id,seller_id from tbl_goodsorder where order_state=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,"确认送达");
+            rs = pst.executeQuery();
+            while(rs.next()){
+                BeanGoodsOrder bgo = new BeanGoodsOrder();
+                bgo.setOrder_id(rs.getInt(1));
+                bgo.setAdd_id(rs.getInt(2));
+                bgo.setManjian_id(rs.getInt(3));
+                bgo.setCoupon_id(rs.getInt(4));
+                bgo.setRider_id(rs.getInt(5));
+                bgo.setOriginal_price(rs.getDouble(6));
+                bgo.setFinal_price(rs.getDouble(7));
+                bgo.setOrder_time(rs.getTimestamp(8));
+                bgo.setRequest_time(rs.getTimestamp(9));
+                bgo.setOrder_state(rs.getString(10));
+                bgo.setUser_id(rs.getString(11));
+                bgo.setSeller_id(rs.getInt(12));
+                result.add(bgo);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //得到"超时"订单
+    public List<BeanGoodsOrder> loadOverTime() throws BaseException{
+        //初始化
+        List<BeanGoodsOrder> result = new ArrayList<BeanGoodsOrder>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现得到所有订单
+            sql = "select order_id,add_id,manjian_id,coupon_id,rider_id,original_price,final_price,order_time," +
+                    "request_time,order_state,user_id,seller_id from tbl_goodsorder where order_state=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,"超时");
+            rs = pst.executeQuery();
+            while(rs.next()){
+                BeanGoodsOrder bgo = new BeanGoodsOrder();
+                bgo.setOrder_id(rs.getInt(1));
+                bgo.setAdd_id(rs.getInt(2));
+                bgo.setManjian_id(rs.getInt(3));
+                bgo.setCoupon_id(rs.getInt(4));
+                bgo.setRider_id(rs.getInt(5));
+                bgo.setOriginal_price(rs.getDouble(6));
+                bgo.setFinal_price(rs.getDouble(7));
+                bgo.setOrder_time(rs.getTimestamp(8));
+                bgo.setRequest_time(rs.getTimestamp(9));
+                bgo.setOrder_state(rs.getString(10));
+                bgo.setUser_id(rs.getString(11));
+                bgo.setSeller_id(rs.getInt(12));
+                result.add(bgo);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //得到"已取消"订单
+    public List<BeanGoodsOrder> loadCancel() throws BaseException{
+        //初始化
+        List<BeanGoodsOrder> result = new ArrayList<BeanGoodsOrder>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现得到所有订单
+            sql = "select order_id,add_id,manjian_id,coupon_id,rider_id,original_price,final_price,order_time," +
+                    "request_time,order_state,user_id,seller_id from tbl_goodsorder where order_state=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,"已取消");
+            rs = pst.executeQuery();
+            while(rs.next()){
+                BeanGoodsOrder bgo = new BeanGoodsOrder();
+                bgo.setOrder_id(rs.getInt(1));
+                bgo.setAdd_id(rs.getInt(2));
+                bgo.setManjian_id(rs.getInt(3));
+                bgo.setCoupon_id(rs.getInt(4));
+                bgo.setRider_id(rs.getInt(5));
+                bgo.setOriginal_price(rs.getDouble(6));
+                bgo.setFinal_price(rs.getDouble(7));
+                bgo.setOrder_time(rs.getTimestamp(8));
+                bgo.setRequest_time(rs.getTimestamp(9));
+                bgo.setOrder_state(rs.getString(10));
+                bgo.setUser_id(rs.getString(11));
+                bgo.setSeller_id(rs.getInt(12));
+                result.add(bgo);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
     }
     //用户删除订单信息
     public void deleteOrder(BeanGoodsOrder order) throws BaseException{
@@ -423,13 +746,13 @@ public class OrderManager implements IOrderManager {
         try {
             conn = DBUtil.getConnection();
             //订单表删除记录
-            sql = "delete from tbl_goodsorder where order_id=?";
+            sql = "update tbl_goodsorder set flag=1 where order_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, order.getOrder_id());
             pst.execute();
             pst.close();
             //订单详情表删除记录
-            sql = "delete from tbl_orderinfo where order_id=?";
+            sql = "update tbl_orderinfo set flag=1 where order_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, order.getOrder_id());
             pst.execute();
@@ -524,6 +847,88 @@ public class OrderManager implements IOrderManager {
             }
         }
     }
+    //订单确认送达
+    public void confirmOrder(BeanGoodsOrder order) throws BaseException{
+        //判空
+        if(order == null){
+            throw new BusinessException("订单为空,请重试");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            conn.setAutoCommit(false);
+            //①改变订单的状态为"确认送达" ②骑手入帐单加入一条 ③骑手单数加1,月收入增加(判断单数来增加)
+            sql = "update tbl_goodsorder set order_state=? where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, "已送达");
+            pst.setInt(2, order.getOrder_id());
+            pst.execute();
+            //新建入帐单
+            Double income = 0.0; //先算这单的收入,查询该骑手的单数和身份
+            int count = 0;//单数
+            String status = null;
+            sql = "select order_count,rider_status from tbl_rider where rider_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, order.getRider_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                count = rs.getInt(1);
+                status = rs.getString(2);
+            }
+            if(count < 100)
+                income = 2.0;
+            else if(count >= 100 && count < 300)
+                income = 3.0;
+            else if(count >= 300 && count < 450)
+                income = 5.0;
+            else if(count >= 450 && count < 550)
+                income = 6.0;
+            else if(count >= 550 && count < 650)
+                income = 7.0;
+            else
+                income = 8.0;
+            if(status.equals("新人") && count < 500)
+                income += 0.5;
+            if(status.equals("新人") && count >= 500)
+                income += 1.0;
+            sql = "insert into tbl_rideraccount(finish_time,per_income,rider_id,order_id,order_comment) values(?,?,?,?,?)";
+            pst = conn.prepareStatement(sql);
+            pst.setTimestamp(1, new java.sql.Timestamp(System.currentTimeMillis()));
+            pst.setDouble(2, income);
+            pst.setInt(3, order.getRider_id());
+            pst.setInt(4, order.getOrder_id());
+            pst.setString(5,"未评价");
+            pst.execute();
+            //修改骑手信息
+            sql = "update tbl_rider set order_count=order_count+1,month_income=month_income+? where rider_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setDouble(1, income);
+            pst.setInt(2, order.getRider_id());
+            pst.execute();
+            conn.commit();
+            rs.close();
+            pst.close();
+        }catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     //修改骑手
     public void modifyRider(BeanGoodsOrder order, BeanRider rider) throws BaseException{
         //判空
@@ -571,6 +976,99 @@ public class OrderManager implements IOrderManager {
             sql = "update tbl_goodsorder set add_id=? where order_id=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, address.getAdd_id());
+            pst.setInt(2, order.getOrder_id());
+            pst.execute();
+            pst.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    //修改订单状态为"配送中"
+    public void modifyDoing(BeanGoodsOrder order) throws BaseException{
+        //判空
+        if(order == null){
+            throw new BusinessException("订单为空,请重试");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现修改
+            sql = "update tbl_goodsorder set order_state=? where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, "配送中");
+            pst.setInt(2, order.getOrder_id());
+            pst.execute();
+            pst.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    //修改订单状态为"超时"
+    public void modifyOverTime(BeanGoodsOrder order) throws BaseException{
+        //判空
+        if(order == null){
+            throw new BusinessException("订单为空,请重试");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现修改
+            sql = "update tbl_goodsorder set order_state=? where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, "超时");
+            pst.setInt(2, order.getOrder_id());
+            pst.execute();
+            pst.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    //修改订单状态为"已取消"
+    public void modifyCancel(BeanGoodsOrder order) throws BaseException{
+        //判空
+        if(order == null){
+            throw new BusinessException("订单为空,请重试");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现修改
+            sql = "update tbl_goodsorder set order_state=? where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, "已取消");
             pst.setInt(2, order.getOrder_id());
             pst.execute();
             pst.close();

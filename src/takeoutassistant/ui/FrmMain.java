@@ -37,7 +37,7 @@ public class FrmMain extends JFrame implements ActionListener {
     private JMenuItem  menuItem_ModifyGoods=new JMenuItem("更新商品信息");
 
     private JMenuItem  menuItem_Rider=new JMenuItem("骑手管理");
-    private JMenuItem  menuItem_User=new JMenuItem("用户管理");
+    private JMenuItem  menuItem_Order=new JMenuItem("订单管理");
 
     private JMenuItem  menuItem_AddAdmin=new JMenuItem("管理员添加");
     private JMenuItem  menuItem_modifyPwd=new JMenuItem("密码修改");
@@ -171,6 +171,8 @@ public class FrmMain extends JFrame implements ActionListener {
         this.menu_goods.add(this.menuItem_ModifyGoods); this.menuItem_ModifyGoods.addActionListener(this);
         //其他管理菜单
         this.menu_others.add(this.menuItem_Rider); this.menuItem_Rider.addActionListener(this);
+        this.menu_others.add(this.menuItem_Order); this.menuItem_Order.addActionListener(this);
+        //管理员管理
         this.menu_admin.add(this.menuItem_AddAdmin); this.menuItem_AddAdmin.addActionListener(this);
         this.menu_admin.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
 
@@ -373,6 +375,10 @@ public class FrmMain extends JFrame implements ActionListener {
         //骑手管理界面
         else if(e.getSource() == this.menuItem_Rider){
             new FrmMain_rider();
+        }
+        //订单管理界面
+        else if(e.getSource() == this.menuItem_Order){
+            new FrmMain_order();
         }
 
         //添加管理员

@@ -2,18 +2,26 @@ package takeoutassistant.itf;
 
 import takeoutassistant.control.UserManager;
 import takeoutassistant.model.BeanGoods;
+import takeoutassistant.model.BeanGoodsOrder;
 import takeoutassistant.model.BeanOrderInfo;
 import takeoutassistant.model.BeanUser;
 import takeoutassistant.util.BaseException;
+import takeoutassistant.util.DBUtil;
+import takeoutassistant.util.DbException;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface IOrderInfoManager {
 
     //新增订单信息
     public void addOrderInfo(BeanUser user, BeanGoods goods, int quantity) throws BaseException;
-    //显示订单信息
+    //显示订单信息(购物车)
     public List<BeanOrderInfo> loadOrderInfo(BeanUser user) throws BaseException;
+    //显示订单信息(用户)
+    public List<BeanOrderInfo> loadMyOrderInfo(BeanGoodsOrder order) throws BaseException;
     //删除订单信息
     public void deleteOrderInfo(BeanOrderInfo orderInfo) throws BaseException;
     //清空购物车

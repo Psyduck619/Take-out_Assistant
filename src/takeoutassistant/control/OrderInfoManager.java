@@ -1,10 +1,7 @@
 package takeoutassistant.control;
 
 import takeoutassistant.itf.IOrderInfoManager;
-import takeoutassistant.model.BeanGoods;
-import takeoutassistant.model.BeanMyCoupon;
-import takeoutassistant.model.BeanOrderInfo;
-import takeoutassistant.model.BeanUser;
+import takeoutassistant.model.*;
 import takeoutassistant.util.BaseException;
 import takeoutassistant.util.BusinessException;
 import takeoutassistant.util.DBUtil;
@@ -112,7 +109,7 @@ public class OrderInfoManager implements IOrderInfoManager {
             }
         }
     }
-    //显示订单信息
+    //显示订单信息(购物车)
     public List<BeanOrderInfo> loadOrderInfo(BeanUser user) throws BaseException{
         //初始化
         List<BeanOrderInfo> result = new ArrayList<BeanOrderInfo>();
@@ -125,6 +122,46 @@ public class OrderInfoManager implements IOrderInfoManager {
             sql = "select goods_id,goods_name,goods_quantity,goods_price,per_discount,order_id from tbl_orderinfo where user_id=? and done=false";
             pst = conn.prepareStatement(sql);
             pst.setString(1, user.getUser_id());
+            java.sql.ResultSet rs = pst.executeQuery();
+            while(rs.next()){
+                BeanOrderInfo boi = new BeanOrderInfo();
+                boi.setGoods_id(rs.getInt(1));
+                boi.setGoods_name(rs.getString(2));
+                boi.setGoods_quantity(rs.getInt(3));
+                boi.setOrder_price(rs.getDouble(4));
+                boi.setPer_discount(rs.getDouble(5));
+                boi.setOrder_id(rs.getInt(6));
+                result.add(boi);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        }
+        finally{
+            if(conn!=null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //显示订单信息(用户)
+    public List<BeanOrderInfo> loadMyOrderInfo(BeanGoodsOrder order) throws BaseException{
+        //初始化
+        List<BeanOrderInfo> result = new ArrayList<BeanOrderInfo>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            //显示用户目前的购物车信息(商品名,商品数量,单价,每件优惠,总价)
+            sql = "select goods_id,goods_name,goods_quantity,goods_price,per_discount,order_id from tbl_orderinfo where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, order.getOrder_id());
             java.sql.ResultSet rs = pst.executeQuery();
             while(rs.next()){
                 BeanOrderInfo boi = new BeanOrderInfo();

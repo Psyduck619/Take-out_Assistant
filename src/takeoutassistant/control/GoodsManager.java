@@ -41,6 +41,7 @@ public class GoodsManager {
         java.sql.PreparedStatement pst = null;
         try {
             conn = DBUtil.getConnection();
+            conn.setAutoCommit(false);
             //实现对应类别数量加1
             sql = "update tbl_goodstype set quantity=quantity+1 where type_id=?";
             pst = conn.prepareStatement(sql);
@@ -56,9 +57,15 @@ public class GoodsManager {
             pst.setDouble(4, price1);
             pst.setDouble(5, price2);
             pst.setInt(6, quantity);
+            conn.commit();
             pst.execute();
             pst.close();
         } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             e.printStackTrace();
         } finally {
             if (conn != null) {

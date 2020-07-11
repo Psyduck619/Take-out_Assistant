@@ -23,11 +23,11 @@ public class FrmMain_user extends JFrame implements ActionListener {
     private JMenu menu_VIP=new JMenu("会员");
 
     private JMenuItem menuItem_ShowSeller=new JMenuItem("查看商家详情");
-    private JMenuItem menuItem_DeletePlan=new JMenuItem("删除计划");
-
-    private JMenuItem menuItem_AddStep=new JMenuItem("查看订单");
-    private JMenuItem menuItem_DeleteStep=new JMenuItem("删除订单");
-    private JMenuItem menuItem_startStep=new JMenuItem("评价订单");
+    //用户订单管理
+    private JMenuItem menuItem_ShowOrder=new JMenuItem("查看订单");
+//    private JMenuItem menuItem_CommentGoods=new JMenuItem("评价商品");
+//    private JMenuItem menuItem_CommentOrder=new JMenuItem("评价骑手");
+//    private JMenuItem menuItem_DeleteOrder=new JMenuItem("删除订单");
     //个人菜单组件
     private JMenuItem menuItem_myCoupon=new JMenuItem("我的优惠券");
     private JMenuItem menuItem_myJidan=new JMenuItem("我的集单");
@@ -124,11 +124,11 @@ public class FrmMain_user extends JFrame implements ActionListener {
         this.setTitle("大开大合-外卖助手");
         //菜单
         this.menu_buy.add(this.menuItem_ShowSeller); this.menuItem_ShowSeller.addActionListener(this);
-//        this.menu_plan.add(this.menuItem_DeletePlan); this.menuItem_DeletePlan.addActionListener(this);
-//        this.menu_step.add(this.menuItem_AddStep); this.menuItem_AddStep.addActionListener(this);
-//        this.menu_step.add(this.menuItem_DeleteStep); this.menuItem_DeleteStep.addActionListener(this);
-//        this.menu_step.add(this.menuItem_startStep); this.menuItem_startStep.addActionListener(this);
-//        this.menu_more.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
+        //订单菜单
+        this.menu_order.add(this.menuItem_ShowOrder); this.menuItem_ShowOrder.addActionListener(this);
+//        this.menu_buy.add(this.menuItem_CommentGoods); this.menuItem_CommentGoods.addActionListener(this);
+//        this.menu_buy.add(this.menuItem_CommentOrder); this.menuItem_CommentOrder.addActionListener(this);
+//        this.menu_buy.add(this.menuItem_DeleteOrder); this.menuItem_DeleteOrder.addActionListener(this);
         //个人菜单
         this.menu_user.add(this.menuItem_myCoupon); this.menuItem_myCoupon.addActionListener(this);
         this.menu_user.add(this.menuItem_myJidan); this.menuItem_myJidan.addActionListener(this);
@@ -279,6 +279,15 @@ public class FrmMain_user extends JFrame implements ActionListener {
             }
             FrmRenewVIP dlg = new FrmRenewVIP(this,"续费会员",true);
             dlg.setVisible(true);
+        }
+
+        //用户查看订单
+        else if(e.getSource() == this.menuItem_ShowOrder){
+            if(currentLoginUser == null) {
+                JOptionPane.showMessageDialog(null, "用户登录错误,请重试", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            new FrmMyOrder();
         }
 
     }

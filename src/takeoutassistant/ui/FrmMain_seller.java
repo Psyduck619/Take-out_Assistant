@@ -163,11 +163,11 @@ public class FrmMain_seller extends JFrame implements ActionListener {
 
         //主界面布局
         JScrollPane js1 = new JScrollPane(this.dataTableSeller);
-        js1.setPreferredSize(new Dimension(400, 10));
+        js1.setPreferredSize(new Dimension(300, 10));
         JScrollPane js2 = new JScrollPane(this.dataTableManjian);
         js2.setPreferredSize(new Dimension(200, 10));
         JScrollPane js3 = new JScrollPane(this.dataTableCoupon);
-        js3.setPreferredSize(new Dimension(650, 10));
+        js3.setPreferredSize(new Dimension(750, 10));
         //商家信息在左
         this.getContentPane().add(js1, BorderLayout.WEST);
         this.dataTableSeller.addMouseListener(new MouseAdapter(){
