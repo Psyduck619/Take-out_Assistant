@@ -75,7 +75,7 @@ public class FrmShowSeller extends JFrame implements ActionListener {
     }
     //显示所有商品
     private void reloadGoodsTabel(int typeIdx){
-        if(typeIdx <= 0) {
+        if(typeIdx < 0) {
             while(tabGoodsModel.getRowCount() > 0){
                 tabGoodsModel.removeRow(tabGoodsModel.getRowCount()-1);
             }

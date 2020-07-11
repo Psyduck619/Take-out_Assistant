@@ -79,7 +79,7 @@ public class FrmAddCoupon extends JDialog implements ActionListener {
         workPane.add(edtNo);
         this.getContentPane().add(workPane, BorderLayout.CENTER);
 
-        this.setSize(280, 240);
+        this.setSize(280, 260);
         // ´°¿Ú¾ÓÖÐ
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();

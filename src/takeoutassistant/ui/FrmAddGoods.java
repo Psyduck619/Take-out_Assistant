@@ -4,13 +4,16 @@ import takeoutassistant.TakeoutAssistantUtil;
 import takeoutassistant.model.BeanGoodsType;
 import takeoutassistant.model.BeanSeller;
 import takeoutassistant.util.BaseException;
+import takeoutassistant.util.BusinessException;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Pattern;
 
 import static takeoutassistant.control.AdminManager.isDouble;
+import static takeoutassistant.ui.FrmMain.curGoods;
 import static takeoutassistant.ui.FrmMain.curType;
 
 public class FrmAddGoods extends JDialog implements ActionListener {
@@ -21,10 +24,12 @@ public class FrmAddGoods extends JDialog implements ActionListener {
     private Button btnCancel = new Button("取消");
     private JLabel labelName = new JLabel("商品名称：");
     private JLabel labelPrice = new JLabel("单价：");
-    private JLabel labelPeice2 = new JLabel("会员价：");
+    private JLabel labelPrice2 = new JLabel("会员价：");
+    private JLabel labelQuantity = new JLabel("商品数量：");
     private JTextField edtName = new JTextField(20);
     private JTextField edtPrice = new JTextField(20);
     private JTextField edtPrice2 = new JTextField(20);
+    private JTextField edtQuantity = new JTextField(20);
 
     public FrmAddGoods(Frame f, String s, boolean b) {
         super(f, s, b);
@@ -36,10 +41,12 @@ public class FrmAddGoods extends JDialog implements ActionListener {
         workPane.add(edtName);
         workPane.add(labelPrice);
         workPane.add(edtPrice);
-        workPane.add(labelPeice2);
+        workPane.add(labelPrice2);
         workPane.add(edtPrice2);
+        workPane.add(labelQuantity);
+        workPane.add(edtQuantity);
         this.getContentPane().add(workPane, BorderLayout.CENTER);
-        this.setSize(280, 300);
+        this.setSize(280, 320);
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -60,12 +67,30 @@ public class FrmAddGoods extends JDialog implements ActionListener {
             String name = this.edtName.getText();
             String price = this.edtPrice.getText();
             String price2 = this.edtPrice2.getText();
+            String quantity = this.edtQuantity.getText();
+            if(name == null || "".equals(name)){
+                JOptionPane.showMessageDialog(null, "商品名字不能为空", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if(price == null || "".equals(price) || price2 == null || "".equals(price2)){
+                JOptionPane.showMessageDialog(null, "金额不能为空", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if(!isDouble(price) || !isDouble(price2)){
                 JOptionPane.showMessageDialog(null, "金额格式错误", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            if(quantity == null || "".equals(name)){
+                JOptionPane.showMessageDialog(null, "商品数量不能为空", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            Pattern p = Pattern.compile("[0-9]*");
+            if(!p.matcher(quantity).matches()){
+                JOptionPane.showMessageDialog(null, "商品数量只能为正整数", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             try {
-                TakeoutAssistantUtil.goodsManager.addGoods(type, name, Double.parseDouble(price), Double.parseDouble(price2));
+                TakeoutAssistantUtil.goodsManager.addGoods(type, name, Double.parseDouble(price), Double.parseDouble(price2), Integer.parseInt(quantity));
                 this.setVisible(false);
             } catch (BaseException e1) {
                 JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);

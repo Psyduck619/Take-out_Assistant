@@ -55,6 +55,25 @@ public class FrmAddtoCart extends JDialog implements ActionListener {
                 JOptionPane.showMessageDialog(null, "请输入正整数", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            //计算需求数加上购物车里的数量是不是大于商品数量
+            int cartQuantity = 0;
+            int goods_quantity = 0;  //查询出当前购物车中某商品的库存数
+            try {
+                cartQuantity = TakeoutAssistantUtil.orderInfoManager.getQuantity2(curUser, curGoods);
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
+            try {
+                goods_quantity = TakeoutAssistantUtil.orderInfoManager.getGoodsQuantity2(curGoods);
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
+            System.out.println(cartQuantity);
+            System.out.println(goods_quantity);
+            if(Integer.parseInt(count)+cartQuantity > goods_quantity){
+                JOptionPane.showMessageDialog(null, "商品库存不足", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             try {
                 TakeoutAssistantUtil.orderInfoManager.addOrderInfo(curUser, curGoods, Integer.parseInt(count));
                 this.setVisible(false);

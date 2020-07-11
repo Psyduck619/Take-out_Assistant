@@ -42,7 +42,7 @@ public class CouponManager implements ICouponManager {
         try {
             conn = DBUtil.getConnection();
             //实现优惠券添加到数据库
-            sql = "insert into tbl_coupon(seller_id, coupon_amount, coupon_request, begin_date, end_date, ifTogether) values(?,?,?,?,?)";
+            sql = "insert into tbl_coupon(seller_id, coupon_amount, coupon_request, begin_date, end_date, ifTogether) values(?,?,?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, seller.getSeller_id());
             pst.setInt(2, amount);
@@ -185,7 +185,7 @@ public class CouponManager implements ICouponManager {
             pst.setInt(2, coupon.getCoupon_id());
             pst.execute();
             pst.close();
-            sql = "update tbl_manjian set ifTogether=? where coupon_id=?";
+            sql = "update tbl_coupon set ifTogether=? where coupon_id=?";
             pst = conn.prepareStatement(sql);
             pst.setBoolean(1, together);
             pst.setInt(2, coupon.getCoupon_id());

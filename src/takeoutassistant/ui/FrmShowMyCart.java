@@ -18,6 +18,7 @@ import java.util.List;
 
 import static takeoutassistant.model.BeanUser.currentLoginUser;
 import static takeoutassistant.ui.FrmConfirm.confirm;
+import static takeoutassistant.ui.FrmShowSeller.curGoods;
 
 public class FrmShowMyCart extends JFrame implements ActionListener {
 
@@ -89,7 +90,7 @@ public class FrmShowMyCart extends JFrame implements ActionListener {
                 if(i < 0) {
                     return;
                 }
-                System.out.println(i);
+                System.out.println("curMyCart:"+i);
                 curMyCart = allMyCart.get(i);
             }
         });

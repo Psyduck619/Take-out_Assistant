@@ -15,7 +15,7 @@ import java.util.List;
 
 public class GoodsManager {
     //增加商品
-    public void addGoods(BeanGoodsType type, String name, double price1, double price2) throws BaseException {
+    public void addGoods(BeanGoodsType type, String name, double price1, double price2, int quantity) throws BaseException {
         //判断是否选择商品类别
         if (type == null) {
             throw new BusinessException("请选择一个商品类别");
@@ -31,6 +31,10 @@ public class GoodsManager {
         if (price1 < 0 || price2 < 0) {
             throw new BusinessException("商品价格不能小于0");
         }
+        //判断数量是否合理
+        if(quantity < 0){
+            throw new BusinessException("商品数量不能小于0");
+        }
         //初始化
         Connection conn = null;
         String sql = null;
@@ -44,13 +48,14 @@ public class GoodsManager {
             pst.execute();
             pst.close();
             //实现商品添加到数据库
-            sql = "insert into tbl_goods(type_id,goods_type,goods_name,price,discount_price) values(?,?,?,?,?)";
+            sql = "insert into tbl_goods(type_id,goods_type,goods_name,price,discount_price,goods_quantity) values(?,?,?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, type.getType_id());
             pst.setString(2, type.getType_name());
             pst.setString(3, name);
             pst.setDouble(4, price1);
             pst.setDouble(5, price2);
+            pst.setInt(6, quantity);
             pst.execute();
             pst.close();
         } catch (SQLException e) {
@@ -77,7 +82,7 @@ public class GoodsManager {
         try {
             conn = DBUtil.getConnection();
             //实现显示对应类别全部商品功能
-            sql = "select goods_id,goods_name,goods_type,price,discount_price from tbl_goods where type_id=? order by goods_id";
+            sql = "select goods_id,goods_name,goods_type,price,discount_price,goods_quantity from tbl_goods where type_id=? order by goods_id";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, type.getType_id());
             rs = pst.executeQuery();
@@ -89,6 +94,7 @@ public class GoodsManager {
                 bg.setPrice(rs.getDouble(4));
                 bg.setDiscount_price(rs.getDouble(5));
                 bg.setType_id(type.getType_id());
+                bg.setGoods_quantity(rs.getInt(6));
                 result.add(bg);
             }
             rs.close();
@@ -146,7 +152,7 @@ public class GoodsManager {
     }
 
     //修改商品名字.价格.优惠价
-    public void modifyGoods(BeanGoods goods, String name, double price1, double price2) throws BaseException {
+    public void modifyGoods(BeanGoods goods, String name, double price1, double price2, int quantity) throws BaseException {
         //判断是否选择商品
         if (goods == null) {
             throw new BusinessException("请选择一个商品");
@@ -161,6 +167,10 @@ public class GoodsManager {
         //判断价格
         if (price1 < 0 || price2 < 0) {
             throw new BusinessException("商品价格不能小于0");
+        }
+        //判断数量
+        if(quantity < 0){
+            throw new BusinessException("商品数量不能小于0");
         }
         //初始化
         Connection conn = null;
@@ -179,10 +189,11 @@ public class GoodsManager {
             pst.setDouble(1, price1);
             pst.setInt(2, goods.getGoods_id());
             pst.execute();
-            sql = "update tbl_goods set discount_price=? where goods_id=?";
+            sql = "update tbl_goods set discount_price=?,goods_quantity=? where goods_id=?";
             pst = conn.prepareStatement(sql);
             pst.setDouble(1, price2);
-            pst.setInt(2, goods.getGoods_id());
+            pst.setInt(2, quantity);
+            pst.setInt(3, goods.getGoods_id());
             pst.execute();
             pst.close();
         } catch (SQLException e) {
@@ -209,7 +220,7 @@ public class GoodsManager {
         try {
             conn = DBUtil.getConnection();
             //实现显示对应类别全部商品功能
-            sql = "select a.goods_id,a.goods_name,a.goods_type,a.price,a.discount_price from tbl_goods a,tbl_goodstype b" +
+            sql = "select a.goods_id,a.goods_name,a.goods_type,a.price,a.discount_price,a.goods_quantity from tbl_goods a,tbl_goodstype b" +
                     " where b.type_id=a.type_id and b.seller_id=? LIMIT 3";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, seller.getSeller_id());
@@ -221,6 +232,7 @@ public class GoodsManager {
                 bg.setGoods_type(rs.getString(3));
                 bg.setPrice(rs.getDouble(4));
                 bg.setDiscount_price(rs.getDouble(5));
+                bg.setGoods_quantity(rs.getInt(6));
                 result.add(bg);
             }
             rs.close();

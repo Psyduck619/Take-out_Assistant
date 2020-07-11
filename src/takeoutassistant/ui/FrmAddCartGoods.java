@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 import java.util.regex.Pattern;
 
 import static takeoutassistant.ui.FrmShowMyCart.curMyCart;
+import static takeoutassistant.ui.FrmShowMyJidan.curUser;
+import static takeoutassistant.ui.FrmShowSeller.curGoods;
 
 public class FrmAddCartGoods extends JDialog implements ActionListener {
 
@@ -52,6 +54,23 @@ public class FrmAddCartGoods extends JDialog implements ActionListener {
             Pattern p = Pattern.compile("[0-9]*");
             if(!p.matcher(count).matches()){
                 JOptionPane.showMessageDialog(null, "请输入正整数", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            //计算需求数加上购物车里的数量是不是大于商品数量
+            int cartQuantity = 0;
+            int goods_quantity = 0;  //查询出当前购物车中某商品的库存数
+            try {
+                cartQuantity = TakeoutAssistantUtil.orderInfoManager.getQuantity(curUser, curMyCart);
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
+            try {
+                goods_quantity = TakeoutAssistantUtil.orderInfoManager.getGoodsQuantity(curMyCart);
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
+            if(Integer.parseInt(count)+cartQuantity > goods_quantity){
+                JOptionPane.showMessageDialog(null, "商品库存不足", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try {

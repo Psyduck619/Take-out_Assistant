@@ -203,7 +203,9 @@ public class FrmMain_seller extends JFrame implements ActionListener {
                 if(i < 0) {
                     return;
                 }
+                System.out.println(i);
                 curCoupon = allCoupon.get(i);
+                System.out.println(curCoupon.getCoupon_id());
                 //FrmMain_seller.this.reloadCouponTabel(i);
             }
         });

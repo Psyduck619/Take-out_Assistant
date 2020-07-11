@@ -44,7 +44,7 @@ public class ManjianManager implements IManjianManager {
             rs.close();
             pst.close();
             //判断是否已有类似的满减存在
-            sql = "select * from tbl_manjian where manjian_discount=?";
+            sql = "select * from tbl_manjian where manjian_amount=?";
             pst = conn.prepareStatement(sql);
             pst.setInt(1,discount);
             rs = pst.executeQuery();
@@ -56,7 +56,7 @@ public class ManjianManager implements IManjianManager {
             rs.close();
             pst.close();
             //实现类别添加到数据库
-            sql = "insert into tbl_manjian(seller_id,manjian_amount,discount_amount) values(?,?,?,?)";
+            sql = "insert into tbl_manjian(seller_id,manjian_amount,discount_amount) values(?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1,seller.getSeller_id());
             pst.setInt(2,full);

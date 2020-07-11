@@ -9,10 +9,7 @@ import takeoutassistant.util.DbException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public class OrderManager implements IOrderManager {
 
@@ -209,7 +206,6 @@ public class OrderManager implements IOrderManager {
         }
         //price2 -= coupon.getCoupon_amount();
         //处理空指针异常
-        System.out.println(coupon.getCoupon_amount());
         if(coupon == null){
             System.out.println("优惠券为空");
             coupon = new BeanMyCoupon();
@@ -247,6 +243,23 @@ public class OrderManager implements IOrderManager {
             pst.setString(10,user.getUser_id());
             pst.setInt(11,seller.getSeller_id());
             pst.execute();
+            //相关商品数量减少 //先查询得到一个当前订单的各商品ID和减少数量的对应表
+            Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+            sql = "select goods_id,goods_quantity from tbl_orderinfo where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,orderID);
+            rs = pst.executeQuery();
+            while(rs.next()){
+                map.put(rs.getInt(1), rs.getInt(2));
+            }
+            for (Integer key : map.keySet()){  //循环减少商品数据
+                sql = "update tbl_goods set goods_quantity=goods_quantity-? where goods_id=? and order_id=?";
+                pst.setInt(1, map.get(key));
+                pst.setInt(2, key);
+                pst.setInt(3, orderID);
+                pst = conn.prepareStatement(sql);
+                pst.execute();
+            }
             //修改订单详情表中的虚拟订单为真实订单
             sql = "update tbl_orderinfo set done=true where order_id=?";
             pst = conn.prepareStatement(sql);
@@ -264,7 +277,8 @@ public class OrderManager implements IOrderManager {
             pst.setString(2,user.getUser_id());
             pst.execute();
             //增加对应商家的销量,更改人均消费
-            sql = "update tbl_seller set total_sales=total_sales+1,per_cost=((per_cost*total_sales)+?)/(total_sales+1) where seller_id=?";
+            sql = "update tbl_seller set total_sales=total_sales+1," +
+                    "per_cost=((per_cost*total_sales)+?)/total_sales where seller_id=?";
             pst = conn.prepareStatement(sql);
             pst.setDouble(1,price2);
             pst.setInt(2,seller.getSeller_id());

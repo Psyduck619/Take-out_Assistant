@@ -185,6 +185,168 @@ public class OrderInfoManager implements IOrderInfoManager {
             }
         }
     }
+    //得到当前购物车某商品的数量
+    public int getQuantity(BeanUser user, BeanOrderInfo myCart) throws BaseException{
+        //判空
+        if(user == null){
+            try {
+                throw new BusinessException("用户为空,请重试");
+            } catch (BusinessException e) {
+                e.printStackTrace();
+            }
+        }
+        if(myCart == null)
+            return 0;
+        //初始化
+        int quantity = 0;
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //得到数量
+            sql = "select goods_quantity from tbl_orderinfo where user_id=? and goods_id=? and done=false";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, user.getUser_id());
+            pst.setInt(2, myCart.getGoods_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                quantity = rs.getInt(1);
+            }
+            rs.close();
+            pst.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return quantity;
+    }
+    //得到当前购物车中选中的商品的库存数
+    public int getGoodsQuantity(BeanOrderInfo myCart) throws BaseException{
+        //判空
+        if(myCart == null)
+            return 0;
+        //初始化
+        int quantity = 0;
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //得到数量
+            sql = "select goods_quantity from tbl_goods where goods_id=?";
+            pst = conn.prepareStatement(sql);
+            System.out.println("1:"+myCart.getGoods_id());
+            pst.setInt(1, myCart.getGoods_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                quantity = rs.getInt(1);
+            }
+            rs.close();
+            pst.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return quantity;
+    }
+    //得到当前购物车某商品的数量(添加商品)
+    public int getQuantity2(BeanUser user, BeanGoods goods) throws BaseException{
+        //判空
+        if(user == null){
+            try {
+                throw new BusinessException("用户为空,请重试");
+            } catch (BusinessException e) {
+                e.printStackTrace();
+            }
+        }
+        if(goods == null)
+            return 0;
+        //初始化
+        int quantity = 0;
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //得到数量
+            sql = "select goods_quantity from tbl_orderinfo where user_id=? and goods_id=? and done=false";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, user.getUser_id());
+            pst.setInt(2, goods.getGoods_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                quantity = rs.getInt(1);
+            }
+            rs.close();
+            pst.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return quantity;
+    }
+    //得到当前购物车中选中的商品的库存数(添加商品)
+    public int getGoodsQuantity2(BeanGoods goods) throws BaseException{
+        //判空
+        if(goods == null)
+            return 0;
+        //初始化
+        int quantity = 0;
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //得到数量
+            sql = "select goods_quantity from tbl_goods where goods_id=?";
+            pst = conn.prepareStatement(sql);
+            System.out.println("1:"+goods.getGoods_id());
+            pst.setInt(1, goods.getGoods_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                quantity = rs.getInt(1);
+            }
+            rs.close();
+            pst.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return quantity;
+    }
     //清空购物车
     public void deleteAll(BeanUser user) throws BaseException{
         //初始化
