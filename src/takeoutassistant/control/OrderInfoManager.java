@@ -1,5 +1,6 @@
 package takeoutassistant.control;
 
+import takeoutassistant.TakeoutAssistantUtil;
 import takeoutassistant.itf.IOrderInfoManager;
 import takeoutassistant.model.*;
 import takeoutassistant.util.BaseException;
@@ -34,6 +35,7 @@ public class OrderInfoManager implements IOrderInfoManager {
         }
         try {
             conn = DBUtil.getConnection();
+            conn.setAutoCommit(false);
             //查询购物车中有没有商品,若没有,增加新订单,若有,则在同订单编号下进行操作
             sql = "select * from tbl_orderinfo where user_id=? and done=0";
             pst = conn.prepareStatement(sql);
@@ -41,7 +43,7 @@ public class OrderInfoManager implements IOrderInfoManager {
             rs = pst.executeQuery();
             if(!rs.next()){  //购物车为空,则增加新的虚拟订单
                 //向数据库插入新建的虚拟订单(done==0)
-                sql = "insert into tbl_orderinfo(goods_id,goods_quantity,goods_price,per_discount,user_id,done,goods_name) values(?,?,?,?,?,?,?)";
+                sql = "insert into tbl_orderinfo(goods_id,goods_quantity,goods_price,per_discount,user_id,done,goods_name,flag,comment) values(?,?,?,?,?,?,?,?,?)";
                 pst = conn.prepareStatement(sql);
                 pst.setInt(1,goods.getGoods_id());
                 pst.setInt(2,quantity);
@@ -50,9 +52,10 @@ public class OrderInfoManager implements IOrderInfoManager {
                 pst.setString(5,user.getUser_id());
                 pst.setBoolean(6,false);
                 pst.setString(7,goods.getGoods_name());
+                pst.setBoolean(8,false);
+                pst.setBoolean(9,false);
                 pst.execute();
-                rs.close();
-                pst.close();
+                System.out.println(goods.getGoods_id());
             }
             else{  //购物车非空在同一个订单编号下进行添加
                 //先查询出订单编号
@@ -82,7 +85,7 @@ public class OrderInfoManager implements IOrderInfoManager {
                 }
                 else{  //商品不在购物车中,添加商品
                     sql = "insert into tbl_orderinfo(order_id,goods_id,goods_quantity,goods_price," +
-                            "per_discount,user_id,done,goods_name) values(?,?,?,?,?,?,?,?)";
+                            "per_discount,user_id,done,goods_name,flag,comment) values(?,?,?,?,?,?,?,?,?,?)";
                     pst = conn.prepareStatement(sql);
                     pst.setInt(1,orderID);
                     pst.setInt(2,goods.getGoods_id());
@@ -92,12 +95,21 @@ public class OrderInfoManager implements IOrderInfoManager {
                     pst.setString(6,user.getUser_id());
                     pst.setBoolean(7,false);
                     pst.setString(8,goods.getGoods_name());
+                    pst.setBoolean(9,false);
+                    pst.setBoolean(10,false);
                     pst.execute();
                 }
-                rs.close();
-                pst.close();
+
             }
+            conn.commit();
+            rs.close();
+            pst.close();
         } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             e.printStackTrace();
         } finally {
             if(conn != null){
@@ -149,6 +161,58 @@ public class OrderInfoManager implements IOrderInfoManager {
                 }
         }
     }
+    //判断购物车里的商品有没有当前商家以外的
+    public boolean isOnly(BeanUser user, BeanSeller curSeller) throws BaseException{
+        //判空
+        if(curSeller == null){
+            throw new BaseException("商家信息错误,请重试");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //先查询出当前用户购物车订单有多少
+            sql = "select goods_id from tbl_orderinfo where user_id=? and done=0";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,user.getUser_id());
+            rs = pst.executeQuery();
+            while(rs.next()){
+                //查询当前商品ID所属的商家
+                sql = "select b.seller_id from tbl_goods a,tbl_goodstype b where a.goods_id=? and a.type_id=b.type_id";
+                java.sql.PreparedStatement pst2 = conn.prepareStatement(sql);
+                pst2.setInt(1,rs.getInt(1));
+                java.sql.ResultSet rs2 = pst2.executeQuery();
+                if(rs2.next()){
+                    if(rs2.getInt(1) != curSeller.getSeller_id()){
+                        rs2.close();
+                        pst2.close();
+                        rs.close();
+                        pst.close();
+                        return false;
+                    }
+                }
+                rs2.close();
+                pst2.close();
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e){
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if(conn!=null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return true;
+    }
     //显示订单信息(用户)
     public List<BeanOrderInfo> loadMyOrderInfo(BeanGoodsOrder order) throws BaseException{
         //初始化
@@ -158,8 +222,8 @@ public class OrderInfoManager implements IOrderInfoManager {
         java.sql.PreparedStatement pst = null;
         try {
             conn = DBUtil.getConnection();
-            //显示用户目前的购物车信息(商品名,商品数量,单价,每件优惠,总价)
-            sql = "select goods_id,goods_name,goods_quantity,goods_price,per_discount,order_id from tbl_orderinfo where order_id=?";
+            //显示用户订单详情信息(商品名,商品数量,单价,每件优惠,总价)
+            sql = "select goods_id,goods_name,goods_quantity,goods_price,per_discount,order_id,user_id from tbl_orderinfo where order_id=? and flag=0";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, order.getOrder_id());
             java.sql.ResultSet rs = pst.executeQuery();
@@ -171,6 +235,7 @@ public class OrderInfoManager implements IOrderInfoManager {
                 boi.setOrder_price(rs.getDouble(4));
                 boi.setPer_discount(rs.getDouble(5));
                 boi.setOrder_id(rs.getInt(6));
+                boi.setUser_id(rs.getString(7));
                 result.add(boi);
             }
             rs.close();
@@ -490,6 +555,58 @@ public class OrderInfoManager implements IOrderInfoManager {
                     e.printStackTrace();
                 }
             }
+        }
+    }
+    //根据产品购买量为用户推荐产品
+    public List<BeanRecommend> Recommend(BeanUser user) throws BaseException{
+        //初始化
+        List<BeanRecommend> result = new ArrayList<BeanRecommend>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            //根据购买量排序商品
+            sql = "select goods_name,order_id,count(goods_quantity) count,goods_id from tbl_orderinfo " +
+                    "where done=1 and flag=0 and user_id=? group by goods_id order by count DESC LIMIT 5";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, user.getUser_id());
+            java.sql.ResultSet rs = pst.executeQuery();
+            while(rs.next()){
+                BeanRecommend br = new BeanRecommend();
+                br.setUser_id(user.getUser_id());
+                br.setGoods_name(rs.getString(1));
+                br.setQuantity(rs.getInt(3));
+                br.setGoods_id(rs.getInt(4));
+                int sellerID = 0;
+                sql = "select seller_id from tbl_goodsorder where order_id=?";
+                java.sql.PreparedStatement pst2 = conn.prepareStatement(sql);
+                pst2.setInt(1,rs.getInt(2));
+                java.sql.ResultSet rs2 = pst2.executeQuery();
+                if(rs2.next()){
+                    sellerID = rs2.getInt(1);
+                }
+                String sellerName = TakeoutAssistantUtil.sellerManager.getSellerName(sellerID);
+                br.setSeller_id(sellerID);
+                br.setSeller_name(sellerName);
+                result.add(br);
+                pst2.close();
+                rs2.close();
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        }
+        finally{
+            if(conn!=null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
         }
     }
 

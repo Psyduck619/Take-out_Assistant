@@ -31,6 +31,7 @@ public class FrmShowSeller extends JFrame implements ActionListener {
     private JButton btManjian = new JButton("商家满减");
     private JButton btCoupon = new JButton("商家优惠券");
     private JButton btMyCoupon = new JButton("我的优惠券");
+    private JButton btCheckComment = new JButton("查看商品评价");
     private JButton btMyCart = new JButton("我的购物车");
     private JButton btAddCart = new JButton("加入购物车");
     private JButton btBuy = new JButton("结算");
@@ -117,12 +118,10 @@ public class FrmShowSeller extends JFrame implements ActionListener {
         this.setLocation((int) (width - this.getWidth()) / 2,
                 (int) (height - this.getHeight()) / 2);
         //功能菜单1按钮设置
-        menuBar1.add(btManjian);
-        menuBar1.add(btCoupon);
-        menuBar1.add(btMyCoupon);
-        this.btManjian.addActionListener(this);
-        this.btCoupon.addActionListener(this);
-        this.btMyCoupon.addActionListener(this);
+        menuBar1.add(btManjian); this.btManjian.addActionListener(this);
+        menuBar1.add(btCoupon); this.btCoupon.addActionListener(this);
+        menuBar1.add(btMyCoupon); this.btMyCoupon.addActionListener(this);
+        menuBar1.add(btCheckComment); this.btCheckComment.addActionListener(this);
         //功能菜单2按钮设置
         menuBar2.add(btMyCart);
         menuBar2.add(btAddCart);
@@ -209,8 +208,26 @@ public class FrmShowSeller extends JFrame implements ActionListener {
         //订单结算
         else if(e.getSource() == btBuy){
             FrmBuy dlg = new FrmBuy(this,"订单结算",true);
+            //判断购物车里的商品有没有当前商家以外的
+            try {
+                if(!TakeoutAssistantUtil.orderInfoManager.isOnly(currentLoginUser,curSeller)){
+                    JOptionPane.showMessageDialog(null, "购物车中包含非当前商家的商品,请重新选择", "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
+
             if(flag)
                 dlg.setVisible(true);
+        }
+        //查看商品评价
+        else if(e.getSource() == btCheckComment){
+            if(this.curGoods == null) {
+                JOptionPane.showMessageDialog(null, "请选择一个商品", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            new FrmShowGoodsComment();
         }
     }
 }

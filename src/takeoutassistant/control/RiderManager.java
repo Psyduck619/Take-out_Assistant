@@ -70,7 +70,7 @@ public class RiderManager implements IRiderManager {
         try {
             conn = DBUtil.getConnection();
             //实现从数据库查找所有骑手信息
-            sql = "select rider_id,rider_name,entry_date,rider_status from tbl_rider";
+            sql = "select rider_id,rider_name,entry_date,rider_status,order_count,month_income from tbl_rider";
             pst = conn.prepareStatement(sql);
             rs = pst.executeQuery();
             while(rs.next()){
@@ -79,6 +79,8 @@ public class RiderManager implements IRiderManager {
                 br.setRider_name(rs.getString(2));
                 br.setEntry_date(rs.getTimestamp(3));
                 br.setRider_status(rs.getString(4));
+                br.setOrder_count(rs.getInt(5));
+                br.setMonth_income(rs.getDouble(6));
                 result.add(br);
             }
             rs.close();

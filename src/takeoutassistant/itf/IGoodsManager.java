@@ -18,4 +18,12 @@ public interface IGoodsManager {
     public void modifyGoods(BeanGoods goods, String name, double price1, double price2, int quantity) throws BaseException;
     //显示热门产品(最好的三个产品)
     public List<BeanGoods> loadHGoods(BeanSeller seller) throws BaseException;
+    //根据类别ID得到商家名
+    public String typeToSeller_name(int type_id) throws BaseException;
+    //根据商品ID得到商品名
+    public String idToName(int goods_id) throws BaseException;
+    //按商品名查询
+    public List<BeanGoods> loadForName(String name) throws BaseException;
+    //按类别名查询
+    public List<BeanGoods> loadForType(String name) throws BaseException;
 }

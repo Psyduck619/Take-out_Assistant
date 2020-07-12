@@ -20,4 +20,5 @@ public class TakeoutAssistantUtil {
     public static IAddressManager addressManager = new AddressManager();
     public static IOrderManager orderManager = new OrderManager();
     public static IOrderInfoManager orderInfoManager = new OrderInfoManager();
+    public static IGoodsCommentManager goodsCommentManager = new GoodsCommentManager();
 }

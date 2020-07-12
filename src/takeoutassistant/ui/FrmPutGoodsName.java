@@ -1,6 +1,7 @@
 package takeoutassistant.ui;
 
 import takeoutassistant.TakeoutAssistantUtil;
+import takeoutassistant.model.BeanSeller;
 import takeoutassistant.util.BaseException;
 
 import javax.swing.*;
@@ -8,29 +9,26 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static takeoutassistant.ui.FrmMain.curSeller;
-import static takeoutassistant.ui.FrmMain_rider.curRider;
+public class FrmPutGoodsName extends JDialog implements ActionListener {
 
-public class FrmModifyStatus extends JDialog implements ActionListener {
-
+    public static String name = null;
     private JPanel toolBar = new JPanel();
     private JPanel workPane = new JPanel();
-    private Button btnOk = new Button("确定");
+    private Button btnOk = new Button("查询");
     private Button btnCancel = new Button("取消");
-    private JLabel labelStatus = new JLabel("骑手身份：");
-    String items[] = {"新人","正式员工","单王"};
-    private JComboBox edtStatus = new JComboBox(items);
+    private JLabel labelName = new JLabel("请输入商品名称：");
+    private JTextField edtName = new JTextField(20);
 
-    public FrmModifyStatus(Frame f, String s, boolean b) {
+    public FrmPutGoodsName(Frame f, String s, boolean b) {
         super(f, s, b);
         toolBar.setLayout(new FlowLayout(FlowLayout.RIGHT));
         toolBar.add(this.btnOk);
         toolBar.add(btnCancel);
         this.getContentPane().add(toolBar, BorderLayout.SOUTH);
-        workPane.add(labelStatus);
-        workPane.add(edtStatus);
+        workPane.add(labelName);
+        workPane.add(edtName);
         this.getContentPane().add(workPane, BorderLayout.CENTER);
-        this.setSize(280, 150);
+        this.setSize(280, 180);
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -40,6 +38,7 @@ public class FrmModifyStatus extends JDialog implements ActionListener {
         this.validate();
         this.btnCancel.addActionListener(this);
         this.btnOk.addActionListener(this);
+
     }
 
     @Override
@@ -48,14 +47,10 @@ public class FrmModifyStatus extends JDialog implements ActionListener {
             this.setVisible(false);
         }
         else if(e.getSource() == this.btnOk){
-            String status = (String)this.edtStatus.getSelectedItem();
-            try {
-                TakeoutAssistantUtil.riderManager.modifyStatus(curRider, status);
-                this.setVisible(false);
-            } catch (BaseException e1) {
-                JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+            name = this.edtName.getText();
+            FrmGoodsForName dlg = new FrmGoodsForName();
+            this.setVisible(false);
+            dlg.setVisible(true);
         }
     }
 

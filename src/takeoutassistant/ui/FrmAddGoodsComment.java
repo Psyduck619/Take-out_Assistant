@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static takeoutassistant.ui.FrmMyOrder.curOrder;
+import static takeoutassistant.ui.FrmShowOrderInfo.curOrderInfo;
 
 public class FrmAddGoodsComment extends JDialog implements ActionListener {
 
@@ -16,10 +16,14 @@ public class FrmAddGoodsComment extends JDialog implements ActionListener {
     private JPanel workPane = new JPanel();
     private Button btnOk = new Button("确定");
     private Button btnCancel = new Button("取消");
-    private JLabel labelComment = new JLabel("请选择评价：                  ");
-    private JRadioButton edtGood = new JRadioButton("好评");
-    private JRadioButton edtNormal = new JRadioButton("中评");
-    private JRadioButton edtBad = new JRadioButton("差评");
+    private JLabel labelLevel = new JLabel("请选择星级:                                                            ");
+    private JLabel labelComment = new JLabel("评价一下商品吧~:");
+    private JTextField content = new JTextField(20);
+    private JRadioButton edtLevel1 = new JRadioButton("一星");
+    private JRadioButton edtLevel2 = new JRadioButton("二星");
+    private JRadioButton edtLevel3 = new JRadioButton("三星");
+    private JRadioButton edtLevel4 = new JRadioButton("四星");
+    private JRadioButton edtLevel5 = new JRadioButton("五星");
     private ButtonGroup group = new ButtonGroup();
 
     public FrmAddGoodsComment(Frame f, String s, boolean b) {
@@ -28,16 +32,22 @@ public class FrmAddGoodsComment extends JDialog implements ActionListener {
         toolBar.add(this.btnOk);
         toolBar.add(btnCancel);
         this.getContentPane().add(toolBar, BorderLayout.SOUTH);
-        group.add(edtGood);
-        group.add(edtNormal);
-        group.add(edtBad);
+        group.add(edtLevel1);
+        group.add(edtLevel2);
+        group.add(edtLevel3);
+        group.add(edtLevel4);
+        group.add(edtLevel5);
+        workPane.add(labelLevel);
+        workPane.add(edtLevel1);
+        workPane.add(edtLevel2);
+        workPane.add(edtLevel3);
+        workPane.add(edtLevel4);
+        workPane.add(edtLevel5);
+        edtLevel5.setSelected(true);
         workPane.add(labelComment);
-        workPane.add(edtGood);
-        workPane.add(edtNormal);
-        workPane.add(edtBad);
-        edtGood.setSelected(true);
+        workPane.add(content);
         this.getContentPane().add(workPane, BorderLayout.CENTER);
-        this.setSize(190, 160);
+        this.setSize(320, 200);
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
         double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -55,15 +65,19 @@ public class FrmAddGoodsComment extends JDialog implements ActionListener {
             this.setVisible(false);
         }
         else if(e.getSource() == this.btnOk){
-            String comment = null;
-            if(edtGood.isSelected())
-                comment = "好评";
-            else if(edtNormal.isSelected())
-                comment = "中评";
+            String level = null;
+            if(edtLevel1.isSelected())
+                level = "一星";
+            else if(edtLevel2.isSelected())
+                level = "二星";
+            else if(edtLevel3.isSelected())
+                level = "三星";
+            else if(edtLevel4.isSelected())
+                level = "四星";
             else
-                comment = "差评";
+                level = "五星";
             try {
-                TakeoutAssistantUtil.riderAccountManager.addRiderComment(curOrder, comment);
+                TakeoutAssistantUtil.goodsCommentManager.addGoodsComment(curOrderInfo, content.getText(), level);
                 JOptionPane.showMessageDialog(null, "评价成功", "提示", JOptionPane.INFORMATION_MESSAGE);
                 this.setVisible(false);
             } catch (BaseException e1) {

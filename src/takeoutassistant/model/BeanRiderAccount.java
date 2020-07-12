@@ -5,6 +5,7 @@ import java.util.Date;
 public class BeanRiderAccount {
 
     public static final String[] tblRiderAccountTitle={"订单编号","订单完成时间","订单评价","本单收入"};
+    public static final String[] tblRiderCommentTitle={"骑手","评价","订单完成时间"};
     private int account_id;
     private Date finish_time;
     private String order_comment;
@@ -65,6 +66,13 @@ public class BeanRiderAccount {
         else if(col==1) return ""+this.finish_time;
         else if(col==2) return ""+this.order_comment;
         else if(col==3) return ""+this.per_income;
+        else return "";
+    }
+
+    public String getCell2(int col){
+        if(col==0) return ""+this.rider_id;
+        else if(col==1) return ""+this.order_comment;
+        else if(col==2) return ""+this.finish_time;
         else return "";
     }
 

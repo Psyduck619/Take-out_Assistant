@@ -278,5 +278,61 @@ public class RiderAccountManager implements IRiderAccountManager {
             }
         }
     }
+    //显示用户的所有评价
+    public List<BeanRiderAccount> loadUsers(BeanUser user) throws BaseException{
+        //初始化
+        List<BeanRiderAccount> result = new ArrayList<BeanRiderAccount>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            conn.setAutoCommit(false);
+            //先查询出用户的订单号,然后再根据订单号查询对应的骑手评价
+            sql = "select order_id from tbl_goodsorder where user_id=? and rider_id>=1";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,user.getUser_id());
+            rs = pst.executeQuery();
+            while(rs.next()){
+                sql = "select account_id,order_id,finish_time,order_comment,per_income,rider_id from tbl_rideraccount where order_id=? order by account_id";
+                java.sql.PreparedStatement pst2 = conn.prepareStatement(sql);
+                pst2.setInt(1, rs.getInt(1));
+                java.sql.ResultSet rs2 = pst2.executeQuery();
+                while(rs2.next()){
+                    BeanRiderAccount bra = new BeanRiderAccount();
+                    bra.setAccount_id(rs2.getInt(1));
+                    bra.setOrder_id(rs2.getInt(2));
+                    bra.setFinish_time(rs2.getTimestamp(3));
+                    bra.setOrder_comment(rs2.getString(4));
+                    bra.setPer_income(rs2.getDouble(5));
+                    bra.setRider_id(rs2.getInt(6));
+                    result.add(bra);
+                }
+                rs2.close();
+                pst2.close();
+            }
+            conn.commit();
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            try {
+                conn.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            e.printStackTrace();
+            throw new DbException(e);
+        }
+        finally{
+            if(conn!=null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
 
 }

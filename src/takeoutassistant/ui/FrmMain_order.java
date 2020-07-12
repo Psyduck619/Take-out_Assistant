@@ -32,7 +32,6 @@ public class FrmMain_order extends JFrame implements ActionListener {
     private JMenuItem  menuItem_SelectRider=new JMenuItem("分配骑手");
     private JMenuItem  menuItem_ChangeRider=new JMenuItem("更换骑手");
     private JMenuItem  menuItem_Confirm=new JMenuItem("确认送达");
-    private JMenuItem  menuItem_Delete=new JMenuItem("删除订单");
 
     //状态栏
     private JPanel statusBar = new JPanel();
@@ -79,8 +78,7 @@ public class FrmMain_order extends JFrame implements ActionListener {
     //主界面
     public FrmMain_order(){
         //设置窗口信息
-        this.setExtendedState(Frame.NORMAL);
-        this.setSize(1100,600);
+        this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setTitle("订单管理");
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -98,7 +96,6 @@ public class FrmMain_order extends JFrame implements ActionListener {
         this.menu_OrderAccount.add(this.menuItem_SelectRider); this.menuItem_SelectRider.addActionListener(this);
         this.menu_OrderAccount.add(this.menuItem_ChangeRider); this.menuItem_ChangeRider.addActionListener(this);
         this.menu_OrderAccount.add(this.menuItem_Confirm); this.menuItem_Confirm.addActionListener(this);
-        this.menu_OrderAccount.add(this.menuItem_Delete); this.menuItem_Delete.addActionListener(this);
 
         menubar.add(menu_Order);
         menubar.add(menu_OrderAccount);

@@ -341,8 +341,8 @@ public class FrmMain extends JFrame implements ActionListener {
             FrmAddGoods dlg = new FrmAddGoods(this,"添加商品",true);
             dlg.type = curType;
             dlg.setVisible(true);
-            FrmMain.this.reloadGoodsTabel(FrmMain.this.dataTableGType.getSelectedRow());
             FrmMain.this.reloadGTypeTabel(FrmMain.this.dataTableSeller.getSelectedRow());
+            FrmMain.this.reloadGoodsTabel(FrmMain.this.dataTableGType.getSelectedRow());
         }
         //删除商品
         else if(e.getSource() == this.menuItem_DeleteGoods){

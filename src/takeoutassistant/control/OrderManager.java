@@ -275,13 +275,6 @@ public class OrderManager implements IOrderManager {
             pst.setInt(1,coupon.getCoupon_id());
             pst.setString(2,user.getUser_id());
             pst.execute();
-            //增加对应商家的销量,更改人均消费
-            sql = "update tbl_seller set total_sales=total_sales+1," +
-                    "per_cost=((per_cost*total_sales)+?)/total_sales where seller_id=?";
-            pst = conn.prepareStatement(sql);
-            pst.setDouble(1,price2);
-            pst.setInt(2,seller.getSeller_id());
-            pst.execute();
 
 //            //更新用户的集单表 //①商家有,表中无,则全都添加进去并加1②商家有,表中有,且加1后没达到要求,则直接加1
 //            //③商家有,表中有,且加1后达到要求,则删除该条集单信息,对应优惠券加1④商家有表中无,但需求只有1,那么直接优惠券加1
@@ -868,7 +861,21 @@ public class OrderManager implements IOrderManager {
             pst.setInt(2, order.getOrder_id());
             pst.execute();
             //新建入帐单
-            Double income = 0.0; //先算这单的收入,查询该骑手的单数和身份
+            //先判断是不是新的月份,如果是的话月收入清零,重新计算
+            Date time = null;
+            sql = "select * from tbl_rideraccount where rider_id=?" +
+                    " and YEAR(finish_time)=Year(now()) and MONTH(finish_time)=MONTH(now())";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,order.getOrder_id());
+            rs = pst.executeQuery();
+            if(!rs.next()){
+                sql = "update tbl_rider set month_income=0,order_count=0 where rider_id=?";
+                java.sql.PreparedStatement pst2 = conn.prepareStatement(sql);
+                pst2.execute();
+                pst2.close();
+            }
+            //算这单的收入,查询该骑手的单数和身份
+            Double income = 0.0;
             int count = 0;//单数
             String status = null;
             sql = "select order_count,rider_status from tbl_rider where rider_id=?";
@@ -909,6 +916,35 @@ public class OrderManager implements IOrderManager {
             pst.setDouble(1, income);
             pst.setInt(2, order.getRider_id());
             pst.execute();
+            //如果骑手是新人,入职时间超过3个月,月单数超过450,转为正式员工;如果是正式员工,月单数超过1000,转为单王
+            sql = "update tbl_rider set rider_status='正式员工' where rider_id=? and rider_status='新人' and order_count>=450";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,order.getRider_id());
+            pst.execute();
+            sql = "update tbl_rider set rider_status='单王' where rider_id=? and rider_status='正式员工' and order_count>=1000";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,order.getRider_id());
+            pst.execute();
+            //增加对应商家的销量,更改人均消费
+            sql = "update tbl_seller set total_sales=total_sales+1," +
+                    "per_cost=((per_cost*total_sales)+?)/total_sales where seller_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setDouble(1,order.getFinal_price());
+            pst.setInt(2,order.getSeller_id());
+            pst.execute();
+            //更新每件商品的销量
+            sql = "select goods_id,goods_quantity from tbl_orderinfo where order_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,order.getOrder_id());
+            rs = pst.executeQuery();
+            while(rs.next()){
+                sql = "update tbl_goods set goods_sales=goods_sales+? where goods_id=?";
+                java.sql.PreparedStatement pst2 = conn.prepareStatement(sql);
+                pst2.setInt(1,rs.getInt(2));
+                pst2.setInt(2,rs.getInt(1));
+                pst2.execute();
+                pst2.close();
+            }
             conn.commit();
             rs.close();
             pst.close();
@@ -1083,5 +1119,41 @@ public class OrderManager implements IOrderManager {
                 }
             }
         }
+    }
+    //判断当前用户没有过购买
+    public boolean ifBougnt(BeanUser user) throws BaseException{
+        //判空
+        if(user == null){
+            throw new BusinessException("用户信息错误,请重试");
+        }
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            sql = "select * from tbl_goodsorder where user_id = ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,user.getUser_id());
+            java.sql.ResultSet rs = pst.executeQuery();
+            if(rs.next()){
+                rs.close();
+                pst.close();
+                return true;
+            }
+            rs.close();
+            pst.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
 }

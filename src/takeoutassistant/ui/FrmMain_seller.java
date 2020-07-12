@@ -15,27 +15,16 @@ public class FrmMain_seller extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private JMenuBar menubar=new JMenuBar();
     //总菜单选项
-    private JMenu menu_seller=new JMenu("商家管理");
     private JMenu menu_manjian=new JMenu("满减管理");
     private JMenu menu_coupon=new JMenu("优惠券管理");
-    private JMenu menu_others=new JMenu("其他");
-    //商家菜单选项
-    private JMenuItem  menuItem_AddSeller=new JMenuItem("添加商家");
-    private JMenuItem  menuItem_DeleteSeller=new JMenuItem("删除商家");
-    private JMenuItem  menuItem_ModifyName=new JMenuItem("修改名称");
-    private JMenuItem  menuItem_ShowLevel=new JMenuItem("商家星级筛选");
-    //商家菜单选项
+    //满减选项
     private JMenuItem  menuItem_AddManjian=new JMenuItem("满减添加");
     private JMenuItem  menuItem_DeleteManjian=new JMenuItem("满减删除");
     private JMenuItem  menuItem_ModifyManjian=new JMenuItem("满减修改");
-    //商品类别菜单选项
+    //优惠券菜单选项
     private JMenuItem  menuItem_AddCoupon=new JMenuItem("优惠券添加");
     private JMenuItem  menuItem_DeleteCoupon=new JMenuItem("优惠券删除");
     private JMenuItem  menuItem_ModifyCoupon=new JMenuItem("优惠券修改");
-    //商品菜单选项
-    private JMenuItem  menuItem_AddGoods=new JMenuItem("添加商品");
-    private JMenuItem  menuItem_DeleteGoods=new JMenuItem("删除商品");
-    private JMenuItem  menuItem_ModifyGoods=new JMenuItem("更新商品信息");
 
     //主界面
     private JPanel statusBar = new JPanel();
@@ -141,24 +130,17 @@ public class FrmMain_seller extends JFrame implements ActionListener {
     public FrmMain_seller(){
         this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setTitle("商家满减优惠管理");
-        //商家菜单
-        this.menu_seller.add(this.menuItem_AddSeller); this.menuItem_AddSeller.addActionListener(this);
-        this.menu_seller.add(this.menuItem_DeleteSeller); this.menuItem_DeleteSeller.addActionListener(this);
-        this.menu_seller.add(this.menuItem_ModifyName); this.menuItem_ModifyName.addActionListener(this);
-        this.menu_seller.add(this.menuItem_ShowLevel); this.menuItem_ShowLevel.addActionListener(this);
-        //商品类别菜单
+        //满减菜单
         this.menu_manjian.add(this.menuItem_AddManjian); this.menuItem_AddManjian.addActionListener(this);
         this.menu_manjian.add(this.menuItem_DeleteManjian); this.menuItem_DeleteManjian.addActionListener(this);
         this.menu_manjian.add(this.menuItem_ModifyManjian); this.menuItem_ModifyManjian.addActionListener(this);
-        //商品菜单
+        //优惠券菜单
         this.menu_coupon.add(this.menuItem_AddCoupon); this.menuItem_AddCoupon.addActionListener(this);
         this.menu_coupon.add(this.menuItem_DeleteCoupon); this.menuItem_DeleteCoupon.addActionListener(this);
-        this.menu_coupon.add(this.menuItem_ModifyCoupon); this.menuItem_ModifyCoupon.addActionListener(this);
+        //this.menu_coupon.add(this.menuItem_ModifyCoupon); this.menuItem_ModifyCoupon.addActionListener(this);
 
-        menubar.add(menu_seller);
         menubar.add(menu_manjian);
         menubar.add(menu_coupon);
-        menubar.add(menu_others);
         this.setJMenuBar(menubar);
 
         //主界面布局
@@ -167,7 +149,7 @@ public class FrmMain_seller extends JFrame implements ActionListener {
         JScrollPane js2 = new JScrollPane(this.dataTableManjian);
         js2.setPreferredSize(new Dimension(200, 10));
         JScrollPane js3 = new JScrollPane(this.dataTableCoupon);
-        js3.setPreferredSize(new Dimension(750, 10));
+        js3.setPreferredSize(new Dimension(600, 10));
         //商家信息在左
         this.getContentPane().add(js1, BorderLayout.WEST);
         this.dataTableSeller.addMouseListener(new MouseAdapter(){
@@ -216,48 +198,11 @@ public class FrmMain_seller extends JFrame implements ActionListener {
         JLabel label=new JLabel("您好!管理员!");
         statusBar.add(label);
         this.getContentPane().add(statusBar,BorderLayout.SOUTH);
-//        this.addWindowListener(new WindowAdapter(){
-//            public void windowClosing(WindowEvent e){
-//                System.exit(0);
-//            }
-//        });
-
         this.setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        //添加商家
-        if(e.getSource() == this.menuItem_AddSeller){
-            FrmAddSeller dlg = new FrmAddSeller(this,"添加商家",true);
-            dlg.setVisible(true);
-            reloadSellerTable();
-        }
-        //删除商家
-        else if(e.getSource() == this.menuItem_DeleteSeller){
-            if(this.curSeller == null) {
-                JOptionPane.showMessageDialog(null, "请选择商家", "错误",JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            try {
-                TakeoutAssistantUtil.sellerManager.deleteSeller(this.curSeller);
-                reloadSellerTable();
-            } catch (BaseException e1) {
-                JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        }
-        //修改商家名称
-        else if(e.getSource() == this.menuItem_ModifyName){
-            if(this.curSeller == null) {
-                JOptionPane.showMessageDialog(null, "请选择商家", "错误",JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            FrmModifySeller dlg = new FrmModifySeller(this,"添加商家",true);
-            dlg.setVisible(true);
-            reloadSellerTable();
-        }
 
         //添加满减
         if(e.getSource() == this.menuItem_AddManjian){

@@ -25,6 +25,8 @@ public class FrmMyOrder extends JFrame implements ActionListener {
     private JButton btnRiderComment = new JButton("评价骑手");
     private JButton btnCancel = new JButton("取消订单");
     private JButton btnDelete = new JButton("删除订单");
+    private JButton btnShowGoodsComment = new JButton("我的商品评价");
+    private JButton btnShowRiderComment = new JButton("我的骑手评价");
 
     //主界面
     private JPanel statusBar = new JPanel();
@@ -57,8 +59,7 @@ public class FrmMyOrder extends JFrame implements ActionListener {
     //主界面
     public FrmMyOrder(){
         //设置窗口信息
-        this.setExtendedState(Frame.NORMAL);
-        this.setSize(1000,500);
+        this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setTitle("我的订单");
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -70,6 +71,8 @@ public class FrmMyOrder extends JFrame implements ActionListener {
         menuBar.add(btnRiderComment); this.btnRiderComment.addActionListener(this);
         menuBar.add(btnCancel); this.btnCancel.addActionListener(this);
         menuBar.add(btnDelete); this.btnDelete.addActionListener(this);
+        menuBar.add(btnShowGoodsComment); this.btnShowGoodsComment.addActionListener(this);
+        menuBar.add(btnShowRiderComment); this.btnShowRiderComment.addActionListener(this);
         //菜单栏
         menuBar.setLayout(new FlowLayout(FlowLayout.LEFT));
         this.getContentPane().add(menuBar,BorderLayout.NORTH);
@@ -167,7 +170,14 @@ public class FrmMyOrder extends JFrame implements ActionListener {
             dlg.setVisible(true);
             reloadOrderTable();
         }
-
+        //查看所有我的商品评价
+        if(e.getSource() == this.btnShowGoodsComment){
+            new FrmMyGoodsComment();
+        }
+        //查看所有我的骑手评价
+        if(e.getSource() == this.btnShowRiderComment){
+            new FrmMyRiderComment();
+        }
     }
 
 }

@@ -1,10 +1,7 @@
 package takeoutassistant.itf;
 
 import takeoutassistant.control.UserManager;
-import takeoutassistant.model.BeanGoods;
-import takeoutassistant.model.BeanGoodsOrder;
-import takeoutassistant.model.BeanOrderInfo;
-import takeoutassistant.model.BeanUser;
+import takeoutassistant.model.*;
 import takeoutassistant.util.BaseException;
 import takeoutassistant.util.DBUtil;
 import takeoutassistant.util.DbException;
@@ -24,6 +21,8 @@ public interface IOrderInfoManager {
     public List<BeanOrderInfo> loadMyOrderInfo(BeanGoodsOrder order) throws BaseException;
     //删除订单信息
     public void deleteOrderInfo(BeanOrderInfo orderInfo) throws BaseException;
+    //判断购物车里的商品有没有当前商家以外的
+    public boolean isOnly(BeanUser user, BeanSeller curSeller) throws BaseException;
     //清空购物车
     public void deleteAll(BeanUser user) throws BaseException;
     //得到当前购物车某商品的数量(增加商品)
@@ -38,5 +37,7 @@ public interface IOrderInfoManager {
     public void addCount(BeanOrderInfo orderInfo, int count) throws BaseException;
     //购物车减少商品数量
     public void loseCount(BeanOrderInfo orderInfo, int count) throws BaseException;
+    //根据产品购买量为用户推荐产品
+    public List<BeanRecommend> Recommend(BeanUser user) throws BaseException;
 
 }

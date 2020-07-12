@@ -1,9 +1,6 @@
 package takeoutassistant.itf;
 
-import takeoutassistant.model.BeanGoodsOrder;
-import takeoutassistant.model.BeanRider;
-import takeoutassistant.model.BeanRiderAccount;
-import takeoutassistant.model.BeanSeller;
+import takeoutassistant.model.*;
 import takeoutassistant.util.BaseException;
 
 import java.util.List;
@@ -16,5 +13,6 @@ public interface IRiderAccountManager {
     public void modifyRiderAccount(int riderid, BeanRiderAccount riderAccount) throws BaseException;//修改入帐单的归属
     public void addRiderComment(BeanGoodsOrder order, String comment) throws BaseException;//添加骑手评价
     public boolean isComment(BeanGoodsOrder order) throws BaseException;//判断订单是否已评价骑手
+    public List<BeanRiderAccount> loadUsers(BeanUser user) throws BaseException;//显示用户的所有评价
 
 }

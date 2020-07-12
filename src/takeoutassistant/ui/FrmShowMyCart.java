@@ -13,11 +13,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.beans.BeanInfo;
 import java.util.List;
 
 import static takeoutassistant.model.BeanUser.currentLoginUser;
 import static takeoutassistant.ui.FrmConfirm.confirm;
+import static takeoutassistant.ui.FrmMain_user.curSeller;
 import static takeoutassistant.ui.FrmShowSeller.curGoods;
 
 public class FrmShowMyCart extends JFrame implements ActionListener {
@@ -90,7 +90,7 @@ public class FrmShowMyCart extends JFrame implements ActionListener {
                 if(i < 0) {
                     return;
                 }
-                System.out.println("curMyCart:"+i);
+                System.out.println(i);
                 curMyCart = allMyCart.get(i);
             }
         });
@@ -98,8 +98,8 @@ public class FrmShowMyCart extends JFrame implements ActionListener {
         this.reloadMyCartTable();
         //×´Ì¬À¸
         statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        String name = curUser.getUser_name();
-        JLabel label=new JLabel("ÄúºÃ!×ð¾´µÄ"+name+"!");
+        String name = curSeller.getSeller_name();
+        JLabel label=new JLabel("ÄúºÃ!»¶Ó­¹âÁÙ"+name+"!");
         statusBar.add(label);
         this.getContentPane().add(statusBar,BorderLayout.SOUTH);
 

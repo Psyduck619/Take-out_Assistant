@@ -68,13 +68,13 @@ public class FrmAddtoCart extends JDialog implements ActionListener {
             } catch (BaseException baseException) {
                 baseException.printStackTrace();
             }
-            System.out.println(cartQuantity);
-            System.out.println(goods_quantity);
             if(Integer.parseInt(count)+cartQuantity > goods_quantity){
                 JOptionPane.showMessageDialog(null, "商品库存不足", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try {
+                System.out.println("商品编号"+curGoods.getGoods_id());
+                System.out.println("加入商品数量"+Integer.parseInt(count));
                 TakeoutAssistantUtil.orderInfoManager.addOrderInfo(curUser, curGoods, Integer.parseInt(count));
                 this.setVisible(false);
             } catch (BaseException e1) {

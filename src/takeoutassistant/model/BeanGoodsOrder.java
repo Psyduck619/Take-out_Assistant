@@ -3,7 +3,7 @@ package takeoutassistant.model;
 import java.util.Date;
 
 public class BeanGoodsOrder {
-    public static final String[] tblOrderTitle={"订单编号","用户编号","商家编号","地址编号","骑手编号","下单时间","期望送达时间","配送状态"};
+    public static final String[] tblOrderTitle={"订单编号","用户编号","商家编号","地址编号","骑手编号","原价","实际价格","满减编号","优惠券编号","下单时间","期望送达时间","配送状态"};
     //public static final String[] tblOrderTitle2={"订单编号","用户编号","商家编号","地址编号","骑手编号","下单时间","期望送达时间","配送状态"};
     private int order_id;
     private int seller_id;
@@ -129,9 +129,13 @@ public class BeanGoodsOrder {
         else if(col==2) return ""+this.seller_id;
         else if(col==3) return ""+this.add_id;
         else if(col==4) return ""+this.rider_id;
-        else if(col==5) return ""+this.order_time;
-        else if(col==6) return ""+this.request_time;
-        else if(col==7) return ""+this.order_state;
+        else if(col==5) return ""+this.original_price;
+        else if(col==6) return ""+this.final_price;
+        else if(col==7) return ""+this.manjian_id;
+        else if(col==8) return ""+this.coupon_id;
+        else if(col==9) return ""+this.order_time;
+        else if(col==10) return ""+this.request_time;
+        else if(col==11) return ""+this.order_state;
         else return "";
     }
 

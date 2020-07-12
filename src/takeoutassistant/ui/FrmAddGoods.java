@@ -80,13 +80,13 @@ public class FrmAddGoods extends JDialog implements ActionListener {
                 JOptionPane.showMessageDialog(null, "金额格式错误", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if(quantity == null || "".equals(name)){
+            if(quantity == null || "".equals(quantity)){
                 JOptionPane.showMessageDialog(null, "商品数量不能为空", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             Pattern p = Pattern.compile("[0-9]*");
             if(!p.matcher(quantity).matches()){
-                JOptionPane.showMessageDialog(null, "商品数量只能为正整数", "错误",JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "商品数量只能为非零整数", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try {

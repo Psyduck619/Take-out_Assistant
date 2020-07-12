@@ -1,8 +1,12 @@
 package takeoutassistant.model;
 
+import takeoutassistant.TakeoutAssistantUtil;
+import takeoutassistant.util.BaseException;
+
 public class BeanGoods {
-    public static final String[] tblGoodsTitle={"商品名称","单价","会员价","剩余数量"};
-    public static final String[] tblGoodsTitle2={"热门商品","单价","会员价"};
+    public static final String[] tblGoodsTitle={"商品编号","商品名称","单价","会员价","销量","库存","星级"};
+    public static final String[] tblGoodsTitle2={"热门商品","单价","会员价","销量"};
+    public static final String[] tblGoodsTitle3={"商家名称","商品类别","商品名称","单价","会员价","销量","库存","星级"};
     private int goods_id;
     private int type_id;
     private String goods_type;
@@ -10,6 +14,24 @@ public class BeanGoods {
     private double price;
     private double discount_price;
     private int goods_quantity;
+    private int goods_sales;
+    private double goods_level;
+
+    public int getGoods_sales() {
+        return goods_sales;
+    }
+
+    public void setGoods_sales(int goods_sales) {
+        this.goods_sales = goods_sales;
+    }
+
+    public double getGoods_level() {
+        return goods_level;
+    }
+
+    public void setGoods_level(double goods_level) {
+        this.goods_level = goods_level;
+    }
 
     public int getGoods_quantity() {
         return goods_quantity;
@@ -68,10 +90,13 @@ public class BeanGoods {
     }
 
     public String getCell(int col){
-        if(col==0) return this.goods_name;
-        else if(col==1) return ""+this.price;
-        else if(col==2) return ""+this.discount_price;
-        else if(col==3) return ""+this.goods_quantity;
+        if(col==0) return ""+this.goods_id;
+        else if(col==1) return this.goods_name;
+        else if(col==2) return ""+this.price;
+        else if(col==3) return ""+this.discount_price;
+        else if(col==4) return ""+this.goods_sales;
+        else if(col==5) return ""+this.goods_quantity;
+        else if(col==6) return ""+this.goods_level;
         else return "";
     }
 
@@ -79,7 +104,27 @@ public class BeanGoods {
         if(col==0) return this.goods_name;
         else if(col==1) return ""+this.price;
         else if(col==2) return ""+this.discount_price;
+        else if(col==3) return ""+this.goods_sales;
         else return "";
+    }
+
+    public String getCell3(int col){
+        if(col==0) {
+            try {
+                return TakeoutAssistantUtil.goodsManager.typeToSeller_name(this.type_id);
+            } catch (BaseException e) {
+                e.printStackTrace();
+            }
+        }
+        else if(col==1) return ""+this.goods_type;
+        else if(col==2) return ""+this.goods_name;
+        else if(col==3) return ""+this.price;
+        else if(col==4) return ""+this.discount_price;
+        else if(col==5) return ""+this.goods_sales;
+        else if(col==6) return ""+this.goods_quantity;
+        else if(col==7) return ""+this.goods_level;
+        else return "";
+        return null;
     }
 
 }

@@ -10,6 +10,32 @@ public class BeanOrderInfo {
     private double per_discount;
     private String user_id;
     private boolean done;
+    private boolean flag;
+    private boolean comment;
+
+    public double getGoods_price() {
+        return goods_price;
+    }
+
+    public void setGoods_price(double goods_price) {
+        this.goods_price = goods_price;
+    }
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
+    }
+
+    public boolean isComment() {
+        return comment;
+    }
+
+    public void setComment(boolean comment) {
+        this.comment = comment;
+    }
 
     public String getGoods_name() {
         return goods_name;

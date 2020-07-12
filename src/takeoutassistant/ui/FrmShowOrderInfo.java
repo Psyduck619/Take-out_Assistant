@@ -54,7 +54,7 @@ public class FrmShowOrderInfo extends JFrame implements ActionListener {
     public FrmShowOrderInfo(){
         //设置窗口信息
         this.setExtendedState(Frame.NORMAL);
-        this.setSize(1000,500);
+        this.setSize(800,400);
         this.setTitle("订单详情表");
         // 窗口居中
         double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -97,15 +97,15 @@ public class FrmShowOrderInfo extends JFrame implements ActionListener {
                 return;
             }
             //判断是否已评价
-//            try {
-//                boolean flag = TakeoutAssistantUtil.riderAccountManager.isComment(curOrderInfo);
-//                if(flag){
-//                    JOptionPane.showMessageDialog(null, "该商品已进行评价", "错误",JOptionPane.ERROR_MESSAGE);
-//                    return;
-//                }
-//            } catch (BaseException baseException) {
-//                baseException.printStackTrace();
-//            }
+            try {
+                boolean flag = TakeoutAssistantUtil.goodsCommentManager.isComment(curOrderInfo);
+                if(flag){
+                    JOptionPane.showMessageDialog(null, "该商品已评价或评价已被删除", "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
             FrmAddGoodsComment dlg = new FrmAddGoodsComment(this,"商品评价",true);
             dlg.setVisible(true);
             reloadOrderInfoTable();

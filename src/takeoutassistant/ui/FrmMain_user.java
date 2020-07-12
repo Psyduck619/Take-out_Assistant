@@ -17,17 +17,16 @@ import static takeoutassistant.ui.FrmLogin.loginType;
 public class FrmMain_user extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private JMenuBar menubar=new JMenuBar();
-    private JMenu menu_buy=new JMenu("商品选购");
-    private JMenu menu_order=new JMenu("订单");
-    private JMenu menu_user=new JMenu("个人");
-    private JMenu menu_VIP=new JMenu("会员");
+    private JMenu menu_buy=new JMenu("商家与商品");
+    private JMenu menu_order=new JMenu("订单管理");
+    private JMenu menu_user=new JMenu("个人管理");
+    private JMenu menu_VIP=new JMenu("会员管理");
 
-    private JMenuItem menuItem_ShowSeller=new JMenuItem("查看商家详情");
+    private JMenuItem menuItem_ShowSeller=new JMenuItem("选择商家");
+    private JMenuItem menuItem_CheckGoods=new JMenuItem("商品名查询商品");
+    private JMenuItem menuItem_CheckType=new JMenuItem("类别查询商品");
     //用户订单管理
     private JMenuItem menuItem_ShowOrder=new JMenuItem("查看订单");
-//    private JMenuItem menuItem_CommentGoods=new JMenuItem("评价商品");
-//    private JMenuItem menuItem_CommentOrder=new JMenuItem("评价骑手");
-//    private JMenuItem menuItem_DeleteOrder=new JMenuItem("删除订单");
     //个人菜单组件
     private JMenuItem menuItem_myCoupon=new JMenuItem("我的优惠券");
     private JMenuItem menuItem_myJidan=new JMenuItem("我的集单");
@@ -111,7 +110,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
         tblGoodsData = new Object[allGoods.size()][BeanGoods.tblGoodsTitle.length];
         for(int i = 0 ; i < allGoods.size() ; i++){
             for(int j = 0 ; j < BeanGoods.tblGoodsTitle.length ; j++)
-                tblGoodsData[i][j] = allGoods.get(i).getCell(j);
+                tblGoodsData[i][j] = allGoods.get(i).getCell2(j);
         }
 
         tabGoodsModel.setDataVector(tblGoodsData,tblGoodsTitle);
@@ -122,13 +121,12 @@ public class FrmMain_user extends JFrame implements ActionListener {
 
         this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setTitle("大开大合-外卖助手");
-        //菜单
+        //商家菜单
         this.menu_buy.add(this.menuItem_ShowSeller); this.menuItem_ShowSeller.addActionListener(this);
+        this.menu_buy.add(this.menuItem_CheckGoods); this.menuItem_CheckGoods.addActionListener(this);
+        this.menu_buy.add(this.menuItem_CheckType); this.menuItem_CheckType.addActionListener(this);
         //订单菜单
         this.menu_order.add(this.menuItem_ShowOrder); this.menuItem_ShowOrder.addActionListener(this);
-//        this.menu_buy.add(this.menuItem_CommentGoods); this.menuItem_CommentGoods.addActionListener(this);
-//        this.menu_buy.add(this.menuItem_CommentOrder); this.menuItem_CommentOrder.addActionListener(this);
-//        this.menu_buy.add(this.menuItem_DeleteOrder); this.menuItem_DeleteOrder.addActionListener(this);
         //个人菜单
         this.menu_user.add(this.menuItem_myCoupon); this.menuItem_myCoupon.addActionListener(this);
         this.menu_user.add(this.menuItem_myJidan); this.menuItem_myJidan.addActionListener(this);
@@ -148,10 +146,10 @@ public class FrmMain_user extends JFrame implements ActionListener {
         //主界面布局
         JScrollPane js1 = new JScrollPane(this.dataTableSeller);
         js1.setPreferredSize(new Dimension(500, 10));
-        JScrollPane js2 = new JScrollPane(this.dataTableManjian);
-        js2.setPreferredSize(new Dimension(200, 10));
-        JScrollPane js3 = new JScrollPane(this.dataTableGoods);
-        js3.setPreferredSize(new Dimension(400, 10));
+        JScrollPane js2 = new JScrollPane(this.dataTableGoods);
+        js2.setPreferredSize(new Dimension(500, 10));
+        JScrollPane js3 = new JScrollPane(this.dataTableManjian);
+        js3.setPreferredSize(new Dimension(300, 10));
         //商家信息在左
         this.getContentPane().add(js1, BorderLayout.WEST);
         this.dataTableSeller.addMouseListener(new MouseAdapter (){
@@ -165,12 +163,14 @@ public class FrmMain_user extends JFrame implements ActionListener {
                 FrmMain_user.this.reloadGoodsTabel(i);
             }
         });
-        //满减信息在中
-        this.getContentPane().add(js2, BorderLayout.CENTER);
         //热门商品信息在右
+        this.getContentPane().add(js2, BorderLayout.CENTER);
+        //满减信息在中
         this.getContentPane().add(js3, BorderLayout.EAST);
         //加载初始信息
         this.reloadSellerTable();  //加载商家信息
+//        this.reloadGoodsTabel(0);
+//        this.reloadManjianTabel(0);
         //状态栏
         if(loginType == "用户"){  //用户登录界面
             statusBar.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -183,6 +183,13 @@ public class FrmMain_user extends JFrame implements ActionListener {
             statusBar.add(label);
             this.getContentPane().add(statusBar,BorderLayout.SOUTH);
             this.setVisible(true);
+            //判断当前用户有没有过购买经历,有的话就推荐
+            try {
+                if(TakeoutAssistantUtil.orderManager.ifBougnt(currentLoginUser))
+                new FrmShowRecommend();
+            } catch (BaseException e) {
+                e.printStackTrace();
+            }
         }
         this.addWindowListener(new WindowAdapter(){  //关闭窗口即退出程序
             public void windowClosing(WindowEvent e){
@@ -235,6 +242,16 @@ public class FrmMain_user extends JFrame implements ActionListener {
                 return;
             }
             new FrmShowSeller();
+        }
+        //根据商品名进行查询
+        else if(e.getSource() == this.menuItem_CheckGoods){
+            FrmPutGoodsName dlg = new FrmPutGoodsName(this,"商品查询",true);
+            dlg.setVisible(true);
+        }
+        //根据类别进行查询
+        else if(e.getSource() == this.menuItem_CheckType){
+            FrmPutTypeName dlg = new FrmPutTypeName(this,"商品查询",true);
+            dlg.setVisible(true);
         }
         //用户地址管理
         else if(e.getSource() == this.menuItem_myaddress){

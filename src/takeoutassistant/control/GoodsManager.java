@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GoodsManager {
+
     //增加商品
     public void addGoods(BeanGoodsType type, String name, double price1, double price2, int quantity) throws BaseException {
         //判断是否选择商品类别
@@ -49,7 +50,7 @@ public class GoodsManager {
             pst.execute();
             pst.close();
             //实现商品添加到数据库
-            sql = "insert into tbl_goods(type_id,goods_type,goods_name,price,discount_price,goods_quantity) values(?,?,?,?,?,?)";
+            sql = "insert into tbl_goods(type_id,goods_type,goods_name,price,discount_price,goods_quantity,goods_sales,goods_level) values(?,?,?,?,?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, type.getType_id());
             pst.setString(2, type.getType_name());
@@ -57,8 +58,10 @@ public class GoodsManager {
             pst.setDouble(4, price1);
             pst.setDouble(5, price2);
             pst.setInt(6, quantity);
-            conn.commit();
+            pst.setInt(7,0);
+            pst.setDouble(8,0.0);
             pst.execute();
+            conn.commit();
             pst.close();
         } catch (SQLException e) {
             try {
@@ -77,7 +80,6 @@ public class GoodsManager {
             }
         }
     }
-
     //显示所有商品
     public List<BeanGoods> loadGoods(BeanGoodsType type) throws BaseException {
         //初始化
@@ -119,7 +121,6 @@ public class GoodsManager {
                 }
         }
     }
-
     //删除商品
     public void deleteGoods(BeanGoods goods) throws BaseException {
         //判断是否选择了某一商品
@@ -157,7 +158,6 @@ public class GoodsManager {
             }
         }
     }
-
     //修改商品名字.价格.优惠价
     public void modifyGoods(BeanGoods goods, String name, double price1, double price2, int quantity) throws BaseException {
         //判断是否选择商品
@@ -215,7 +215,6 @@ public class GoodsManager {
             }
         }
     }
-
     //显示热门产品(最好的三个产品)
     public List<BeanGoods> loadHGoods(BeanSeller seller) throws BaseException {
         //初始化
@@ -227,8 +226,8 @@ public class GoodsManager {
         try {
             conn = DBUtil.getConnection();
             //实现显示对应类别全部商品功能
-            sql = "select a.goods_id,a.goods_name,a.goods_type,a.price,a.discount_price,a.goods_quantity from tbl_goods a,tbl_goodstype b" +
-                    " where b.type_id=a.type_id and b.seller_id=? LIMIT 3";
+            sql = "select a.goods_id,a.goods_name,a.goods_type,a.price,a.discount_price,a.goods_quantity,a.goods_sales top from tbl_goods a,tbl_goodstype b" +
+                    " where b.type_id=a.type_id and b.seller_id=? order by top DESC LIMIT 3";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, seller.getSeller_id());
             rs = pst.executeQuery();
@@ -240,6 +239,7 @@ public class GoodsManager {
                 bg.setPrice(rs.getDouble(4));
                 bg.setDiscount_price(rs.getDouble(5));
                 bg.setGoods_quantity(rs.getInt(6));
+                bg.setGoods_sales(rs.getInt(7));
                 result.add(bg);
             }
             rs.close();
@@ -257,4 +257,157 @@ public class GoodsManager {
                 }
         }
     }
+    //根据类别ID得到商家名
+    public String typeToSeller_name(int type_id) throws BaseException{
+        //初始化
+        List<BeanGoods> result = new ArrayList<BeanGoods>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //sql
+            sql = "select b.seller_name from tbl_goodstype a,tbl_seller b where a.type_id=? and a.seller_id=b.seller_id";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, type_id);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                return rs.getString(1);
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return null;
+    }
+    //根据商品ID得到商品名
+    public String idToName(int goods_id) throws BaseException{
+        //初始化
+        List<BeanGoods> result = new ArrayList<BeanGoods>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //sql
+            sql = "select goods_name from tbl_goods where goods_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1, goods_id);
+            rs = pst.executeQuery();
+            if (rs.next()) {
+                return rs.getString(1);
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+        return null;
+    }
+    //按商品名查询
+    public List<BeanGoods> loadForName(String name) throws BaseException{
+        //初始化
+        List<BeanGoods> result = new ArrayList<BeanGoods>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现sql查询
+            sql = "select goods_id,goods_name,goods_type,price,discount_price,goods_quantity,type_id,goods_sales,goods_level from tbl_goods where goods_name like ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, "%"+name+"%");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                BeanGoods bg = new BeanGoods();
+                bg.setGoods_id(rs.getInt(1));
+                bg.setGoods_name(rs.getString(2));
+                bg.setGoods_type(rs.getString(3));
+                bg.setPrice(rs.getDouble(4));
+                bg.setDiscount_price(rs.getDouble(5));
+                bg.setGoods_quantity(rs.getInt(6));
+                bg.setType_id(rs.getInt(7));
+                bg.setGoods_sales(rs.getInt(8));
+                bg.setGoods_level(rs.getDouble(9));
+                result.add(bg);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //按类别名查询
+    public List<BeanGoods> loadForType(String name) throws BaseException{
+        //初始化
+        List<BeanGoods> result = new ArrayList<BeanGoods>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            //实现sql查询
+            sql = "select goods_id,goods_name,goods_type,price,discount_price,goods_quantity,type_id,goods_sales,goods_level from tbl_goods where goods_type like ?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, "%"+name+"%");
+            rs = pst.executeQuery();
+            while (rs.next()) {
+                BeanGoods bg = new BeanGoods();
+                bg.setGoods_id(rs.getInt(1));
+                bg.setGoods_name(rs.getString(2));
+                bg.setGoods_type(rs.getString(3));
+                bg.setPrice(rs.getDouble(4));
+                bg.setDiscount_price(rs.getDouble(5));
+                bg.setGoods_quantity(rs.getInt(6));
+                bg.setType_id(rs.getInt(7));
+                bg.setGoods_sales(rs.getInt(8));
+                bg.setGoods_level(rs.getDouble(9));
+                result.add(bg);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        } finally {
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+
 }

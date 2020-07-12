@@ -53,5 +53,7 @@ public interface IOrderManager {
     public void modifyOverTime(BeanGoodsOrder order) throws BaseException;
     //修改订单状态为"已取消"
     public void modifyCancel(BeanGoodsOrder order) throws BaseException;
+    //判断当前用户没有过购买
+    public boolean ifBougnt(BeanUser user) throws BaseException;
 
 }

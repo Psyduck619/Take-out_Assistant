@@ -103,7 +103,7 @@ public class FrmMain_rider extends JFrame implements ActionListener {
         this.menu_RiderAccount.add(this.menuItem_ModifyRiderAccount); this.menuItem_ModifyRiderAccount.addActionListener(this);
 
         menubar.add(menu_Rider);
-        menubar.add(menu_RiderAccount);
+        //menubar.add(menu_RiderAccount);
         this.setJMenuBar(menubar);
 
         //主界面布局
