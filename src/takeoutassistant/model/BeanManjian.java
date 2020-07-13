@@ -1,7 +1,7 @@
 package takeoutassistant.model;
 
 public class BeanManjian {
-    public static final String[] tblManjianTitle={"Âú×ã½ğ¶î","ÓÅ»İ½ğ¶î"};
+    public static final String[] tblManjianTitle={"Âú¼õ±àºÅ","Âú×ã½ğ¶î","ÓÅ»İ½ğ¶î"};
     private int manjian_id;
     private int seller_id;
     private int manjian_amount;
@@ -40,8 +40,9 @@ public class BeanManjian {
     }
 
     public String getCell(int col){
-        if(col==0) return ""+this.manjian_amount;
-        else if(col==1) return ""+this.discount_amount;
+        if(col==0) return ""+this.manjian_id;
+        else if(col==1) return ""+this.manjian_amount;
+        else if(col==2) return ""+this.discount_amount;
         else return "";
     }
 }

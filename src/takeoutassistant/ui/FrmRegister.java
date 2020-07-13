@@ -61,6 +61,7 @@ public class FrmRegister extends JDialog implements ActionListener {
 		workPane.add(edtGender);
 		workPane.add(edtGender2);
 		workPane.add(edtGender3);
+		edtGender.setSelected(true);
 
 		workPane.add(labelPhone);
 		workPane.add(edtPhone);

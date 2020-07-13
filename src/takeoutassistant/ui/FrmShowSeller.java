@@ -207,7 +207,14 @@ public class FrmShowSeller extends JFrame implements ActionListener {
         }
         //订单结算
         else if(e.getSource() == btBuy){
+
             FrmBuy dlg = new FrmBuy(this,"订单结算",true);
+            //判断是否有优惠券过期了
+            try {
+                TakeoutAssistantUtil.myCouponManager.ifOVerTime(currentLoginUser);
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
             //判断购物车里的商品有没有当前商家以外的
             try {
                 if(!TakeoutAssistantUtil.orderInfoManager.isOnly(currentLoginUser,curSeller)){

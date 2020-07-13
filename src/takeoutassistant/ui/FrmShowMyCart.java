@@ -44,6 +44,7 @@ public class FrmShowMyCart extends JFrame implements ActionListener {
     private void reloadMyCartTable(){
         try {
             allMyCart = TakeoutAssistantUtil.orderInfoManager.loadOrderInfo(curUser);
+            System.out.println("allCart:"+allMyCart.size());
         } catch (BaseException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
             return;
@@ -90,7 +91,9 @@ public class FrmShowMyCart extends JFrame implements ActionListener {
                 if(i < 0) {
                     return;
                 }
+                reloadMyCartTable();
                 System.out.println(i);
+                System.out.println(allMyCart.size());
                 curMyCart = allMyCart.get(i);
             }
         });
@@ -111,12 +114,17 @@ public class FrmShowMyCart extends JFrame implements ActionListener {
 
         //删除整条商品
         if(e.getSource() == this.btDelete){
+            if(this.allMyCart.size() == 0){
+                JOptionPane.showMessageDialog(null, "购物车为空", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if(this.curMyCart == null) {
                 JOptionPane.showMessageDialog(null, "请选择一项商品", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             try {
                 TakeoutAssistantUtil.orderInfoManager.deleteOrderInfo(this.curMyCart);
+                curMyCart = null;
                 reloadMyCartTable();
             } catch (BaseException e1) {
                 JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
@@ -125,32 +133,47 @@ public class FrmShowMyCart extends JFrame implements ActionListener {
         }
         //在购物车中增加商品数量
         if(e.getSource() == this.btAdd){
+            if(this.allMyCart.size() == 0){
+                JOptionPane.showMessageDialog(null, "购物车为空", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if(this.curMyCart == null) {
                 JOptionPane.showMessageDialog(null, "请选择一项商品", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
             FrmAddCartGoods dlg = new FrmAddCartGoods(this,"添加商品数量",true);
             dlg.setVisible(true);
+            curMyCart = null;
             reloadMyCartTable();
         }
         //在购物车中减少商品数量
         if(e.getSource() == this.btLose){
+            if(this.allMyCart.size() == 0){
+                JOptionPane.showMessageDialog(null, "购物车为空", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if(this.curMyCart == null) {
                 JOptionPane.showMessageDialog(null, "请选择一项商品", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            FrmLoseCartGoods dlg = new FrmLoseCartGoods(this,"添加商品数量",true);
+            FrmLoseCartGoods dlg = new FrmLoseCartGoods(this,"减少商品数量",true);
             dlg.setVisible(true);
+            curMyCart = null;
             reloadMyCartTable();
         }
         //清空购物车
         if(e.getSource() == this.btClear){
+            if(this.allMyCart.size() == 0){
+                JOptionPane.showMessageDialog(null, "购物车已空", "提示",JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
             try {
                 FrmConfirm dlg = new FrmConfirm(this, "提示", true);
                 dlg.setVisible(true);
                 if(confirm){
                     TakeoutAssistantUtil.orderInfoManager.deleteAll(curUser);
                     JOptionPane.showMessageDialog(null, "购物车清空成功~", "提示", JOptionPane.INFORMATION_MESSAGE);
+                    curMyCart = null;
                     reloadMyCartTable();
                 }
                 else

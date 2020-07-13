@@ -242,23 +242,21 @@ public class RiderAccountManager implements IRiderAccountManager {
             pst.setDouble(2, money);
             pst.setInt(3, order.getOrder_id());
             pst.execute();
-            pst.close();
-            //更新骑手收入(先查询出骑手ID)
-            int riderID = 0;
-            sql = "select rider_id from tbl_rideraccount where order_id=?";
-            pst = conn.prepareStatement(sql);
-            pst.setInt(1,order.getOrder_id());
-            rs = pst.executeQuery();
-            if(rs.next()){
-                riderID = rs.getInt(1);
-            }
-            pst.close();
-            rs.close();
+//            //更新骑手收入(先查询出骑手ID)
+//            int riderID = 0;
+//            sql = "select rider_id from tbl_rideraccount where order_id=?";
+//            pst = conn.prepareStatement(sql);
+//            pst.setInt(1,order.getOrder_id());
+//            rs = pst.executeQuery();
+//            if(rs.next()){
+//                riderID = rs.getInt(1);
+//            }
             sql = "update tbl_rider set month_income=month_income+? where rider_id=?";
             pst = conn.prepareStatement(sql);
             pst.setDouble(1,money);
-            pst.setInt(2,riderID);
+            pst.setInt(2,order.getRider_id());
             pst.execute();
+
             conn.commit();
             pst.close();
         } catch (SQLException e) {

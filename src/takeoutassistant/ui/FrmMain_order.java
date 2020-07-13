@@ -146,8 +146,8 @@ public class FrmMain_order extends JFrame implements ActionListener {
             }
             reloadOrderTable();
         }
-        //筛选"确认送达"订单
-        else if(e.getSource() == this.menuItem_Confirm){
+        //筛选"已送达"订单
+        else if(e.getSource() == this.menuItem_Done){
             try {
                 allOrder = TakeoutAssistantUtil.orderManager.loadConfirm();
             } catch (BaseException baseException) {

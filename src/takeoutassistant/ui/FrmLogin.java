@@ -52,12 +52,12 @@ public class FrmLogin extends JDialog implements ActionListener {
 		workPane.add(rbtUser2);
 
 		this.getContentPane().add(workPane, BorderLayout.CENTER);
-		Icon icon = new ImageIcon("src/PIKA.jpg");
+		Icon icon = new ImageIcon("src/timg.jpg");
 		lIcon.setIcon(icon);
 		imagePane.add(lIcon);
 		imagePane.setBackground(Color.DARK_GRAY);
 		this.getContentPane().add(imagePane,BorderLayout.NORTH);
-		this.setSize(320, 520);
+		this.setSize(320, 530);
 		// ∆¡ƒªæ”÷–œ‘ æ
 		double width = Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 		double height = Toolkit.getDefaultToolkit().getScreenSize().getHeight();

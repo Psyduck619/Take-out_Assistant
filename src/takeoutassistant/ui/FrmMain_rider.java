@@ -23,7 +23,7 @@ public class FrmMain_rider extends JFrame implements ActionListener {
     //骑手菜单选项
     private JMenuItem  menuItem_AddRider=new JMenuItem("添加骑手");
     private JMenuItem  menuItem_DeleteRider=new JMenuItem("删除骑手");
-    private JMenuItem  menuItem_ModifyRider=new JMenuItem("修改骑手");
+    private JMenuItem  menuItem_ModifyRider=new JMenuItem("修改骑手身份");
     private JMenuItem  menuItem_ShowRider=new JMenuItem("筛选骑手");
     //入帐单菜单选项
     private JMenuItem  menuItem_DeleteRiderAccount=new JMenuItem("删除入帐单");
@@ -97,7 +97,7 @@ public class FrmMain_rider extends JFrame implements ActionListener {
         this.menu_Rider.add(this.menuItem_AddRider); this.menuItem_AddRider.addActionListener(this);
         this.menu_Rider.add(this.menuItem_DeleteRider); this.menuItem_DeleteRider.addActionListener(this);
         this.menu_Rider.add(this.menuItem_ModifyRider); this.menuItem_ModifyRider.addActionListener(this);
-        this.menu_Rider.add(this.menuItem_ShowRider); this.menuItem_ShowRider.addActionListener(this);
+        //this.menu_Rider.add(this.menuItem_ShowRider); this.menuItem_ShowRider.addActionListener(this);
         //入帐单功能菜单
         this.menu_RiderAccount.add(this.menuItem_DeleteRiderAccount); this.menuItem_DeleteRiderAccount.addActionListener(this);
         this.menu_RiderAccount.add(this.menuItem_ModifyRiderAccount); this.menuItem_ModifyRiderAccount.addActionListener(this);
@@ -161,6 +161,15 @@ public class FrmMain_rider extends JFrame implements ActionListener {
             if(this.curRider == null) {
                 JOptionPane.showMessageDialog(null, "请选择骑手", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
+            }
+            //判断骑手是否送过单,若送过,则无法删除
+            try {
+                if(TakeoutAssistantUtil.riderManager.ifHavingOrder(curRider)){
+                    JOptionPane.showMessageDialog(null, "该骑手有配送记录,禁止删除", "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
             }
             try {
                 TakeoutAssistantUtil.riderManager.deleteRider(this.curRider);

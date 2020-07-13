@@ -221,6 +221,14 @@ public class FrmMain_seller extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "请选择满减", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            try { //判断满减是否存在于订单中
+                if(TakeoutAssistantUtil.manjianManager.ifHavingOrder(curManjian)){
+                    JOptionPane.showMessageDialog(null, "该满减已存在于订单,无法删除", "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
             try {
                 TakeoutAssistantUtil.manjianManager.deleteManjian(this.curManjian);
                 FrmMain_seller.this.reloadManjianTabel(FrmMain_seller.this.dataTableSeller.getSelectedRow());
@@ -256,6 +264,14 @@ public class FrmMain_seller extends JFrame implements ActionListener {
             if(this.curCoupon == null) {
                 JOptionPane.showMessageDialog(null, "请选择优惠券", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
+            }
+            try { //判断优惠券是否存在于订单表.集单表.用户优惠券表
+                if(TakeoutAssistantUtil.couponManager.ifHavingOrder(curCoupon)){
+                    JOptionPane.showMessageDialog(null, "该优惠券已存在订单或用户中,无法删除", "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
             }
             try {
                 TakeoutAssistantUtil.couponManager.deleteCoupon(this.curCoupon);

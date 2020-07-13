@@ -15,4 +15,6 @@ public interface IRiderManager {
     public void deleteRider(BeanRider rider) throws BaseException;
     //修改骑手身份
     public void modifyStatus(BeanRider rider, String status) throws BaseException;
+    //判断骑手是否送过单,若送过,则无法删除
+    public boolean ifHavingOrder(BeanRider rider) throws BaseException;
 }

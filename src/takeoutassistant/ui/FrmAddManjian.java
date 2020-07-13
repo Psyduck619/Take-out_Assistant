@@ -55,6 +55,10 @@ public class FrmAddManjian extends JDialog implements ActionListener {
             String full = edtFull.getText();
             String discount = edtDiscount.getText();
             Pattern pattern = Pattern.compile("[0-9]*");
+            if(full == null || "".equals(full) || discount == null || "".equals(discount)){
+                JOptionPane.showMessageDialog(null, "金额不能为空", "错误",JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if(!pattern.matcher(full).matches() || !pattern.matcher(discount).matches()){
                 JOptionPane.showMessageDialog(null, "金额必须为整数", "错误",JOptionPane.ERROR_MESSAGE);
                 return;

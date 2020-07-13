@@ -9,17 +9,16 @@ import takeoutassistant.util.DbException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MyCouponManager implements IMyCouponManager {
 
     //新增优惠券
-    public BeanMyCoupon addMyCoupon(BeanUser user, BeanCoupon coupon) throws BaseException{
+    public BeanMyCoupon addMyCoupon(String user_id, BeanCoupon coupon) throws BaseException{
         //判空
-        if(user == null){
-            throw new BusinessException("用户为空,请重试");
-        }
         if(coupon == null){
             throw new BusinessException("优惠券为空,请重试");
         }
@@ -40,15 +39,12 @@ public class MyCouponManager implements IMyCouponManager {
             if(rs.next()){
                 flag = true;
             }
-            rs.close();
-            pst.close();
             //若已有该优惠券,优惠券+1
             if(flag){
                 sql = "update tbl_mycoupon set coupon_count=coupon_count+1 where coupon_id=?";
                 pst = conn.prepareStatement(sql);
                 pst.setInt(1, coupon.getCoupon_id());
                 pst.execute();
-                pst.close();
             }
             else{
                 //先查询优惠券所属商家名字
@@ -65,17 +61,17 @@ public class MyCouponManager implements IMyCouponManager {
                 //添加我的优惠券
                 sql = "insert into tbl_mycoupon(user_id,coupon_id,coupon_amount,coupon_count,end_date,seller_name,ifTogether) values(?,?,?,?,?,?,?)";
                 pst = conn.prepareStatement(sql);
-                pst.setString(1, user.getUser_id());
+                pst.setString(1, user_id);
                 pst.setInt(2, coupon.getCoupon_id());
                 pst.setInt(3, coupon.getCoupon_amount());
                 pst.setInt(4,1);
                 pst.setTimestamp(5, new java.sql.Timestamp(coupon.getEnd_date().getTime()));
                 pst.setString(6,name);
                 pst.setBoolean(7, coupon.isIfTogether());
-                conn.commit();
                 pst.execute();
-                pst.close();
             }
+            conn.commit();
+            pst.close();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -163,8 +159,49 @@ public class MyCouponManager implements IMyCouponManager {
                 result.add(bgc);
             }
             rs.close();
+            rs.close();
             pst.close();
             return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        }
+        finally{
+            if(conn!=null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
+    }
+    //登录时判断优惠券是否过期,过期的话直接删除
+    public void ifOVerTime(BeanUser user) throws BaseException{
+        //初始化
+        List<BeanMyCoupon> result = new ArrayList<BeanMyCoupon>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            sql = "select end_date,coupon_id from tbl_mycoupon where user_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setString(1,user.getUser_id());
+            java.sql.ResultSet rs = pst.executeQuery();
+            while(rs.next()){
+                int coupon = rs.getInt(2);
+                Date da = rs.getTimestamp(1);
+                long ts = da.getTime();
+                if(ts <= System.currentTimeMillis()){
+                    sql = "delete from tbl_mycoupon where coupon_id=?";
+                    java.sql.PreparedStatement pst2 = conn.prepareStatement(sql);
+                    pst2.setInt(1,coupon);
+                    pst2.execute();
+                    pst2.close();
+                }
+            }
+            rs.close();
+            pst.close();
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DbException(e);

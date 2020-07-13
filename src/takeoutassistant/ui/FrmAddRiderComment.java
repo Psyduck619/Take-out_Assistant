@@ -64,6 +64,7 @@ public class FrmAddRiderComment extends JDialog implements ActionListener {
             else
                 comment = "差评";
             try {
+                System.out.println(curOrder.getOrder_id());
                 TakeoutAssistantUtil.riderAccountManager.addRiderComment(curOrder, comment);
                 JOptionPane.showMessageDialog(null, "评价成功", "提示", JOptionPane.INFORMATION_MESSAGE);
                 this.setVisible(false);

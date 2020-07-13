@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 
+import static takeoutassistant.ui.FrmConfirm.confirm;
 import static takeoutassistant.ui.FrmLogin.loginType;
 
 public class FrmMain extends JFrame implements ActionListener {
@@ -38,6 +39,7 @@ public class FrmMain extends JFrame implements ActionListener {
 
     private JMenuItem  menuItem_Rider=new JMenuItem("骑手管理");
     private JMenuItem  menuItem_Order=new JMenuItem("订单管理");
+    private JMenuItem  menuItem_User=new JMenuItem("用户消费情况");
 
     private JMenuItem  menuItem_AddAdmin=new JMenuItem("管理员添加");
     private JMenuItem  menuItem_modifyPwd=new JMenuItem("密码修改");
@@ -85,24 +87,6 @@ public class FrmMain extends JFrame implements ActionListener {
         tabSellerModel.setDataVector(tblSellerData,tblSellerTitle);
         this.dataTableSeller.validate();
         this.dataTableSeller.repaint();
-    }
-    //实现显示指定商家
-    public static void reloadSLevelTable(int level){
-        try {
-            allSeller = TakeoutAssistantUtil.sellerManager.loadLevel(level);
-        } catch (BaseException e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        tblSellerData = new Object[allSeller.size()][BeanSeller.tableTitles.length];
-        for(int i = 0 ; i < allSeller.size() ; i++){
-            for(int j = 0 ; j < BeanSeller.tableTitles.length ; j++){
-                tblSellerData[i][j] = allSeller.get(i).getCell(j);
-            }
-        }
-        tabSellerModel.setDataVector(tblSellerData,tblSellerTitle);
-        //this.dataTableSeller.validate();
-        //this.dataTableSeller.repaint();
     }
     //显示所有商品类型
     private void reloadGTypeTabel(int sellerIdx){
@@ -153,13 +137,13 @@ public class FrmMain extends JFrame implements ActionListener {
     public FrmMain(){
         this.setExtendedState(Frame.MAXIMIZED_BOTH);
         this.setTitle("外卖助手管理系统");
-        dlgLogin=new FrmLogin(this,"登录",true);
+        dlgLogin=new FrmLogin(this,"外卖助手登录",true);
         dlgLogin.setVisible(true);
         //商家菜单
         this.menu_seller.add(this.menuItem_AddSeller); this.menuItem_AddSeller.addActionListener(this);
         this.menu_seller.add(this.menuItem_DeleteSeller); this.menuItem_DeleteSeller.addActionListener(this);
         this.menu_seller.add(this.menuItem_ModifyName); this.menuItem_ModifyName.addActionListener(this);
-        this.menu_seller.add(this.menuItem_ShowLevel); this.menuItem_ShowLevel.addActionListener(this);
+        //this.menu_seller.add(this.menuItem_ShowLevel); this.menuItem_ShowLevel.addActionListener(this);
         this.menu_seller.add(this.menuItem_ShowCoupon); this.menuItem_ShowCoupon.addActionListener(this);
         //商品类别菜单
         this.menu_type.add(this.menuItem_AddType); this.menuItem_AddType.addActionListener(this);
@@ -172,6 +156,7 @@ public class FrmMain extends JFrame implements ActionListener {
         //其他管理菜单
         this.menu_others.add(this.menuItem_Rider); this.menuItem_Rider.addActionListener(this);
         this.menu_others.add(this.menuItem_Order); this.menuItem_Order.addActionListener(this);
+        this.menu_others.add(this.menuItem_User); this.menuItem_User.addActionListener(this);
         //管理员管理
         this.menu_admin.add(this.menuItem_AddAdmin); this.menuItem_AddAdmin.addActionListener(this);
         this.menu_admin.add(this.menuItem_modifyPwd); this.menuItem_modifyPwd.addActionListener(this);
@@ -228,7 +213,6 @@ public class FrmMain extends JFrame implements ActionListener {
                     return;
                 }
                 curGoods = allGoods.get(i);
-                System.out.println(curGoods);
             }
         });
 
@@ -263,13 +247,27 @@ public class FrmMain extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "请选择商家", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            try {
-                TakeoutAssistantUtil.sellerManager.deleteSeller(this.curSeller);
-                reloadSellerTable();
-            } catch (BaseException e1) {
-                JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
-                return;
+            try { //判断是否有该商家的订单存在,若有,则无法删除
+                if(TakeoutAssistantUtil.sellerManager.ifHavingOrder(curSeller)){
+                    JOptionPane.showMessageDialog(null, "该商家已存在订单,禁止删除", "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
             }
+            FrmConfirm dlg = new FrmConfirm(this, "提示", true); //让用户再次确认
+            dlg.setVisible(true);
+            if(confirm){
+                try {
+                    TakeoutAssistantUtil.sellerManager.deleteSeller(this.curSeller);
+                    reloadSellerTable();
+                } catch (BaseException e1) {
+                    JOptionPane.showMessageDialog(null, e1.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+            else
+                return;
         }
         //修改商家名称
         else if(e.getSource() == this.menuItem_ModifyName){
@@ -277,7 +275,7 @@ public class FrmMain extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "请选择商家", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            FrmModifySeller dlg = new FrmModifySeller(this,"添加商家",true);
+            FrmModifySeller dlg = new FrmModifySeller(this,"修改商家名称",true);
             dlg.setVisible(true);
             reloadSellerTable();
         }
@@ -379,6 +377,10 @@ public class FrmMain extends JFrame implements ActionListener {
         //订单管理界面
         else if(e.getSource() == this.menuItem_Order){
             new FrmMain_order();
+        }
+        //查看用户信息
+        else if(e.getSource() == this.menuItem_User){
+            new FrmShowUser();
         }
 
         //添加管理员

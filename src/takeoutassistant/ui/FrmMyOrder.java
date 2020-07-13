@@ -39,9 +39,10 @@ public class FrmMyOrder extends JFrame implements ActionListener {
     //初始化信息
     public static BeanGoodsOrder curOrder = null;
     public static List<BeanGoodsOrder> allOrder = null;
-    //显示所有地址
+    //显示所有
     private void reloadOrderTable(){
         try {
+            System.out.println(currentLoginUser.getUser_id());
             allOrder = TakeoutAssistantUtil.orderManager.loadUsers(currentLoginUser);
         } catch (BaseException e) {
             JOptionPane.showMessageDialog(null, e.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);

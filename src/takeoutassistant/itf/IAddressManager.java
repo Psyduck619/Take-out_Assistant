@@ -16,4 +16,6 @@ public interface IAddressManager {
     public void deleteAddress(BeanAddress address) throws BaseException;
     //用户修改地址
     public void modifyAddress(BeanAddress address, String name, String linkman, String linkphone) throws BaseException;
+    //判断地址是否存在订单中
+    public boolean ifHavingOrder(BeanAddress address) throws BaseException;
 }

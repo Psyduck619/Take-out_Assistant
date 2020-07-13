@@ -131,6 +131,37 @@ public class SellerManager implements ISellerManager {
             }
         }
     }
+    //判断是否有该商家的订单存在,若有,则无法删除
+    public boolean ifHavingOrder(BeanSeller seller) throws BaseException{
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            sql = "select * from tbl_goodsorder where seller_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,seller.getSeller_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
 
     //修改商家名字
     @Override
@@ -213,7 +244,7 @@ public class SellerManager implements ISellerManager {
                 pst.close();
             }
             else{//显示指定星级商家
-                sql = "select seller_id,seller_name,seller_level,per_cost,total_sales from tbl_seller where seller_level=?";
+                sql = "select seller_id,seller_name,seller_level,per_cost,total_sales from tbl_seller where seller_level>=?";
                 pst = conn.prepareStatement(sql);
                 pst.setInt(1,level);
                 rs = pst.executeQuery();

@@ -55,5 +55,7 @@ public interface IOrderManager {
     public void modifyCancel(BeanGoodsOrder order) throws BaseException;
     //判断当前用户没有过购买
     public boolean ifBougnt(BeanUser user) throws BaseException;
+    //查询用户消费信息
+    public List<BeanUserCus> loadUserCus() throws BaseException;
 
 }

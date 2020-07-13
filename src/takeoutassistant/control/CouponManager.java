@@ -203,5 +203,50 @@ public class CouponManager implements ICouponManager {
             }
         }
     }
+    //判断优惠券是否存在于订单.鸡蛋表或用户优惠券表中
+    public boolean ifHavingOrder(BeanCoupon coupon) throws BaseException{
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            sql = "select * from tbl_goodsorder where coupon_id=?";//判断订单表
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,coupon.getCoupon_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            sql = "select * from tbl_userjidan where coupon_id=?";//判断集单表
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,coupon.getCoupon_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            sql = "select * from tbl_mycoupon where coupon_id=?";//判断用户优惠券表
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,coupon.getCoupon_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
 
 }

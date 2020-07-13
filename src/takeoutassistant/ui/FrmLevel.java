@@ -78,7 +78,7 @@ public class FrmLevel extends JDialog implements ActionListener {
             }else {
                 level =0;
             }
-            FrmMain.reloadSLevelTable(level);
+            FrmMain_user.reloadSLevelTable(level);
             this.setVisible(false);
         }
     }

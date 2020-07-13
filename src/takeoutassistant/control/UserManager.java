@@ -32,7 +32,7 @@ public class UserManager implements IUserManager {
         }
         //判断电话号是否合法
         if(phone == null || "".equals(phone)){
-            throw new BusinessException("名字不能为空!");
+            throw new BusinessException("电话不能为空!");
         }
         p = Pattern.compile("[0-9]*");
         if(!p.matcher(phone).matches()){

@@ -22,7 +22,8 @@ public class FrmMain_user extends JFrame implements ActionListener {
     private JMenu menu_user=new JMenu("个人管理");
     private JMenu menu_VIP=new JMenu("会员管理");
 
-    private JMenuItem menuItem_ShowSeller=new JMenuItem("选择商家");
+    private JMenuItem menuItem_ShowSeller=new JMenuItem("进入商家");
+    private JMenuItem menuItem_CheckSeller=new JMenuItem("选择星级商家");
     private JMenuItem menuItem_CheckGoods=new JMenuItem("商品名查询商品");
     private JMenuItem menuItem_CheckType=new JMenuItem("类别查询商品");
     //用户订单管理
@@ -40,9 +41,9 @@ public class FrmMain_user extends JFrame implements ActionListener {
     //主界面
     private JPanel statusBar = new JPanel();
     //商家表
-    private Object tblSellerTitle[] = BeanSeller.tableTitles2;
-    private Object tblSellerData[][];
-    DefaultTableModel tabSellerModel = new DefaultTableModel();
+    private static Object[] tblSellerTitle = BeanSeller.tableTitles2;
+    private static Object[][] tblSellerData;
+    static DefaultTableModel tabSellerModel = new DefaultTableModel();
     private JTable dataTableSeller = new JTable(tabSellerModel);
     //满减表
     private Object tblManjianTitle[] = BeanManjian.tblManjianTitle;
@@ -56,7 +57,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
     private JTable dataTableGoods = new JTable(tabGoodsModel);
 
     public static BeanSeller curSeller = null;
-    List<BeanSeller> allSeller = null;
+    static List<BeanSeller> allSeller = null;
     List<BeanManjian> allManjian = null;
     List<BeanGoods> allGoods = null;
 
@@ -76,6 +77,24 @@ public class FrmMain_user extends JFrame implements ActionListener {
         tabSellerModel.setDataVector(tblSellerData,tblSellerTitle);
         this.dataTableSeller.validate();
         this.dataTableSeller.repaint();
+    }
+    //实现显示指定商家
+    public static void reloadSLevelTable(int level){
+        try {
+            allSeller = TakeoutAssistantUtil.sellerManager.loadLevel(level);
+        } catch (BaseException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "错误",JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        tblSellerData = new Object[allSeller.size()][BeanSeller.tableTitles.length];
+        for(int i = 0 ; i < allSeller.size() ; i++){
+            for(int j = 0 ; j < BeanSeller.tableTitles.length ; j++){
+                tblSellerData[i][j] = allSeller.get(i).getCell2(j);
+            }
+        }
+        tabSellerModel.setDataVector(tblSellerData,tblSellerTitle);
+        //this.dataTableSeller.validate();
+        //this.dataTableSeller.repaint();
     }
     //显示所有满减
     private void reloadManjianTabel(int sellerIdx){
@@ -123,6 +142,7 @@ public class FrmMain_user extends JFrame implements ActionListener {
         this.setTitle("大开大合-外卖助手");
         //商家菜单
         this.menu_buy.add(this.menuItem_ShowSeller); this.menuItem_ShowSeller.addActionListener(this);
+        this.menu_buy.add(this.menuItem_CheckSeller); this.menuItem_CheckSeller.addActionListener(this);
         this.menu_buy.add(this.menuItem_CheckGoods); this.menuItem_CheckGoods.addActionListener(this);
         this.menu_buy.add(this.menuItem_CheckType); this.menuItem_CheckType.addActionListener(this);
         //订单菜单
@@ -242,6 +262,12 @@ public class FrmMain_user extends JFrame implements ActionListener {
                 return;
             }
             new FrmShowSeller();
+        }
+        //筛选商家
+        else if(e.getSource() == this.menuItem_CheckSeller){
+            FrmLevel dlg = new FrmLevel(this,"选择星级商家",true);
+            curSeller = null;
+            dlg.setVisible(true);
         }
         //根据商品名进行查询
         else if(e.getSource() == this.menuItem_CheckGoods){

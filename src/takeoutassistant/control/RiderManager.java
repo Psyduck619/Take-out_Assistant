@@ -57,7 +57,6 @@ public class RiderManager implements IRiderManager {
         }
         return null;
     }
-
     //显示所有骑手
     @Override
     public List<BeanRider> loadAll() throws BaseException {
@@ -99,7 +98,6 @@ public class RiderManager implements IRiderManager {
         }
         return result;
     }
-
     //删除骑手
     @Override
     public void deleteRider(BeanRider rider) throws BaseException {
@@ -128,7 +126,6 @@ public class RiderManager implements IRiderManager {
             }
         }
     }
-
     //修改骑手身份
     @Override
     public void modifyStatus(BeanRider rider, String status) throws BaseException{
@@ -157,6 +154,37 @@ public class RiderManager implements IRiderManager {
                 }
             }
         }
+    }
+    //判断骑手是否送过单,若送过,则无法删除
+    public boolean ifHavingOrder(BeanRider rider) throws BaseException{
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            sql = "select * from tbl_goodsorder where rider_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,rider.getRider_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
 
 }

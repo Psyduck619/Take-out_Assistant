@@ -275,112 +275,6 @@ public class OrderManager implements IOrderManager {
             pst.setInt(1,coupon.getCoupon_id());
             pst.setString(2,user.getUser_id());
             pst.execute();
-
-//            //更新用户的集单表 //①商家有,表中无,则全都添加进去并加1②商家有,表中有,且加1后没达到要求,则直接加1
-//            //③商家有,表中有,且加1后达到要求,则删除该条集单信息,对应优惠券加1④商家有表中无,但需求只有1,那么直接优惠券加1
-//            List<Integer> array = new ArrayList<Integer>();
-//            //先查询出商家所有的优惠券ID
-//            sql = "select coupon_id from tbl_coupon where seller_id=?";
-//            pst = conn.prepareStatement(sql);
-//            pst.setInt(1,seller.getSeller_id());
-//            rs = pst.executeQuery();
-//            while(rs.next()){ //得到所有优惠券ID
-//                array.add(rs.getInt(1));
-//            }
-//            //开始循环查询每一个优惠券对应的情况
-//            for(int i = 0 ; i < array.size() ; i++){
-//                //先查询优惠券的需求数是不是1,是的话直接优惠券+1
-//                sql = "select coupon_request from tbl_coupon where coupon_id=?";
-//                pst = conn.prepareStatement(sql);
-//                pst.setInt(1,array.get(i));
-//                rs = pst.executeQuery();
-//                if(rs.next()){
-//                    if(rs.getInt(1) == 1){
-//                        BeanCoupon c = new BeanCoupon();//创建一个优惠券对象
-//                        c.setSeller_id(seller.getSeller_id());
-//                        c.setCoupon_id(array.get(i));
-//                        c.setCoupon_request(1);
-//                        sql = "select coupon_amount,begin_date,end_date,ifTogether from tbl_coupon where coupon_id=?";
-//                        pst = conn.prepareStatement(sql);
-//                        pst.setInt(1,array.get(1));
-//                        rs = pst.executeQuery();
-//                        if(rs.next()){
-//                            c.setCoupon_amount(rs.getInt(1));
-//                            c.setBegin_date(rs.getTimestamp(2));
-//                            c.setEnd_date(rs.getTimestamp(3));
-//                            c.setIfTogether(rs.getBoolean(4));
-//                        }
-//                        new MyCouponManager().addMyCoupon(user, c);//调用方法加入优惠券
-//                        continue;
-//                    }
-//                }
-//                //再查询集单表中有没有该优惠券
-//                sql = "select * from tbl_userjidan where coupon_id=?";
-//                pst = conn.prepareStatement(sql);
-//                pst.setInt(1,array.get(1));
-//                rs = pst.executeQuery();
-//                if(!rs.next()){  //如果表中没有的话,则添加
-//                    //查询出该优惠券的需求数.优惠金额
-//                    int q = 0;
-//                    int p = 0;
-//                    sql = "select coupon_request,coupon_amount from tbl_coupon where coupon_id=?";
-//                    pst = conn.prepareStatement(sql);
-//                    pst.setInt(1,array.get(1));
-//                    rs = pst.executeQuery();
-//                    if(rs.next()){
-//                        q = rs.getInt(1);
-//                        p = rs.getInt(2);
-//                    }
-//                    sql = "insert into tbl_userjidan(user_id,seller_id,coupon_request,coupon_get,coupon_amount,coupon_id) values(?,?,?,?,?,?)";
-//                    pst = conn.prepareStatement(sql);
-//                    pst.setString(1,user.getUser_id());
-//                    pst.setInt(2,seller.getSeller_id());
-//                    pst.setInt(3,q);
-//                    pst.setInt(4,1);
-//                    pst.setInt(5,p);
-//                    pst.setInt(6,array.get(1));
-//                    pst.execute();
-//                    continue;
-//                }
-//                else{ //如果表中有的话,则数量加1
-//                    //先查询是不是只差1
-//                    sql = "select coupon_request-coupon_get from tbl_userjidan where coupon_id=?";
-//                    pst = conn.prepareStatement(sql);
-//                    pst.setInt(1,array.get(1));
-//                    rs = pst.executeQuery();
-//                    if(rs.next()){
-//                        if (rs.getInt(1) == 1){ //直接删除该条集单信息,对应优惠券加1
-//                            BeanCoupon c = new BeanCoupon();//创建一个优惠券对象
-//                            c.setSeller_id(seller.getSeller_id());
-//                            c.setCoupon_id(array.get(i));
-//                            c.setCoupon_request(1);
-//                            sql = "select coupon_amount,begin_date,end_date,ifTogether from tbl_coupon where coupon_id=?";
-//                            pst = conn.prepareStatement(sql);
-//                            pst.setInt(1,array.get(1));
-//                            rs = pst.executeQuery();
-//                            if(rs.next()){
-//                                c.setCoupon_amount(rs.getInt(1));
-//                                c.setBegin_date(rs.getTimestamp(2));
-//                                c.setEnd_date(rs.getTimestamp(3));
-//                                c.setIfTogether(rs.getBoolean(4));
-//                            }
-//                            new MyCouponManager().addMyCoupon(user, c);//调用方法加入优惠券
-//                            sql = "delete from tbl_userjidan where coupon_id=?";
-//                            pst = conn.prepareStatement(sql);
-//                            pst.setInt(1,array.get(1));
-//                            pst.execute();
-//                            continue;
-//                        }
-//                        else{ //一般情况,则集单数加1
-//                            sql = "update tbl_userjidan set coupon_get+=1 where coupon_id=?";
-//                            pst = conn.prepareStatement(sql);
-//                            pst.setInt(1,array.get(1));
-//                            pst.execute();
-//                            continue;
-//                        }
-//                    }
-//                }
-//            }
             conn.commit();
             //rs.close();
             pst.close();
@@ -588,7 +482,7 @@ public class OrderManager implements IOrderManager {
                 }
         }
     }
-    //得到"确认送达"订单
+    //得到"已送达"订单
     public List<BeanGoodsOrder> loadConfirm() throws BaseException{
         //初始化
         List<BeanGoodsOrder> result = new ArrayList<BeanGoodsOrder>();
@@ -602,7 +496,7 @@ public class OrderManager implements IOrderManager {
             sql = "select order_id,add_id,manjian_id,coupon_id,rider_id,original_price,final_price,order_time," +
                     "request_time,order_state,user_id,seller_id from tbl_goodsorder where order_state=?";
             pst = conn.prepareStatement(sql);
-            pst.setString(1,"确认送达");
+            pst.setString(1,"已送达");
             rs = pst.executeQuery();
             while(rs.next()){
                 BeanGoodsOrder bgo = new BeanGoodsOrder();
@@ -846,6 +740,9 @@ public class OrderManager implements IOrderManager {
         if(order == null){
             throw new BusinessException("订单为空,请重试");
         }
+        if(order.getRider_id() < 1){
+            throw new BusinessException("该订单为分配骑手");
+        }
         //初始化
         Connection conn = null;
         String sql = null;
@@ -861,19 +758,20 @@ public class OrderManager implements IOrderManager {
             pst.setInt(2, order.getOrder_id());
             pst.execute();
             //新建入帐单
-            //先判断是不是新的月份,如果是的话月收入清零,重新计算
-            Date time = null;
-            sql = "select * from tbl_rideraccount where rider_id=?" +
-                    " and YEAR(finish_time)=Year(now()) and MONTH(finish_time)=MONTH(now())";
-            pst = conn.prepareStatement(sql);
-            pst.setInt(1,order.getOrder_id());
-            rs = pst.executeQuery();
-            if(!rs.next()){
-                sql = "update tbl_rider set month_income=0,order_count=0 where rider_id=?";
-                java.sql.PreparedStatement pst2 = conn.prepareStatement(sql);
-                pst2.execute();
-                pst2.close();
-            }
+//            //先判断是不是新的月份,如果是的话月收入清零,重新计算
+//            Date time = null;
+//            sql = "select * from tbl_rideraccount where rider_id=?" +
+//                    " and YEAR(finish_time)=Year(now()) and MONTH(finish_time)=MONTH(now())";
+//            pst = conn.prepareStatement(sql);
+//            pst.setInt(1,order.getOrder_id());
+//            rs = pst.executeQuery();
+//            if(!rs.next()){
+//                sql = "update tbl_rider set month_income=0,order_count=0 where rider_id=?";
+//                java.sql.PreparedStatement pst2 = conn.prepareStatement(sql);
+//                pst2.setInt(1,order.getRider_id());
+//                pst2.execute();
+//                pst2.close();
+//            }
             //算这单的收入,查询该骑手的单数和身份
             Double income = 0.0;
             int count = 0;//单数
@@ -944,6 +842,111 @@ public class OrderManager implements IOrderManager {
                 pst2.setInt(2,rs.getInt(1));
                 pst2.execute();
                 pst2.close();
+            }
+            //更新用户的集单表 //①商家有,表中无,则全都添加进去并加1②商家有,表中有,且加1后没达到要求,则直接加1
+            //③商家有,表中有,且加1后达到要求,则删除该条集单信息,对应优惠券加1④商家有表中无,但需求只有1,那么直接优惠券加1
+            List<Integer> array = new ArrayList<Integer>();
+            //先查询出商家所有的优惠券ID
+            sql = "select coupon_id from tbl_coupon where seller_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,order.getSeller_id());
+            rs = pst.executeQuery();
+            while(rs.next()){ //得到所有优惠券ID
+                array.add(rs.getInt(1));
+            }
+            //开始循环查询每一个优惠券对应的情况
+            for(int i = 0 ; i < array.size() ; i++){
+                //先查询优惠券的需求数是不是1,是的话直接优惠券+1
+                sql = "select coupon_request from tbl_coupon where coupon_id=?";
+                pst = conn.prepareStatement(sql);
+                pst.setInt(1,array.get(i));
+                rs = pst.executeQuery();
+                if(rs.next()){
+                    if(rs.getInt(1) == 1){
+                        BeanCoupon c = new BeanCoupon();//创建一个优惠券对象
+                        c.setSeller_id(order.getSeller_id());
+                        c.setCoupon_id(array.get(i));
+                        c.setCoupon_request(1);
+                        sql = "select coupon_amount,begin_date,end_date,ifTogether from tbl_coupon where coupon_id=?";
+                        pst = conn.prepareStatement(sql);
+                        pst.setInt(1,array.get(i));
+                        rs = pst.executeQuery();
+                        if(rs.next()){
+                            c.setCoupon_amount(rs.getInt(1));
+                            c.setBegin_date(rs.getTimestamp(2));
+                            c.setEnd_date(rs.getTimestamp(3));
+                            c.setIfTogether(rs.getBoolean(4));
+                        }
+                        new MyCouponManager().addMyCoupon(order.getUser_id(), c);//调用方法加入优惠券
+                        continue;
+                    }
+                }
+                //再查询集单表中有没有该优惠券
+                sql = "select * from tbl_userjidan where coupon_id=?";
+                pst = conn.prepareStatement(sql);
+                pst.setInt(1,array.get(i));
+                rs = pst.executeQuery();
+                if(!rs.next()){  //如果表中没有的话,则添加
+                    //查询出该优惠券的需求数.优惠金额
+                    int q = 0;
+                    int p = 0;
+                    sql = "select coupon_request,coupon_amount from tbl_coupon where coupon_id=?";
+                    pst = conn.prepareStatement(sql);
+                    pst.setInt(1,array.get(i));
+                    rs = pst.executeQuery();
+                    if(rs.next()){
+                        q = rs.getInt(1);
+                        p = rs.getInt(2);
+                    }
+                    sql = "insert into tbl_userjidan(user_id,seller_id,coupon_request,coupon_get,coupon_amount,coupon_id) values(?,?,?,?,?,?)";
+                    pst = conn.prepareStatement(sql);
+                    pst.setString(1,order.getUser_id());
+                    pst.setInt(2,order.getSeller_id());
+                    pst.setInt(3,q);
+                    pst.setInt(4,1);
+                    pst.setInt(5,p);
+                    pst.setInt(6,array.get(i));
+                    pst.execute();
+                    continue;
+                }
+                else{ //如果表中有的话,则数量加1
+                    //先查询是不是只差1
+                    sql = "select coupon_request-coupon_get from tbl_userjidan where coupon_id=?";
+                    pst = conn.prepareStatement(sql);
+                    pst.setInt(1,array.get(i));
+                    rs = pst.executeQuery();
+                    if(rs.next()){
+                        if (rs.getInt(1) == 1){ //直接删除该条集单信息,对应优惠券加1
+                            BeanCoupon c = new BeanCoupon();//创建一个优惠券对象
+                            c.setSeller_id(order.getSeller_id());
+                            c.setCoupon_id(array.get(i));
+                            c.setCoupon_request(1);
+                            sql = "select coupon_amount,begin_date,end_date,ifTogether from tbl_coupon where coupon_id=?";
+                            pst = conn.prepareStatement(sql);
+                            pst.setInt(1,array.get(i));
+                            rs = pst.executeQuery();
+                            if(rs.next()){
+                                c.setCoupon_amount(rs.getInt(1));
+                                c.setBegin_date(rs.getTimestamp(2));
+                                c.setEnd_date(rs.getTimestamp(3));
+                                c.setIfTogether(rs.getBoolean(4));
+                            }
+                            new MyCouponManager().addMyCoupon(order.getUser_id(), c);//调用方法加入优惠券
+                            sql = "delete from tbl_userjidan where coupon_id=?";
+                            pst = conn.prepareStatement(sql);
+                            pst.setInt(1,array.get(i));
+                            pst.execute();
+                            continue;
+                        }
+                        else{ //一般情况,则集单数加1
+                            sql = "update tbl_userjidan set coupon_get=coupon_get+1 where coupon_id=?";
+                            pst = conn.prepareStatement(sql);
+                            pst.setInt(1,array.get(i));
+                            pst.execute();
+                            continue;
+                        }
+                    }
+                }
             }
             conn.commit();
             rs.close();
@@ -1155,5 +1158,47 @@ public class OrderManager implements IOrderManager {
             }
         }
         return false;
+    }
+    //查询用户消费信息
+    public List<BeanUserCus> loadUserCus() throws BaseException{
+        //初始化
+        String user_id = null;
+        int order_count = 0;
+        Double order_amount = 0.0;
+        Double order_discount = 0.0;
+        List<BeanUserCus> result = new ArrayList<BeanUserCus>();
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        try {
+            conn = DBUtil.getConnection();
+            //显示用户消费情况(用户ID,消费单数,消费总额,优惠金额)
+            sql = "select user_id,count(order_id),sum(final_price),sum(original_price-final_price) from " +
+                    "tbl_goodsorder group by user_id";
+            pst = conn.prepareStatement(sql);
+            java.sql.ResultSet rs = pst.executeQuery();
+            while(rs.next()){
+                BeanUserCus buc = new BeanUserCus();
+                buc.setUser_id(rs.getString(1));
+                buc.setOrder_count(rs.getInt(2));
+                buc.setOrder_amount(rs.getDouble(3));
+                buc.setOrder_discount(rs.getDouble(4));
+                result.add(buc);
+            }
+            rs.close();
+            pst.close();
+            return result;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DbException(e);
+        }
+        finally{
+            if(conn!=null)
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+        }
     }
 }

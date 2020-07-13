@@ -2,6 +2,7 @@ package takeoutassistant.model;
 
 public class BeanOrderInfo {
     public static final String[] tblMyCartTitle={"商品名称","商品数量","单价","总价","单品优惠"};
+    public static final String[] tblUserInfoTitle={"用户","累积单数","累积消费","累积享受优惠"};
     private int order_id;
     private int goods_id;
     private String goods_name;
@@ -102,6 +103,15 @@ public class BeanOrderInfo {
     }
 
     public String getCell(int col){
+        if(col==0) return this.goods_name;
+        else if(col==1) return ""+this.goods_quantity;
+        else if(col==2) return ""+this.goods_price;
+        else if(col==3) return ""+(this.goods_price * this.goods_quantity);
+        else if(col==4) return ""+this.per_discount;
+        else return "";
+    }
+
+    public String getCell2(int col){
         if(col==0) return this.goods_name;
         else if(col==1) return ""+this.goods_quantity;
         else if(col==2) return ""+this.goods_price;

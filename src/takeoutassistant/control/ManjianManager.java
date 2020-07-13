@@ -178,5 +178,36 @@ public class ManjianManager implements IManjianManager {
             }
         }
     }
+    //判断地址是否存在
+    public boolean ifHavingOrder(BeanManjian manjian) throws BaseException{
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            sql = "select * from tbl_goodsorder where manjian_id=?";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,manjian.getManjian_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
 
 }

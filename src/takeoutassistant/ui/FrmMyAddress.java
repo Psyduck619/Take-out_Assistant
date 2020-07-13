@@ -109,6 +109,14 @@ public class FrmMyAddress extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "请选择一个地址", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            try { //判断地址是否存在于订单中
+                if(TakeoutAssistantUtil.addressManager.ifHavingOrder(curAddress)){
+                    JOptionPane.showMessageDialog(null, "该地址已存在于订单,无法删除", "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
             try {
                 TakeoutAssistantUtil.addressManager.deleteAddress(this.curAddress);
                 reloadAddressTable();

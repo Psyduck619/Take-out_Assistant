@@ -1,8 +1,8 @@
 package takeoutassistant.model;
 
 public class BeanSeller {
-    public static final String[] tableTitles={"商家序号","商家名称","星级","平均消费","总销量"};
-    public static final String[] tableTitles2={"商家名称","星级","平均消费","总销量"};
+    public static final String[] tableTitles={"商家序号","商家名称","星级","平均消费","总订单数"};
+    public static final String[] tableTitles2={"商家名称","星级","平均消费","总订单数"};
     private int seller_id;
     private String seller_name;
     private Double seller_level;

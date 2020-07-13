@@ -91,7 +91,7 @@ public class GoodsManager {
         try {
             conn = DBUtil.getConnection();
             //实现显示对应类别全部商品功能
-            sql = "select goods_id,goods_name,goods_type,price,discount_price,goods_quantity from tbl_goods where type_id=? order by goods_id";
+            sql = "select goods_id,goods_name,goods_type,price,discount_price,goods_quantity,goods_sales,goods_level from tbl_goods where type_id=? order by goods_id";
             pst = conn.prepareStatement(sql);
             pst.setInt(1, type.getType_id());
             rs = pst.executeQuery();
@@ -104,6 +104,8 @@ public class GoodsManager {
                 bg.setDiscount_price(rs.getDouble(5));
                 bg.setType_id(type.getType_id());
                 bg.setGoods_quantity(rs.getInt(6));
+                bg.setGoods_sales(rs.getInt(7));
+                bg.setGoods_level(rs.getDouble(8));
                 result.add(bg);
             }
             rs.close();
