@@ -99,11 +99,11 @@ public class FrmAddCoupon extends JDialog implements ActionListener {
             Pattern pattern = Pattern.compile("[0-9]*");
             String discount = edtDiscount.getText();
             String jidan = edtJidan.getText();
-            if(discount == null){
+            if(discount == null || "".equals(discount)){
                 JOptionPane.showMessageDialog(null, "优惠金额不能为空", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            if(jidan == null){
+            if(jidan == null || "".equals(jidan)){
                 JOptionPane.showMessageDialog(null, "集单数不能为空", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
@@ -124,8 +124,32 @@ public class FrmAddCoupon extends JDialog implements ActionListener {
             String y2 = edtEndYear.getText();
             String m2 = edtEndMonth.getText();
             String d2 = edtEndDay.getText();
-            if(y1 == null || m1 == null || d1 == null || y2 == null || m2 == null || d2 == null){
+            if("".equals(y1) || "".equals(m1) || "".equals(d1) || "".equals(y2) || "".equals(m2) || "".equals(d2)){
                 JOptionPane.showMessageDialog(null, "日期不能为空,请重新输入", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!pattern.matcher(y1).matches()) {
+                JOptionPane.showMessageDialog(null, "日期必须为整数", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!pattern.matcher(m1).matches()) {
+                JOptionPane.showMessageDialog(null, "日期必须为整数", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!pattern.matcher(d1).matches()) {
+                JOptionPane.showMessageDialog(null, "日期必须为整数", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!pattern.matcher(y2).matches()) {
+                JOptionPane.showMessageDialog(null, "日期必须为整数", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!pattern.matcher(m2).matches()) {
+                JOptionPane.showMessageDialog(null, "日期必须为整数", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (!pattern.matcher(d2).matches()) {
+                JOptionPane.showMessageDialog(null, "日期必须为整数", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             if(Integer.parseInt(y2) > 2021){
@@ -135,6 +159,24 @@ public class FrmAddCoupon extends JDialog implements ActionListener {
             if(Integer.parseInt(m1) < 1 || Integer.parseInt(m1) > 12 || Integer.parseInt(m2) < 1
                 || Integer.parseInt(m2) > 12 || Integer.parseInt(d1) < 1 || Integer.parseInt(d1) > 31
                 || Integer.parseInt(d2) < 0 || Integer.parseInt(d1) > 31){
+                JOptionPane.showMessageDialog(null, "日期不合法,请重新输入", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if(Integer.parseInt(m1) == 2 && Integer.parseInt(d1)>28){
+                JOptionPane.showMessageDialog(null, "日期不合法,请重新输入", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if(Integer.parseInt(m2) == 2 && Integer.parseInt(d2)>28){
+                JOptionPane.showMessageDialog(null, "日期不合法,请重新输入", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if((Integer.parseInt(m1) == 4 && Integer.parseInt(d1)>30) || (Integer.parseInt(m1) == 6 && Integer.parseInt(d1)>30)
+            || (Integer.parseInt(m1) == 9 && Integer.parseInt(d1)>30) || (Integer.parseInt(m1) == 11 && Integer.parseInt(d1)>30)){
+                JOptionPane.showMessageDialog(null, "日期不合法,请重新输入", "错误", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if((Integer.parseInt(m2) == 4 && Integer.parseInt(d2)>30) || (Integer.parseInt(m2) == 6 && Integer.parseInt(d2)>30)
+                    || (Integer.parseInt(m2) == 9 && Integer.parseInt(d2)>30) || (Integer.parseInt(m2) == 11 && Integer.parseInt(d2)>30)){
                 JOptionPane.showMessageDialog(null, "日期不合法,请重新输入", "错误", JOptionPane.ERROR_MESSAGE);
                 return;
             }
