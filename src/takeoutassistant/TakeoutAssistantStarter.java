@@ -13,8 +13,8 @@ public class TakeoutAssistantStarter {
     public static void main(String[] args) {
         new FrmMain();
         new FrmMain_user();
-        new FrmMain();
-        new FrmMain_user();
+//        new FrmMain();
+//        new FrmMain_user();
     }
 
 }

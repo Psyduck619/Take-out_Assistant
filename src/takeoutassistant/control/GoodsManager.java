@@ -411,5 +411,36 @@ public class GoodsManager {
                 }
         }
     }
+    //判断是否有该商品的订单存在,若有,则无法删除
+    public boolean ifHavingOrder(BeanGoods goods) throws BaseException{
+        //初始化
+        Connection conn = null;
+        String sql = null;
+        java.sql.PreparedStatement pst = null;
+        java.sql.ResultSet rs = null;
+        try {
+            conn = DBUtil.getConnection();
+            sql = "select * from tbl_orderinfo where goods_id=? and done=1";
+            pst = conn.prepareStatement(sql);
+            pst.setInt(1,goods.getGoods_id());
+            rs = pst.executeQuery();
+            if(rs.next()){
+                return true;
+            }
+            rs.close();
+            pst.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if(conn != null){
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
+    }
 
 }

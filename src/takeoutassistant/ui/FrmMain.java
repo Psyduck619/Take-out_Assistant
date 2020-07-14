@@ -349,6 +349,15 @@ public class FrmMain extends JFrame implements ActionListener {
                 JOptionPane.showMessageDialog(null, "请选择商品", "错误",JOptionPane.ERROR_MESSAGE);
                 return;
             }
+            //判断是否有这个商品
+            try { //判断是否有该商品的订单存在,若有,则无法删除
+                if(TakeoutAssistantUtil.goodsManager.ifHavingOrder(curGoods)){
+                    JOptionPane.showMessageDialog(null, "该商品已存在订单,禁止删除", "错误",JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } catch (BaseException baseException) {
+                baseException.printStackTrace();
+            }
             try {
                 TakeoutAssistantUtil.goodsManager.deleteGoods(this.allGoods.get(i));
                 FrmMain.this.reloadGoodsTabel(FrmMain.this.dataTableGType.getSelectedRow());

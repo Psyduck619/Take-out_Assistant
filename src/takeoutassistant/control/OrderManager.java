@@ -229,7 +229,7 @@ public class OrderManager implements IOrderManager {
             conn.setAutoCommit(false); //事务控制
             //订单添加到数据库
             sql = "insert into tbl_goodsorder(order_id,add_id,manjian_id,coupon_id,original_price,final_price," +
-                    "order_time,request_time,order_state,user_id,seller_id) values(?,?,?,?,?,?,?,?,?,?,?)";
+                    "order_time,request_time,order_state,user_id,seller_id,flag) values(?,?,?,?,?,?,?,?,?,?,?,?)";
             pst = conn.prepareStatement(sql);
             pst.setInt(1,orderID);
             pst.setInt(2,address.getAdd_id());
@@ -242,6 +242,7 @@ public class OrderManager implements IOrderManager {
             pst.setString(9,"未配送");
             pst.setString(10,user.getUser_id());
             pst.setInt(11,seller.getSeller_id());
+            pst.setBoolean(12,false);
             pst.execute();
             //相关商品数量减少 //先查询得到一个当前订单的各商品ID和减少数量的对应表
             Map<Integer, Integer> map = new HashMap<Integer, Integer>();

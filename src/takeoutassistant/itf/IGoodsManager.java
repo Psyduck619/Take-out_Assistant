@@ -26,4 +26,6 @@ public interface IGoodsManager {
     public List<BeanGoods> loadForName(String name) throws BaseException;
     //按类别名查询
     public List<BeanGoods> loadForType(String name) throws BaseException;
+    //判断是否有该商品的订单存在,若有,则无法删除
+    public boolean ifHavingOrder(BeanGoods goods) throws BaseException;
 }
